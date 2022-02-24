@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>实验六 移位寄存器及桶形移位器 &mdash; 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="实验七 状态机及键盘输入" href="07.html" />
+    <link rel="prev" title="实验五 寄存器组及存储器" href="05.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">实验一 选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">实验二 译码器和编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">实验三 加法器与ALU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">实验四 计数器和时钟</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">实验五 寄存器组及存储器</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">实验六 移位寄存器及桶形移位器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">移位寄存器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">算术移位和逻辑移位寄存器</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">桶形移位器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">实验验收内容</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">实验七 状态机及键盘输入</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">实验八 VGA接口控制器实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">实验九 字符输入界面</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">实验十 CPU数据通路</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">实验十一 RV32I单周期CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">实验十二 计算机系统</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>实验六 移位寄存器及桶形移位器</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/exp/06.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>实验六 移位寄存器及桶形移位器<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
+<p><em>“我想要只干净的茶杯，”帽匠插嘴说，“咱们全部挪动一下位子吧！</em></p>
+<p><em>说着，他就挪了一个地方，睡鼠紧随其后，三月兔就挪到了睡鼠的位子上，爱丽丝也只好很不情愿地坐到了三月兔的位子上。这次挪动唯一得到好位子的是帽匠，爱丽丝的位子比以前差了，因为刚才三月兔把牛奶打翻在位子上了。</em></p>
+<blockquote>
+<div><p>— 《爱丽丝漫游奇境记》 刘易斯·卡罗尔</p>
+</div></blockquote>
+<p>本实验将学习常用的移位寄存器的设计，并实现在移位指令中需要用到的桶形移位器。</p>
+<section id="id2">
+<h2>移位寄存器<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h2>
+<p>移位寄存器在时钟的触发沿，根据其控制信号，将存储在其中的数据向某个方向移动一位。移位寄存器也是数字系统的常用器件。</p>
+<p>图 <a class="reference internal" href="#fig-shift01"><span class="std std-numref">Fig. 48</span></a> 中是一个由4个D触发器构成的简单向右移位寄存器，数据从移位寄存器的左端输入，每个触发器的内容在时钟的正跳变沿（上升沿）将数据传到下一个触发器。图 <a class="reference internal" href="#fig-shift02"><span class="std std-numref">Fig. 49</span></a> 是一个此移位寄存器的序列传递实例。</p>
+<figure class="align-default" id="fig-shift01">
+<img alt="../_images/shift01.png" src="../_images/shift01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 48 </span><span class="caption-text">移位寄存器框图</span><a class="headerlink" href="#fig-shift01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-shift02">
+<img alt="../_images/shift02.png" src="../_images/shift02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 49 </span><span class="caption-text">移位寄存器</span><a class="headerlink" href="#fig-shift02" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<section id="id3">
+<h3>算术移位和逻辑移位寄存器<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h3>
+<p>这里的算术移位是指考虑到符号位的移位，算术移位要保证符号位不改变，算术左移同逻辑左移一样，算术右移最左面的空位补符号位。逻辑移位不管是向左移位还是向右移位都是空缺处补0。循环是将移出去的那一位补充到空出的最高/低位的移位方式。置数是将一个8位的数据输入到寄存器中，即给寄存器赋一个初始值。</p>
+<p>用Verilog HDL语言很容易描述出移位寄存器，如：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span> <span class="o">&lt;=</span> <span class="p">{</span><span class="n">Q</span><span class="p">[</span><span class="mh">0</span><span class="p">],</span><span class="n">Q</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">1</span><span class="p">]};</span> <span class="c1">//循环右移</span>
+<span class="n">Q</span> <span class="o">&lt;=</span> <span class="p">{</span><span class="n">Q</span><span class="p">[</span><span class="mh">7</span><span class="p">],</span><span class="n">Q</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">1</span><span class="p">]};</span> <span class="c1">//算术右移</span>
+</pre></div>
+</div>
+<p>表 <a class="reference internal" href="#tab-shift"><span class="std std-numref">Table 6</span></a> 描述了常见的移位寄存器工作方式。
+其中左端串行输入1位数值，并行输出8位数值是指每个时钟到来时右移一位，并且移入的最左位由外部开关决定是1还是0，输出同其他情况一样为同时输出8位。
+这个功能在进行串行转换为并行时比较有用，可以将时间上顺序输入的8个bit存入移位寄存器，在8个周期后形成一个8bit数一起输出。后续键盘串行输入可以利用这个功能。
+请自行思考这些功能如何用Verilog语言实现。</p>
+<table class="colwidths-auto docutils align-default" id="tab-shift">
+<caption><span class="caption-number">Table 6 </span><span class="caption-text">移位寄存器的工作方式</span><a class="headerlink" href="#tab-shift" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>控制位</p></th>
+<th class="head"><p>工作方式</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0 0 0</p></td>
+<td><p>清0</p></td>
+</tr>
+<tr class="row-odd"><td><p>0 0 1</p></td>
+<td><p>置数</p></td>
+</tr>
+<tr class="row-even"><td><p>0 1 0</p></td>
+<td><p>逻辑右移</p></td>
+</tr>
+<tr class="row-odd"><td><p>0 1 1</p></td>
+<td><p>逻辑左移</p></td>
+</tr>
+<tr class="row-even"><td><p>1 0 0</p></td>
+<td><p>算术右移</p></td>
+</tr>
+<tr class="row-odd"><td><p>1 0 1</p></td>
+<td><p>左端串行输入1位值，并行输出8位值</p></td>
+</tr>
+<tr class="row-even"><td><p>1 1 0</p></td>
+<td><p>循环右移</p></td>
+</tr>
+<tr class="row-odd"><td><p>1 1 1</p></td>
+<td><p>循环左移</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="id4">
+<h2>桶形移位器<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h2>
+<p>在CPU中，我们往往需要对数据进行移位操作。但是传统的移位寄存器一个周期只能移动一位，当要进行多位移位时需要多个时钟周期，效率较低。
+桶形移位器采用组合逻辑的方式来实现同时移动多位，在效率上优势极大。因此，桶形移位器常常被用在ALU中来实现移位。
+图 <a class="reference internal" href="#fig-barrel01"><span class="std std-numref">Fig. 50</span></a> 为8位桶形移位器的输入输出引脚图。
+其中输入数据din和输出数据dout均为8位，移位位数shamt为3位。
+选择端L/R表示左移和右移，置为1为左移，置为0为右移。
+选择端A/L为算术逻辑选择，置为1为算术移位，置为0为逻辑移位。</p>
+<figure class="align-default" id="fig-barrel01">
+<img alt="../_images/barrel01.png" src="../_images/barrel01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 50 </span><span class="caption-text">桶形移位器器件引脚图</span><a class="headerlink" href="#fig-barrel01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-barrel02">
+<img alt="../_images/barrel02.png" src="../_images/barrel02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 51 </span><span class="caption-text">桶形移位器电路结构图</span><a class="headerlink" href="#fig-barrel02" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>图 <a class="reference internal" href="#fig-barrel02"><span class="std std-numref">Fig. 51</span></a> 显示了桶形移位器的具体实现。
+该实现使用了大量的四选一选择器来分三阶段实现0至7位的任意左移或右移。
+第一级利用shamt[0]来控制是否需要移动一位，第二级在第一级的移动结果上用shamt[1]来控制是否要移动两位，第三级在第二级的基础上再对应判断是否要移动四位。
+每个四选一选择器有两位控制端，控制端低位S0为当前级是否需要移动，为0时，对应选择输入的0或2，均不会做任何移动。
+四选一的高位S1由L/R输入控制，当需要移动S0=1时，左移时选中11=3号输入端，右移时选中01=1号输入端。这两个输入端分别连接了数据低位或高位的上一级输出。
+对于算术和逻辑右移的选择，是通过控制高位移入的是0还是din[7]来决定的。
+注意，这个电路是纯组合逻辑，所以可以在输入改变时无需时钟信号就直接改变输出的移位结果。</p>
+<div class="admonition myquestion">
+<p class="admonition-title">思考题</p>
+<p>在RV32I指令集中需要实现32位数据的移位，应该如何用Verilog语言实现？</p>
+</div>
+</section>
+<section id="id5">
+<h2>实验验收内容<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">上板验证: 利用移位寄存器实现随机数发生器</p>
+<p>我们可以利用8位移位寄存器来实现一个简单的随机数发生器。
+经典的LFSR（线性反馈移位寄存器， <a class="reference external" href="https://en.wikipedia.org/wiki/Linear-feedback_shift_register">Linear-feedback shift register</a> ）可以使用n位移位寄存器生成长度为 <span class="math notranslate nohighlight">\(2^n-1\)</span> 的二进制循环序列。
+这类序列的片段在表观上是随机的，所以被广泛用于通信中的随机序列生成。例如，在CDMA通信中的长码的长度就是 <span class="math notranslate nohighlight">\(2^{42}-1\)</span> 的伪随机序列。</p>
+<p>具体实现时，可以用一个8位右移移位寄存器，从左到右的比特以 <span class="math notranslate nohighlight">\(x_7x_6x_5x_4x_3x_2x_1x_0\)</span> 表示。每个时钟周期右移一位， <span class="math notranslate nohighlight">\(x_0\)</span> 被移出，最左边移入的位按照上一周期的值计算 <a class="footnote-reference brackets" href="#f1" id="id6">1</a> ：</p>
+<div class="math notranslate nohighlight">
+\[x_8=x_4\oplus x_3\oplus x_2 \oplus x_0\]</div>
+<p>例如，初始二进制值为00000001时，移位寄存器的状态将按 <span class="math notranslate nohighlight">\(00000001 \rightarrow 10000000 \rightarrow 01000000 \rightarrow 001000000 \rightarrow 00010000 \rightarrow 10001000 \ldots\)</span> 变化。
+该序列的周期为255。
+当然，当初始值为全零时，系统将一直停留在全零状态，所以需要对全零状态进行特殊处理。</p>
+<p>请实现一个8位的周期为255的伪随机序列，以按钮为时钟信号，并请将8位二进制数以十六进制显示在数码管上，在DE10-Standard开发板上观察生成的随机数序列。</p>
+</div>
+<div class="admonition myquestion">
+<p class="admonition-title">思考题</p>
+<p>生成的伪随机数序列仍然有一定的规律，如何能够生成更加复杂的伪随机数序列？</p>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">在线测试</p>
+<ul class="simple">
+<li><p>移位寄存器实现</p></li>
+<li><p>桶形移位器</p></li>
+<li><p>线性反馈移位寄存器</p></li>
+</ul>
+</div>
+<p class="rubric">Footnotes</p>
+<dl class="footnote brackets">
+<dt class="label" id="f1"><span class="brackets"><a class="fn-backref" href="#id6">1</a></span></dt>
+<dd><p>此类循环周期为 <span class="math notranslate nohighlight">\(2^n-1\)</span> 的随机序列的生成公式可以在教科书和网络上找到。</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05.html" class="btn btn-neutral float-left" title="实验五 寄存器组及存储器" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="07.html" class="btn btn-neutral float-right" title="实验七 状态机及键盘输入" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, 王炜 吴海军 陈璐.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

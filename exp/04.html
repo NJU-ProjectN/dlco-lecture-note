@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>实验四 计数器和时钟 &mdash; 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="实验五 寄存器组及存储器" href="05.html" />
+    <link rel="prev" title="实验三 加法器与ALU" href="03.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">实验一 选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">实验二 译码器和编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">实验三 加法器与ALU</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">实验四 计数器和时钟</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">加法计数器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">减法计数器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">定时器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">开发板上的时钟信号</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">生成需要的时钟信号</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">实验验收内容</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">实验五 寄存器组及存储器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">实验六 移位寄存器及桶形移位器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">实验七 状态机及键盘输入</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">实验八 VGA接口控制器实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">实验九 字符输入界面</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">实验十 CPU数据通路</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">实验十一 RV32I单周期CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">实验十二 计算机系统</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>实验四 计数器和时钟</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/exp/04.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>实验四 计数器和时钟<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
+<p><em>On receiving an interrupt, decrement the counter to zero.</em></p>
+<blockquote>
+<div><p>— <em>“Count Zero”</em> 《零伯爵》，威廉·吉布森</p>
+</div></blockquote>
+<p>在数字系统中，常用计数器来记录系统的工作状态，本实验复习了计数器的工作原理，通过介绍几种简单计数器的工作过程和设计方法、以及开发板系统时钟的使用，学习计数器的设计和定时器的工作原理。</p>
+<section id="id2">
+<h2>加法计数器<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h2>
+<p>利用触发器可以构成简单的计数器。图 <a class="reference internal" href="#counter01"><span class="std std-numref">Fig. 22</span></a> 是由3个上升沿触发的D触发器组成的3位二进制异步加法计数器，即在每个Clock的上升沿，计数器输出 <span class="math notranslate nohighlight">\(Q_2Q_1Q_0\)</span> 加1。</p>
+<figure class="align-default" id="counter01">
+<img alt="../_images/counter01.png" src="../_images/counter01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 22 </span><span class="caption-text">3位二进制加法计数器</span><a class="headerlink" href="#counter01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>图 <a class="reference internal" href="#counter02"><span class="std std-numref">Fig. 23</span></a> 是此3位二进制异步加法计数器的状态转移图。</p>
+<figure class="align-default" id="counter02">
+<img alt="../_images/counter02.png" src="../_images/counter02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 23 </span><span class="caption-text">3位二进制加法计数器状态图</span><a class="headerlink" href="#counter02" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>也可以给D触发器加上“清零”和“置数”端，构成一个可以清零和置数的二进制异步加法计数器。请读者自行设计和验证此电路。</p>
+</section>
+<section id="id3">
+<h2>减法计数器<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h2>
+<p>利用D触发器同样可以构成减法计数器，图 <a class="reference internal" href="#counter03"><span class="std std-numref">Fig. 24</span></a> 是由3个上升沿触发的D触发器组成的3位二进制异步减法计数器</p>
+<figure class="align-default" id="counter03">
+<img alt="../_images/counter03.png" src="../_images/counter03.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 24 </span><span class="caption-text">3位二进制异步减法计数器</span><a class="headerlink" href="#counter03" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>图 <a class="reference internal" href="#counter04"><span class="std std-numref">Fig. 25</span></a> 是此3位二进制异步减法计数器的状态转移图。</p>
+<figure class="align-default" id="counter04">
+<img alt="../_images/counter04.png" src="../_images/counter04.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 25 </span><span class="caption-text">3位二进制减法计数器状态图</span><a class="headerlink" href="#counter04" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>利用Verilog语言可以方便的构建计数器，表 <a class="reference internal" href="#counter01"><span class="std std-numref">Fig. 22</span></a> 就是一个3位二进制减法计数器，也可以用类似的代码构成加法计数器。</p>
+<div class="literal-block-wrapper docutils container" id="list-counter01">
+<div class="code-block-caption"><span class="caption-number">Listing 15 </span><span class="caption-text">3位二进制带使能端的加法计数器代码</span><a class="headerlink" href="#list-counter01" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">vminus3</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="n">en</span><span class="p">,</span><span class="n">out_q</span><span class="p">);</span>
+  <span class="k">input</span>  <span class="n">clk</span><span class="p">;</span>
+  <span class="k">input</span>  <span class="n">en</span><span class="p">;</span>
+  <span class="k">output</span> <span class="kt">reg</span> <span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">out_q</span><span class="p">;</span>
+
+  <span class="k">always</span> <span class="p">@</span> <span class="p">(</span><span class="k">posedge</span> <span class="n">clk</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">en</span><span class="p">)</span>   <span class="n">out_q</span> <span class="o">&lt;=</span> <span class="n">out_q</span> <span class="o">-</span><span class="mh">1</span><span class="p">;</span>
+    <span class="k">else</span>   <span class="n">out_q</span> <span class="o">&lt;=</span> <span class="mh">0</span><span class="p">;</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p><a class="reference internal" href="#list-counter01"><span class="std std-numref">Listing 15</span></a> 构建的减法计数器的仿真图如图 <a class="reference internal" href="#fig-countersim"><span class="std std-numref">Fig. 26</span></a> 所示。</p>
+<figure class="align-default" id="fig-countersim">
+<img alt="../_images/countersim.png" src="../_images/countersim.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 26 </span><span class="caption-text">减法计数器仿真图</span><a class="headerlink" href="#fig-countersim" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<div class="admonition myinfo">
+<p class="admonition-title">仿真时输出值未定义</p>
+<p>在仿真计数器的时候时常会出现输出值一直是未定义，即XXXX的情况。这主要是由于计数器的值或输出在仿真开始时是未定义的。在累加或翻转输出时对未定义的值进行操作结果还是XXXX。这时需要在计数器代码内部增加 <code class="docutils literal notranslate"><span class="pre">initial</span></code> 语句，对计数值和输出结果进行初始化。</p>
+</div>
+</section>
+<section id="id4">
+<h2>定时器<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h2>
+<p>如果在计数器的时钟输入端输入一个固定周期的时钟，那么计数器就变成了定时器。</p>
+<p>本实验的目的是学习FPGA开发平台上时钟源的使用，并结合计数器的设计方法学习定时器的设计。</p>
+<section id="id5">
+<h3>开发板上的时钟信号<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h3>
+<p>DE-10 Standard开发板为Cyclone V SOC FPGA提供了四个频率为50MHz的外部输入时钟，这些时钟均可供用户使用。另外还给开放平台上的HPS提供了一个25MHz的时钟，如图 <a class="reference internal" href="#fig-clock01"><span class="std std-numref">Fig. 27</span></a> 所示。</p>
+<figure class="align-default" id="fig-clock01">
+<img alt="../_images/clock01.png" src="../_images/clock01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 27 </span><span class="caption-text">开发板时钟连接</span><a class="headerlink" href="#fig-clock01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>各时钟和FPGA及HPS连接的引脚如图 <a class="reference internal" href="#fig-clock02"><span class="std std-numref">Fig. 28</span></a> 所示：</p>
+<figure class="align-default" id="fig-clock02">
+<img alt="../_images/clock02.png" src="../_images/clock02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 28 </span><span class="caption-text">DE10 Standard时钟引脚</span><a class="headerlink" href="#fig-clock02" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>将此时钟信号作为计数器的时钟信号，即可构成一个定时器：</p>
+<div class="math notranslate nohighlight">
+\[计时时间=脉冲个数\times脉冲周期\]</div>
+</section>
+<section id="id6">
+<h3>生成需要的时钟信号<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h3>
+<p>利用开发板上提供的频率为50MHz时钟信号和定时器，我们可以设计任何我们需要的时钟信号。如下实例是产生周期为1秒的时钟信号的参考代码。其中clk是系统时钟，clk_1s 是产生的周期为1秒的时钟。</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-number">Listing 16 </span><span class="caption-text">1秒时钟生成代码</span><a class="headerlink" href="#id8" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span> <span class="p">@(</span><span class="k">posedge</span> <span class="n">clk</span><span class="p">)</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">count_clk</span><span class="o">==</span><span class="mh">24999999</span><span class="p">)</span>
+  <span class="k">begin</span>
+    <span class="n">count_clk</span> <span class="o">&lt;=</span><span class="mh">0</span><span class="p">;</span>
+    <span class="n">clk_1s</span> <span class="o">&lt;=</span> <span class="o">~</span><span class="n">clk_1s</span><span class="p">;</span>
+  <span class="k">end</span>
+  <span class="k">else</span>
+    <span class="n">count_clk</span> <span class="o">&lt;=</span> <span class="n">count_clk</span><span class="o">+</span><span class="mh">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<p>请阅读、理解此段代码，并请思考为了能满足 <span class="math notranslate nohighlight">\(0 \sim 24999999\)</span> 的计数要求，变量 <code class="docutils literal notranslate"><span class="pre">count_clk</span></code> 的宽度如何设定？</p>
+</section>
+</section>
+<section id="id7">
+<h2>实验验收内容<a class="headerlink" href="#id7" title="Permalink to this headline"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">上板实验（基础）</p>
+<p>请在DE10-Standard开发板上实现一个计时器，在七段数码管上直接以十进制显示。</p>
+<p>利用开发板上的频率为50MHz的时钟，请先设计一个分频器，其输入为50MHz的时钟，输出为一个频率为1Hz，周期为1秒的时钟信号。再用这个新的频率为1Hz的时钟信号作为你设计的时钟信号，进行计数。</p>
+<p>要求此计时器有开始、暂停和清零功能，要求从00计数到99，计数值到99后重新从零开始计数。在数码管上用两位数字显示。</p>
+<p>可以在计时结束的时候让某一个发光二极管闪烁一个时钟周期，提示计时结束。</p>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">上板实验（拓展）</p>
+<p>在DE-10 Standard开发板上实现一个电子时钟，时钟要求能够显示时、分、秒；还可以有以下功能：调整时间；闹铃（在特定时间LED闪烁）；秒表（提供百分之一秒精度，可以停止重启）等。</p>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">在线测试</p>
+<p>计数器级联</p>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">在线测试</p>
+<p>汉明码纠错</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="03.html" class="btn btn-neutral float-left" title="实验三 加法器与ALU" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="05.html" class="btn btn-neutral float-right" title="实验五 寄存器组及存储器" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, 王炜 吴海军 陈璐.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

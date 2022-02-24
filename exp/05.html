@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>实验五 寄存器组及存储器 &mdash; 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="实验六 移位寄存器及桶形移位器" href="06.html" />
+    <link rel="prev" title="实验四 计数器和时钟" href="04.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">实验一 选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">实验二 译码器和编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">实验三 加法器与ALU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">实验四 计数器和时钟</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">实验五 寄存器组及存储器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">寄存器与寄存器组</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">存储器的实现</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">存储器的初始化</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ip">使用IP核生成存储器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ipram">通过IP生成RAM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">存储器初始化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">存储器动态更新</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">实验内容</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">实验六 移位寄存器及桶形移位器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">实验七 状态机及键盘输入</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">实验八 VGA接口控制器实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">实验九 字符输入界面</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">实验十 CPU数据通路</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">实验十一 RV32I单周期CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">实验十二 计算机系统</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>实验五 寄存器组及存储器</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/exp/05.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>实验五 寄存器组及存储器<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
+<p><em>此情可待成追忆，只是当时已惘然。</em></p>
+<blockquote>
+<div><p>— 《锦瑟》，李商隐</p>
+</div></blockquote>
+<p>寄存器组（Register File）与存储器（Memory）是数字系统中的记忆器件，用来存放程序和数据。从程序员的角度来看，CPU的状态由其寄存器及存储器中的信息唯一确定。其中寄存器包括程序计数器PC、通用寄存器，存储器指主存。我们可以将计算机看成一个巨大的有限状态自动机，当这些存储部件的中的信息确定后，计算机的状态也确定了。在没有外部输入时，计算机后续的运行状态也是唯一确定的。</p>
+<p>本实验的目的是了解FPGA的触发器及片上存储器的特性，分析存储器的工作时序和结构，并学习如何设计寄存器组和主存。</p>
+<section id="id2">
+<h2>寄存器与寄存器组<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h2>
+<p>FPGA上有大量的触发器资源来实现数据的存储。D触发器可以用于存储比特信号，给D触发器加上置数功能就变成了一位寄存器，如图 <a class="reference internal" href="#fig-reg01"><span class="std std-numref">Fig. 29</span></a> 所示。由图中可以看出，如果load信号为1，则输入信号in被送入或门中，或门的另一个输入端为0，此时D=in，所以在下一个时钟里q=in。当load值为0时，q值被反馈到或门中，或门的另一个输入值为0，此时D=q，因此在下一个时钟周期里q值保持先前的值不变。</p>
+<figure class="align-default" id="fig-reg01">
+<img alt="../_images/reg01.png" src="../_images/reg01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 29 </span><span class="caption-text">1位寄存器</span><a class="headerlink" href="#fig-reg01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>用Verilog语言设计寄存器也很简单，如 <a class="reference internal" href="#list-reg01"><span class="std std-numref">Listing 17</span></a> 所示。</p>
+<div class="literal-block-wrapper docutils container" id="list-reg01">
+<div class="code-block-caption"><span class="caption-number">Listing 17 </span><span class="caption-text">1位寄存器代码</span><a class="headerlink" href="#list-reg01" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">register1</span><span class="p">(</span><span class="n">load</span><span class="p">,</span><span class="n">clk</span><span class="p">,</span><span class="n">clr</span><span class="p">,</span><span class="n">inp</span><span class="p">,</span><span class="n">q</span><span class="p">);</span>
+  <span class="k">input</span>  <span class="n">load</span><span class="p">,</span><span class="n">clr</span><span class="p">,</span><span class="n">clk</span><span class="p">,</span><span class="n">inp</span><span class="p">;</span>
+  <span class="k">output</span> <span class="kt">reg</span> <span class="n">q</span><span class="p">;</span>
+
+  <span class="k">always</span> <span class="p">@(</span><span class="k">posedge</span> <span class="n">clk</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">clr</span><span class="o">==</span><span class="mh">1</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">&lt;=</span> <span class="mh">0</span><span class="p">;</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">load</span> <span class="o">==</span> <span class="mh">1</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">&lt;=</span> <span class="n">inp</span><span class="p">;</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p><a class="reference internal" href="#list-reg01"><span class="std std-numref">Listing 17</span></a> 的程序的仿真图如图 <a class="reference internal" href="#fig-reg02"><span class="std std-numref">Fig. 30</span></a> 所示。</p>
+<blockquote>
+<div><figure class="align-default" id="fig-reg02">
+<img alt="../_images/reg02.png" src="../_images/reg02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 30 </span><span class="caption-text">1位寄存器仿真结果</span><a class="headerlink" href="#fig-reg02" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</div></blockquote>
+<p>本例实现的是一个带有清0端和输入端的1位寄存器，还有的寄存器带有置位（置1）端的，图 <a class="reference internal" href="#fig-reg03"><span class="std std-numref">Fig. 31</span></a> 是同时带有清0端、输入端和置位端的寄存器的逻辑示意图，读者可自行设计此寄存器。</p>
+<figure class="align-default" id="fig-reg03">
+<img alt="../_images/reg03.png" src="../_images/reg03.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 31 </span><span class="caption-text">1位寄存器框图</span><a class="headerlink" href="#fig-reg03" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>将2个或者2个以上的1位寄存器组合在一起，这些寄存器共用一个时钟信号，这就构成了多位寄存器，寄存器常被用在计算机中存储数据，如指令寄存器、数据寄存器等。表 <a class="reference internal" href="#list-reg02"><span class="std std-numref">Listing 18</span></a> 是利用Verilog语言设计寄存器的例子。</p>
+<div class="literal-block-wrapper docutils container" id="list-reg02">
+<div class="code-block-caption"><span class="caption-number">Listing 18 </span><span class="caption-text">4位寄存器代码</span><a class="headerlink" href="#list-reg02" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">register4</span><span class="p">(</span><span class="n">load</span><span class="p">,</span><span class="n">clk</span><span class="p">,</span><span class="n">clr</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">q</span><span class="p">);</span>
+  <span class="k">input</span>  <span class="n">load</span><span class="p">,</span><span class="n">clr</span><span class="p">,</span><span class="n">clk</span><span class="p">;</span>
+  <span class="k">input</span>  <span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">d</span><span class="p">;</span>
+  <span class="k">output</span> <span class="kt">reg</span> <span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">q</span><span class="p">;</span>
+
+  <span class="k">always</span> <span class="p">@(</span><span class="k">posedge</span> <span class="n">clk</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">clr</span><span class="o">==</span><span class="mh">1</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">&lt;=</span> <span class="mh">0</span><span class="p">;</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">load</span> <span class="o">==</span> <span class="mh">1</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">&lt;=</span> <span class="n">d</span><span class="p">;</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p><a class="reference internal" href="#list-reg02"><span class="std std-numref">Listing 18</span></a> 的程序的仿真图如图 <a class="reference internal" href="#fig-reg04"><span class="std std-numref">Fig. 32</span></a> 所示。</p>
+<figure class="align-default" id="fig-reg04">
+<img alt="../_images/reg04.png" src="../_images/reg04.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 32 </span><span class="caption-text">存储器结构</span><a class="headerlink" href="#fig-reg04" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>存储器是一组存储单元，用于在计算机中存储二进制的数据，如图 <a class="reference internal" href="#fig-mem01"><span class="std std-numref">Fig. 33</span></a> 所示。存储器的端口包括：输入端、输出端和控制端口。输入端口包括：读/写地址端口、数据输入端口等；输出端口一般指的是数据输出端口；控制端口包括时钟端和读/写控制端口。存储器的工作过程如下：</p>
+<figure class="align-default" id="fig-mem01">
+<img alt="../_images/mem01.png" src="../_images/mem01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 33 </span><span class="caption-text">存储器结构</span><a class="headerlink" href="#fig-mem01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p><strong>写数据</strong> ：在时钟（clk）有效沿（上升或下降沿），如果写使能（Wr_en，也可以没有使能端）有效，则读取输入总线（Data_in）上的数据，将其存储到输入地址线（In_addr）所指的存储单元中。</p>
+<p><strong>读数据</strong> ：存储器的输出可以受时钟和使能端的控制，也可以不受时钟和使能端的控制。如果输出受时钟的控制，则在时钟有效沿，将输出地址所指示的单元中的数据，输出到输出总线上（Data_out）；如果不受时钟的控制，则只要输出地址有效，就立即将此地址所指的单元中的数据送到输出总线上。</p>
+<div class="admonition mydanger">
+<p class="admonition-title">注意存储器的读写时序</p>
+<p>对于存储器，其读写时序非常重要，也是实践中容易出错的地方。读取数据时在哪个时间点数据有效，写入数据过多久可以读取，这些都要在设计时反复检查和验证。</p>
+</div>
+<p>FPGA存储器的工作模式有很多，如：真双口RAM、简单双口RAM、单口RAM、ROM或者FIFO缓存等。常见的模式请参照下表。</p>
+<table class="docutils align-default" id="id8">
+<caption><span class="caption-number">Table 5 </span><span class="caption-text">存储器的工作模式</span><a class="headerlink" href="#id8" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 76%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>存储器模式</strong></p></th>
+<th class="head"><p><strong>说明</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>单口存储器</p></td>
+<td><p>某一时刻，只读或者只写</p></td>
+</tr>
+<tr class="row-odd"><td><p>简单双口存储器模式</p></td>
+<td><p>简单双口模式支持同时读写（一读一写）</p></td>
+</tr>
+<tr class="row-even"><td><p>混合宽度的简单双口存储器模式</p></td>
+<td><p>读写使用不同的数据宽度的简单双口模式</p></td>
+</tr>
+<tr class="row-odd"><td><p>真双口储存器模式</p></td>
+<td><p>真双口模式支持任何组合的双口操作：两个读口、两个写口和两个不同时钟频率下的一读口一写口</p></td>
+</tr>
+<tr class="row-even"><td><p>混合宽度的真双口存储器模式</p></td>
+<td><p>读写使用不同的数据宽度的真双口模式</p></td>
+</tr>
+<tr class="row-odd"><td><p>ROM</p></td>
+<td><p>工作于ROM模式，ROM中的内容已经初始化</p></td>
+</tr>
+<tr class="row-even"><td><p>FIFO缓冲器</p></td>
+<td><p>可以实现单时钟或双时钟的FIFO</p></td>
+</tr>
+</tbody>
+</table>
+<p>在Verilog HDL中，可以用二维数组定义存储器。例如，假设需要一个32字节的8位存储器块，即此存储器共有32个存储单元，每个存储单元可以存储一个8位的二进制数。这样的存储器可以定义为 <span class="math notranslate nohighlight">\(32 \times 8\)</span> 的数组，在Verilog语言中可以作如下变量声明：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">reg</span> <span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">memory_array</span> <span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>存储单元为 memory_array [0] ~ memory_array [31]，每个存储单元都是8位的存储空间。</p>
+<p>在读取时，可以用memory_array [13][3:0]直接读取第13号单元的低4位。</p>
+<div class="admonition mycomment">
+<p class="admonition-title">寄存器与存储器的异同</p>
+<p>虽然寄存器和存储器都是用来存储状态信息的，但是它们在用途和实现上有较大的区别：</p>
+<ul class="simple">
+<li><p>寄存器一般要求存取速度快、并行访问要求高，所以通常寄存器的容量较小。在CPU中，PC及通用寄存器会经常被访问，因此存取的时延要求在一个时钟周期内。对于单周期CPU，每个时钟周期往往要求同时读取2个通用寄存器并完成1个寄存器的写回。在要求较高的时候，有可能寄存器组输出的结果需要异步输出，即不在时钟沿上读取，输出随着输入地址实时改变。在这样高的要求下，寄存器组的大小不可能太大，否则会消耗非常多的资源。</p></li>
+<li><p>主存一般容量较大，但是读写时间较长，并且读写过程有严格的时序要求。</p></li>
+<li><p>在Verilog中，虽然寄存器组和存储器的描述都是二维数组的方式。但是，编译和综合过程中会根据代码访问的要求来选择具体的实现方式。例如，当代码中没有严格在时钟信号沿上进行读写时，系统会认为该存储单元的读写要求较高，直接采用FPGA逻辑单元实现。这种实现方式消耗的资源巨大，一般只能支持数K量级的存储单元。如果要求大量的此类存储功能，系统可能会花很长时间进行编译综合，甚至无法实现。如果一个存储单元的访问严格按照时序要求，仅在时钟沿上进行每次单个单元的读写时，系统可以用大容量的M10K实现存储，一般可以支持到数百K字节的容量。因此，在实验中对存储器的读写应特别关注，避免用高级语言的二维数组的思路来看待存储器，否则会造成很多意想不到的后果。</p></li>
+</ul>
+</div>
+</section>
+<section id="id3">
+<h2>存储器的实现<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h2>
+<p>Cyclone V 系列FPGA内部含有两种嵌入式存储器块：</p>
+<p>10Kb的M10K存储器块——这是专用存储器资源块。M10K存储器块是理想的大存储器阵列，并提供大量独立端口。</p>
+<p>64位存储器逻辑阵列（MLABs）——是一种嵌入式存储器阵列是由双用途逻辑阵列块配置而来的。MLAB是理想的宽而浅的存储阵列。MLAB是经过优化的可以用于实现数字信号处理（DSP）应用中的移位寄存器、宽浅FIFO缓存和滤波延迟线。每个MLAB都由10个自适应逻辑块（ALM）组成。在Cyclone V系列器件中，你可以将这些ALM可配置成10个 <span class="math notranslate nohighlight">\(32 \times 2\)</span> 模块，从而每个MLAB可以实现一个 <span class="math notranslate nohighlight">\(32 \times 20\)</span> 简单双端口SRAM模块。</p>
+<p>Cyclone V系列FPGA嵌入式存储器资源如图 <a class="reference internal" href="#fig-mem02"><span class="std std-numref">Fig. 34</span></a> 所示，我们可以对应比较一下DE10-standard开发平台上配置的Cyclone V SX C6的存储器资源。</p>
+<figure class="align-default" id="fig-mem02">
+<img alt="../_images/mem02.png" src="../_images/mem02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 34 </span><span class="caption-text">Cyclone V系列的存储器资源</span><a class="headerlink" href="#fig-mem02" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Quartus 会根据用户存储器设计的速度与大小，来自动选择硬件实现时使用的存储器模块的数量与配置。例如，为提供设计性能，Quarrus可能将可以由1块RAM实现的存储器设计扩展为由多块RAM来实现。</p>
+<div class="admonition myquestion">
+<p class="admonition-title">存储器的行为和FPGA的RAM模块</p>
+<p>以下存储器综合时，综合器是否会用FPGA的RAM模块来实现这个模块？</p>
+<div class="literal-block-wrapper docutils container" id="list-mem01">
+<div class="code-block-caption"><span class="caption-number">Listing 19 </span><span class="caption-text">存储器实现代码</span><a class="headerlink" href="#list-mem01" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">ram</span> <span class="p">#(</span>
+  <span class="k">parameter</span> <span class="n">RAM_WIDTH</span> <span class="o">=</span> <span class="mh">32</span><span class="p">,</span>
+  <span class="k">parameter</span> <span class="n">RAM_ADDR_WIDTH</span> <span class="o">=</span> <span class="mh">10</span>
+<span class="p">)(</span>
+    <span class="k">input</span> <span class="n">clk</span><span class="p">,</span>
+    <span class="k">input</span> <span class="n">we</span><span class="p">,</span>
+    <span class="k">input</span> <span class="p">[</span><span class="n">RAM_WIDTH</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">din</span><span class="p">,</span>
+    <span class="k">input</span> <span class="p">[</span><span class="n">RAM_ADDR_WIDTH</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">inaddr</span><span class="p">,</span>
+    <span class="k">input</span> <span class="p">[</span><span class="n">RAM_ADDR_WIDTH</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">outaddr</span><span class="p">,</span>
+    <span class="k">output</span> <span class="p">[</span><span class="n">RAM_WIDTH</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">dout</span>
+<span class="p">);</span>
+
+  <span class="kt">reg</span> <span class="p">[</span><span class="n">RAM_WIDTH</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">ram</span> <span class="p">[(</span><span class="mh">2</span><span class="o">**</span><span class="n">RAM_ADDR_WIDTH</span><span class="p">)</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+  <span class="k">always</span> <span class="p">@(</span><span class="k">posedge</span> <span class="n">clk</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">we</span><span class="p">)</span>
+        <span class="n">ram</span><span class="p">[</span><span class="n">inaddr</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">din</span><span class="p">;</span>
+
+  <span class="k">assign</span> <span class="n">dout</span> <span class="o">=</span> <span class="n">ram</span><span class="p">[</span><span class="n">outaddr</span><span class="p">];</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>如果将表 <a class="reference internal" href="#list-mem01"><span class="std std-numref">Listing 19</span></a> 中存储器实现部分改为</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span> <span class="p">@(</span><span class="k">posedge</span> <span class="n">clk</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">we</span><span class="p">)</span>
+    <span class="n">ram</span><span class="p">[</span><span class="n">inaddr</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">din</span><span class="p">;</span>
+  <span class="k">else</span>
+    <span class="n">dout</span> <span class="o">&lt;=</span> <span class="n">ram</span><span class="p">[</span><span class="n">outaddr</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>该存储器的行为是否会发生变化？</p>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">分析三个输出端口的存储器实例</p>
+<p><a class="reference internal" href="#list-mem02"><span class="std std-numref">Listing 20</span></a> 是一个存储器实例，实例中为此存储器设置了三个输出端口，请分析存储器结构和工作过程，查看此存储器的RTL图，检查存储器的输入输出和存储体的结构，并分析其三个输出端的结构的不同。为此实例设计一个测试代码，研究此三个端口输出数据时在时序上的差别，结合RTL图，给出其工作时序的解释。</p>
+<div class="literal-block-wrapper docutils container" id="list-mem02">
+<div class="code-block-caption"><span class="caption-number">Listing 20 </span><span class="caption-text">存储器实例代码</span><a class="headerlink" href="#list-mem02" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">v_rams_8</span> <span class="p">(</span><span class="n">clk</span><span class="p">,</span> <span class="n">we</span><span class="p">,</span> <span class="n">inaddr</span><span class="p">,</span> <span class="n">outaddr</span><span class="p">,</span> <span class="n">din</span><span class="p">,</span> <span class="n">dout0</span><span class="p">,</span><span class="n">dout1</span><span class="p">,</span><span class="n">dout2</span><span class="p">);</span>
+  <span class="k">input</span> <span class="n">clk</span><span class="p">;</span>
+  <span class="k">input</span> <span class="n">we</span><span class="p">;</span>
+  <span class="k">input</span> <span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">inaddr</span><span class="p">;</span>
+  <span class="k">input</span> <span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">outaddr</span><span class="p">;</span>
+  <span class="k">input</span> <span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">din</span><span class="p">;</span>
+  <span class="k">output</span> <span class="kt">reg</span> <span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">dout0</span><span class="p">,</span><span class="n">dout1</span><span class="p">,</span><span class="n">dout2</span><span class="p">;</span>
+
+  <span class="kt">reg</span> <span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">ram</span> <span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+  <span class="k">initial</span>
+  <span class="k">begin</span>
+  <span class="n">ram</span><span class="p">[</span><span class="mh">7</span><span class="p">]</span> <span class="o">=</span> <span class="mh">8&#39;hf0</span><span class="p">;</span> <span class="n">ram</span><span class="p">[</span><span class="mh">6</span><span class="p">]</span> <span class="o">=</span> <span class="mh">8&#39;h23</span><span class="p">;</span> <span class="n">ram</span><span class="p">[</span><span class="mh">5</span><span class="p">]</span> <span class="o">=</span> <span class="mh">8&#39;h20</span><span class="p">;</span> <span class="n">ram</span><span class="p">[</span><span class="mh">4</span><span class="p">]</span> <span class="o">=</span> <span class="mh">8&#39;h50</span><span class="p">;</span>
+  <span class="n">ram</span><span class="p">[</span><span class="mh">3</span><span class="p">]</span> <span class="o">=</span> <span class="mh">8&#39;h03</span><span class="p">;</span> <span class="n">ram</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span> <span class="o">=</span> <span class="mh">8&#39;h21</span><span class="p">;</span> <span class="n">ram</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span> <span class="o">=</span> <span class="mh">8&#39;h82</span><span class="p">;</span> <span class="n">ram</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">8&#39;h0D</span><span class="p">;</span>
+  <span class="k">end</span>
+
+  <span class="k">always</span> <span class="p">@(</span><span class="k">posedge</span> <span class="n">clk</span><span class="p">)</span>
+  <span class="k">begin</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">we</span><span class="p">)</span>
+          <span class="n">ram</span><span class="p">[</span><span class="n">inaddr</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">din</span><span class="p">;</span>
+      <span class="k">else</span>
+          <span class="n">dout0</span> <span class="o">&lt;=</span> <span class="n">ram</span><span class="p">[</span><span class="n">outaddr</span><span class="p">];</span>
+  <span class="k">end</span>
+  <span class="k">always</span> <span class="p">@(</span><span class="k">negedge</span> <span class="n">clk</span><span class="p">)</span>
+  <span class="k">begin</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">we</span><span class="p">)</span>
+          <span class="n">dout1</span> <span class="o">&lt;=</span> <span class="n">ram</span><span class="p">[</span><span class="n">outaddr</span><span class="p">];</span>
+  <span class="k">end</span>
+  <span class="k">assign</span>  <span class="n">dout2</span> <span class="o">=</span> <span class="n">ram</span><span class="p">[</span><span class="n">outaddr</span><span class="p">];</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>其中initial语句块完成了在启动时对RAM的初始化。</p>
+<p>适当选择输入输出端口宽度，将此实例进行引脚约束，利用开关或按钮作为时钟端，在开发板上再次验证其不同输入/输出方式的工作时序。</p>
+</div>
+<section id="id4">
+<h3>存储器的初始化<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h3>
+<p>当需要初始化的RAM数据量较大的时候，可以使用文件来在系统启动时直接装入RAM数据。
+Verilog提供了以下语句来将文件中的数据导入到RAM中：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">initial</span>
+<span class="k">begin</span>
+  <span class="nb">$readmemh</span><span class="p">(</span><span class="s">&quot;D:/digital_logic/mem1.txt&quot;</span><span class="p">,</span> <span class="n">ram</span><span class="p">,</span> <span class="mh">0</span><span class="p">,</span> <span class="mh">7</span><span class="p">);</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>以上内容可以替代前例中的RAM初始化部分，将mem1.txt中的数据导入到ram变量的第0单元至第7单元。请注意，这里mem1.txt可以存在任何不包含中文字符的目录下，但是在初始化语句中一定要给出此文件的绝对路径，否则仿真时将看不到初始化数据。</p>
+<p>mem1.txt的内容和格式如下：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="p">@</span><span class="mh">0</span> <span class="mh">0</span><span class="n">d</span>
+<span class="p">@</span><span class="mh">1</span> <span class="mh">82</span>
+<span class="p">@</span><span class="mh">2</span> <span class="mh">21</span>
+<span class="p">@</span><span class="mh">3</span> <span class="mh">03</span>
+<span class="p">@</span><span class="mh">4</span> <span class="mh">20</span>
+<span class="p">@</span><span class="mh">5</span> <span class="n">ff</span>
+<span class="p">@</span><span class="mh">6</span> <span class="mh">50</span>
+<span class="p">@</span><span class="mh">7</span> <span class="mh">04</span>
+</pre></div>
+</div>
+<p>其中&#64;符号后为ram地址，随后是16进制的ram数据。在verilog中，$readmemh方法读取16进制数据，$readmemb方法读取2进制数据。</p>
+<p>初始化存储器时可以选择存储器的部分单元进行初始化，其他单元不初始化。如，假设存储器ram有8个存储单元，下面的初始化表示只对存储器的 <span class="math notranslate nohighlight">\(0$\sim$5\)</span> 号单元进行初始化，这也是可以的。</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">initial</span>
+<span class="k">begin</span>
+  <span class="nb">$readmemh</span><span class="p">(</span><span class="s">&quot;D:/digital_logic/mem1.txt&quot;</span><span class="p">,</span> <span class="n">ram</span><span class="p">,</span> <span class="mh">0</span><span class="p">,</span> <span class="mh">5</span><span class="p">);</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>假设存储器ram有8个存储单元，下面的初始化试图对存储器的0~8号单元，共9个单元进行初始化，这是 <strong>不可以</strong> 的。</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">initial</span>
+<span class="k">begin</span>
+  <span class="nb">$readmemh</span><span class="p">(</span><span class="s">&quot;D:/digital_logic/mem1.txt&quot;</span><span class="p">,</span> <span class="n">ram</span><span class="p">,</span> <span class="mh">0</span><span class="p">,</span> <span class="mh">8</span><span class="p">);</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>对存储器进行初始化还有其他方式，我们会在以后的实验中继续介绍。</p>
+</section>
+</section>
+<section id="ip">
+<h2>使用IP核生成存储器<a class="headerlink" href="#ip" title="Permalink to this headline"></a></h2>
+<p>Quartus提供了很多非常实用的IP核，利用这些IP核可以很方便的实现复杂的设计。下面我们以设计一个存储器为例来介绍如何使用Quartus IP核。</p>
+<section id="ipram">
+<h3>通过IP生成RAM<a class="headerlink" href="#ipram" title="Permalink to this headline"></a></h3>
+<p>在Quartus工作区的右边，就是IP目录，如下图所示</p>
+<figure class="align-default" id="fig-step01">
+<img alt="../_images/step01.png" src="../_images/step01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 35 </span><span class="caption-text">IP目录</span><a class="headerlink" href="#fig-step01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>展开 <code class="docutils literal notranslate"><span class="pre">Library</span></code> 可以看见所有用的IP，继续展开 <code class="docutils literal notranslate"><span class="pre">Basic</span> <span class="pre">Functions</span> <span class="pre">-&gt;</span> <span class="pre">On</span> <span class="pre">Chip</span> <span class="pre">Memory</span></code> , 双击 <code class="docutils literal notranslate"><span class="pre">RAM：1-PORT</span></code> ，即单口RAM。</p>
+<blockquote>
+<div><figure class="align-default" id="fig-step02">
+<img alt="../_images/step02new.png" src="../_images/step02new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 36 </span><span class="caption-text">选择RAM类型</span><a class="headerlink" href="#fig-step02" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</div></blockquote>
+<p>弹出对话框，为此IP取一个名字，此处取名为 <code class="docutils literal notranslate"><span class="pre">ram1port</span></code> ，默认保存在当前工程目录下，IP核对应的硬件描述语言文件选择Verilog。</p>
+<figure class="align-default" id="fig-step03">
+<img alt="../_images/step03new.png" src="../_images/step03new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 37 </span><span class="caption-text">选择目标文件名</span><a class="headerlink" href="#fig-step03" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>选择存储器的大小：这里我们选择的是一个 <span class="math notranslate nohighlight">\(16 \times 8\)</span> bit 的存储器，由编译器自动选择实现存储器的方式是M10K还是MLAB。同时我们选择了一个时钟统一控制读写。</p>
+<figure class="align-default" id="fig-step05">
+<img alt="../_images/step05new.png" src="../_images/step05new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 38 </span><span class="caption-text">选择RAM规模</span><a class="headerlink" href="#fig-step05" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>对缓冲和使能信号等进行配置。注意我们这里没有对输出进行缓存。可以自行尝试增加输出缓存，实验RAM在有缓存时需要多少个时钟周期才能输出。</p>
+<figure class="align-default" id="fig-step06">
+<img alt="../_images/step06new.png" src="../_images/step06new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 39 </span><span class="caption-text">信号缓存配置</span><a class="headerlink" href="#fig-step06" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>对于单时钟RAM，选择如何解决“写时读”的数据冲突。如篇首《锦瑟》所言，本周期写入的数据，不一定能够在本周期读出。</p>
+<figure class="align-default" id="fig-step08">
+<img alt="../_images/step08new.png" src="../_images/step08new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 40 </span><span class="caption-text">读写冲突解决</span><a class="headerlink" href="#fig-step08" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="id5">
+<h3>存储器初始化<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h3>
+<p>在建立存储器的时候，可以选择不初始化，也可以利用一个十六进制文件.hex或者一个存储器初始化文件.mif进行初始化。在配置进行到图 <a class="reference internal" href="#fig-step10"><span class="std std-numref">Fig. 41</span></a> 时可以选择利用文件初始化内存。
+在此步骤中还可以配置内存动态更新，选择Allow In-System Memory Content Editor <span class="math notranslate nohighlight">\(\ldots\)</span> ，并给你的内存模块起一个合适的名字，如RAM1。</p>
+<figure class="align-default" id="fig-step10">
+<img alt="../_images/step10new.png" src="../_images/step10new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 41 </span><span class="caption-text">初始化选择及动态内存更新选择</span><a class="headerlink" href="#fig-step10" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>下面介绍一下.mif文件的生成。</p>
+<p>回到Quartus工作区，点击 <code class="docutils literal notranslate"><span class="pre">File</span> <span class="pre">-&gt;</span> <span class="pre">New</span></code> 在 <code class="docutils literal notranslate"><span class="pre">Memory</span> <span class="pre">Files</span></code> 目录下选择： <code class="docutils literal notranslate"><span class="pre">Memory</span> <span class="pre">Initialization</span> <span class="pre">File</span></code> ，点击 <code class="docutils literal notranslate"><span class="pre">OK</span></code> 。根据存储器大小选择进行设置：</p>
+<figure class="align-default" id="fig-step11">
+<img alt="../_images/step11new.png" src="../_images/step11new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 42 </span><span class="caption-text">初始化文件大小选择</span><a class="headerlink" href="#fig-step11" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>点击 <code class="docutils literal notranslate"><span class="pre">OK</span></code> 。</p>
+<p>编译器自动跳出.mif文件初值设置界面，对其进行初值设置：</p>
+<figure class="align-default" id="fig-step12">
+<img alt="../_images/step12new.png" src="../_images/step12new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 43 </span><span class="caption-text">编辑初始化文件</span><a class="headerlink" href="#fig-step12" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>保存。
+回到IP核生成对话框，点击 <code class="docutils literal notranslate"><span class="pre">Browse</span> <span class="pre">...</span></code> .</p>
+<figure class="align-default" id="fig-step13">
+<img alt="../_images/step13new.png" src="../_images/step13new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 44 </span><span class="caption-text">初始化文件选择</span><a class="headerlink" href="#fig-step13" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>选择刚刚保存的.mif文件，点击 <code class="docutils literal notranslate"><span class="pre">Open</span></code> ，选择存储器初始化文件。点击 <code class="docutils literal notranslate"><span class="pre">Next</span></code> ， <code class="docutils literal notranslate"><span class="pre">Next</span></code> ， <code class="docutils literal notranslate"><span class="pre">Finished</span></code> ，完成整个单口RAM的配置。</p>
+<p>在项目导航栏， <code class="docutils literal notranslate"><span class="pre">Files</span></code> 目录下，展开ram1port.qip，可以看见为此RAM生成的ram1port.v文件，双击打开，可以看见此ram1port.v的接口参数，在存储器设计的顶层实体中，对此RAM进行实例化，即可在设计中使用该RAM：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="n">ram1port</span> <span class="n">my_ram</span><span class="p">(</span>
+    <span class="p">.</span><span class="n">address</span><span class="p">(</span><span class="n">addr</span><span class="p">),</span>
+    <span class="p">.</span><span class="n">clock</span><span class="p">(</span><span class="n">clk</span><span class="p">),</span>
+    <span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">din</span><span class="p">),</span>
+    <span class="p">.</span><span class="n">wren</span><span class="p">(</span><span class="n">we</span><span class="p">),</span>
+    <span class="p">.</span><span class="n">q</span><span class="p">(</span><span class="n">dout0</span><span class="p">));</span>
+</pre></div>
+</div>
+<div class="admonition myhint">
+<p class="admonition-title">利用mif文件初始化非IP核存储器</p>
+<p>编程中也可以使用mif文件来初始化存储器，如下语句即使用data.mif来初始化myrom。
+这时要求该mif文件与.v文件在一个目录下。</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="o">*</span> <span class="n">ram_init_file</span> <span class="o">=</span> <span class="s">&quot;data.mif&quot;</span> <span class="o">*</span><span class="p">)</span> <span class="kt">reg</span> <span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">myrom</span><span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="id6">
+<h3>存储器动态更新<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h3>
+<p>Quartus提供了In-System Memory Content Editor来实时观察和更新RAM中的内容。这对我们Debug是非常有用的。尤其是在CPU实验中，如果CPU设计没有改变，但是需要对系统中运行的汇编代码进行修改时，可以直接用In-System Memory Content Editor来改变，不需要重新编译整个工程。</p>
+<p>在使用In-System Memory Content Editor之前，请先完整编译整个工程，并确保之前生成IP核时勾选了动态内存更新的功能。
+在完成对开发版编程并运行后，打开Quartus的 <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">-&gt;</span> <span class="pre">In-System</span> <span class="pre">Memory</span> <span class="pre">Content</span> <span class="pre">Editor</span></code> 。进入如图 <a class="reference internal" href="#fig-memedit01"><span class="std std-numref">Fig. 45</span></a> 所示界面。此时，需要首先选择硬件，连接开发板。然后会自动扫描JTAG，请选择第二个Device。这时左边应该出现了刚刚配置过的RAM1的标识，但是数据尚未更新。</p>
+<figure class="align-default" id="fig-memedit01">
+<img alt="../_images/memedit01.png" src="../_images/memedit01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 45 </span><span class="caption-text">内存查看器配置</span><a class="headerlink" href="#fig-memedit01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>在RAM01上右击鼠标键，选择菜单中的 <code class="docutils literal notranslate"><span class="pre">Read</span> <span class="pre">Data</span> <span class="pre">...</span></code> , 可以看到RAM中最新的数据。</p>
+<figure class="align-default" id="fig-memedit02">
+<img alt="../_images/memedit02.png" src="../_images/memedit02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 46 </span><span class="caption-text">读取实时内存</span><a class="headerlink" href="#fig-memedit02" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>如果需要改变RAM中的数据，可以直接手动在数据上修改，也可以右键选择Import Data from file，用新的mif文件来更新。在更新后请注意要右键选择Write data to In-System Memory，让更新生效。</p>
+</section>
+</section>
+<section id="id7">
+<h2>实验内容<a class="headerlink" href="#id7" title="Permalink to this headline"></a></h2>
+<p>请在一个工程中完成如下的寄存器堆和RAM。寄存器堆和RAM的大小均为 <span class="math notranslate nohighlight">\(16\times 8\)</span> ，即都有16个存储单元，每个存储单元都是8位的，均可以进行读写。</p>
+<div class="admonition mytodo">
+<p class="admonition-title">实现寄存器堆</p>
+<p>读取时不需要时钟控制，即读地址有效后，直接输出数据。写入时通过时钟上升沿进行控制。</p>
+<p>此时可用以下方式输出：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span> <span class="n">out</span> <span class="o">=</span> <span class="n">ram</span><span class="p">[</span><span class="n">addr</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>采用下面的方式进行初始化。</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">initial</span>
+<span class="k">begin</span>
+  <span class="nb">$readmemh</span><span class="p">(</span><span class="s">&quot;D:/digital_logic/mem1.txt&quot;</span><span class="p">,</span> <span class="n">ram</span><span class="p">,</span> <span class="mh">0</span><span class="p">,</span> <span class="mh">15</span><span class="p">);</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>初始化数值为</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="p">@</span><span class="mh">0</span> <span class="mh">00</span>
+<span class="p">@</span><span class="mh">1</span> <span class="mh">01</span>
+<span class="p">@</span><span class="mh">2</span> <span class="mh">02</span>
+<span class="p">@</span><span class="mh">3</span> <span class="mh">03</span>
+<span class="p">@</span><span class="mh">4</span> <span class="mh">04</span>
+<span class="p">@</span><span class="mh">5</span> <span class="mh">05</span>
+<span class="p">@</span><span class="mh">6</span> <span class="mh">06</span>
+<span class="p">@</span><span class="mh">7</span> <span class="mh">07</span>
+<span class="p">@</span><span class="mh">8</span> <span class="mh">08</span>
+<span class="p">@</span><span class="mh">9</span> <span class="mh">09</span>
+<span class="p">@</span><span class="n">a</span> <span class="mh">0</span><span class="n">a</span>
+<span class="p">@</span><span class="n">b</span> <span class="mh">0</span><span class="n">b</span>
+<span class="p">@</span><span class="n">c</span> <span class="mh">0</span><span class="n">c</span>
+<span class="p">@</span><span class="n">d</span> <span class="mh">0</span><span class="n">d</span>
+<span class="p">@</span><span class="n">e</span> <span class="mh">0</span><span class="n">e</span>
+<span class="p">@</span><span class="n">f</span> <span class="mf">0f</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">实现RAM</p>
+<p>利用IP核设计一个单口存储器，利用.mif文件进行初始化，十六个单元的初始化值分别为：0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6,0xf7,0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff。
+如果IP核不支持最小16单元的单口存储器，可以使用32单元或64单元的单口存储器替代，地址高位置零来只用16个RAM单元。</p>
+<ul>
+<li><p>此两个物理上完全不同的存储器共用时钟、读写地址。适当选择时钟信号和写使能信号，以能够分别对此两个存储器进行读写。请将两个存储器读出的结果分别用2个七段数码管显示。请合理使用FPGA开发板的输入/输出资源，完成此寄存器堆和RAM的设计。由于开发板上输入数量不够，写入时可以只写入2位数据。</p></li>
+<li><p>请使用In-System Memory Content Editor来修改RAM中的数据，验证你的修改确实更新到开发板上了。</p></li>
+<li><p>请使用开发板上的按钮来做为存储器的时钟信号。观察两个不同的实现方式下各需要几个时钟周期来完成读取或写入操作？</p></li>
+<li><p>打开 <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">-&gt;</span> <span class="pre">Netlist</span> <span class="pre">Viewers</span> <span class="pre">-&gt;</span> <span class="pre">Techonlogy</span> <span class="pre">Map</span> <span class="pre">Viewer</span></code> ，点开实现的树形结构寻找到你生成的两个存储器，观察综合后这两个存储器分别使用了什么方式来实现，为什么？</p></li>
+<li><p>注意观察综合后输出的资源消耗情况，图 <a class="reference internal" href="#fig-ramresource"><span class="std std-numref">Fig. 47</span></a> 中两个红框部分消耗的资源可能是由哪个存储器产生的？如果用寄存器方式，我们用的开发板大约可以支持多大容量的存储？用Block Memory呢？</p>
+<figure class="align-default" id="fig-ramresource">
+<img alt="../_images/ramresource.png" src="../_images/ramresource.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 47 </span><span class="caption-text">系统资源消耗</span><a class="headerlink" href="#fig-ramresource" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+</ul>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">在线测试</p>
+<p>寄存器堆实现</p>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">在线测试</p>
+<p>前导零个数判断</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="04.html" class="btn btn-neutral float-left" title="实验四 计数器和时钟" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="06.html" class="btn btn-neutral float-right" title="实验六 移位寄存器及桶形移位器" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, 王炜 吴海军 陈璐.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

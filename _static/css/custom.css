@@ -1,0 +1,62 @@
+/* override the logo for admonition */
+.rst-content .admonition.myoption > .admonition-title:before,
+.rst-content .admonition.mytodo > .admonition-title:before {
+  content: "";
+}
+
+.rst-content .admonition.mycomment > .admonition-title:before {
+  content: "";
+}
+
+.rst-content .admonition.myinfo > .admonition-title:before {
+  content: "";
+}
+
+.rst-content .admonition.myquestion > .admonition-title:before {
+  content: "";
+}
+
+.rst-content .admonition.myflag > .admonition-title:before {
+  content: "";
+}
+
+.rst-content .admonition.myhint > .admonition-title:before {
+  content: "";
+}
+
+
+.rst-content .admonition.myflag > .admonition-title,
+.rst-content .admonition.myhint > .admonition-title {
+  background: #58B957;
+}
+
+.rst-content .admonition.myflag,
+.rst-content .admonition.myhint {
+  background: #DFF0D7;
+}
+
+.rst-content .admonition.mytodo > .admonition-title {
+  background: #f0b37e;
+}
+
+.rst-content .admonition.mytodo {
+  background: #ffedcc;
+}
+
+.rst-content .admonition.mydanger > .admonition-title:before {
+  content: "";
+}
+
+.rst-content .admonition.mycaution > .admonition-title:before {
+  content: "";
+}
+
+.rst-content .admonition.mydanger > .admonition-title,
+.rst-content .admonition.mycaution > .admonition-title {
+  background: #DB524B;
+}
+
+.rst-content .admonition.mydanger,
+.rst-content .admonition.mycaution {
+  background: #F2DEDE;
+}

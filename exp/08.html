@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>实验八 VGA接口控制器实现 &mdash; 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="实验九 字符输入界面" href="09.html" />
+    <link rel="prev" title="实验七 状态机及键盘输入" href="07.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">实验一 选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">实验二 译码器和编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">实验三 加法器与ALU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">实验四 计数器和时钟</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">实验五 寄存器组及存储器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">实验六 移位寄存器及桶形移位器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">实验七 状态机及键盘输入</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">实验八 VGA接口控制器实现</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">VGA简介</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">VGA接口的外观和引脚功能</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">VGA的工作原理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">VGA显示的实现</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#de10-standardvga">DE10-Standard开发板上的VGA接口</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">实验验收内容</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">实验九 字符输入界面</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">实验十 CPU数据通路</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">实验十一 RV32I单周期CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">实验十二 计算机系统</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>实验八 VGA接口控制器实现</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/exp/08.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="vga">
+<h1>实验八 VGA接口控制器实现<a class="headerlink" href="#vga" title="Permalink to this headline"></a></h1>
+<p><em>大约二十瓶颜料在桌子上整整齐齐地排成一溜儿。修拉拿了一支温森特见过的最小号的画笔，把笔尖在其中的一瓶颜料里蘸了一下，就着手在画布上以数学上的那种精确点起色点来。他平静地、毫不动情地工作着，点着，点着，点着。他笔直地握着画笔，只在颜料瓶里蘸一下，就往画布上点啊点的，点上成百上千细小的色点。</em></p>
+<blockquote>
+<div><p>— 《渴望生活·梵高传》，欧文·斯通</p>
+</div></blockquote>
+<p>VGA接口是IBM制定的一种视频数据的传输标准，是电脑显示器最典型的接口。本实验的目的是学习VGA接口原理，学习VGA接口控制器的设计方法。</p>
+<section id="id1">
+<h2>VGA简介<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h2>
+<section id="id2">
+<h3>VGA接口的外观和引脚功能<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
+<p>VGA（Video Graphics Array）接口，即视频图形阵列。 VGA接口最初是用于连接CRT显示器的接口，CRT显示器因为设计制造上的原因，只能接受模拟信号输入，这就需要显卡能输出模拟信号。关于模拟信号和数字信号的区别，请参考( <a class="reference external" href="https://en.wikipedia.org/wiki/Analog_signal">Analog Signal</a> 及 <a class="reference external" href="https://en.wikipedia.org/wiki/Digital_signal">Digital Signal</a> )。VGA接口就是显卡上输出模拟信号的接口，在传统的CRT显示器中，使用的都是VGA接口，现在仍有不少液晶显示器或投影仪还支持VGA口。VGA 接口是15针/孔的梯形插头，分成3排，每排5个，如图 <a class="reference internal" href="#fig-vga01"><span class="std std-numref">Fig. 62</span></a> 所示：</p>
+<figure class="align-default" id="fig-vga01">
+<img alt="../_images/vga01.png" src="../_images/vga01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 62 </span><span class="caption-text">VGA接口形状示意图</span><a class="headerlink" href="#fig-vga01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>VGA接口的接口信号主要有5个：R（Red）、G（Green）、B（Blue）、HS（Horizontal Synchronization）和VS（Vertical Synchronization），即红、绿、蓝、水平同步和垂直同步（也称行同步和帧同步）。</p>
+</section>
+<section id="id3">
+<h3>VGA的工作原理<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h3>
+<p>图像的显示是以像素（点）为单位，显示器的分辨率是指屏幕每行有多少个像素及每帧有多少行，标准的VGA分辨率是 <span class="math notranslate nohighlight">\(640\times 480\)</span> ，也有更高的分辨率，如 <span class="math notranslate nohighlight">\(1024\times 768\)</span> 、 <span class="math notranslate nohighlight">\(1280\times 1024\)</span> 、 <span class="math notranslate nohighlight">\(1920\times 1200\)</span> 等。从人眼的视觉效果考虑，屏幕刷新的频率（每秒钟显示的帧数）应该大于24，这样屏幕看起来才不会闪烁，VGA显示器一般的刷新频率是60HZ。</p>
+<p>每一帧图像的显示都是从屏幕的左上角开始一行一行进行的，行同步信号是一个负脉冲，行同步信号有效后，由RGB端送出当前行显示的各像素点的RGB电压值，当一帧显示结束后，由帧同步信号送出一个负脉冲，重新开始从屏幕的左上端开始显示下一帧图像，如图 <a class="reference internal" href="#fig-vga02"><span class="std std-numref">Fig. 63</span></a> 所示。</p>
+<figure class="align-default" id="fig-vga02">
+<img alt="../_images/vga02.png" src="../_images/vga02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 63 </span><span class="caption-text">显示器扫描示意图</span><a class="headerlink" href="#fig-vga02" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>RGB端并不是所有时间都在传送像素信息，由于CRT的电子束从上一行的行尾到下一行的行头需要时间，从屏幕的右下角回到左上角开始下一帧也需要时间，这时RGB送的电压值为0（黑色），这些时间称为电子束的行消隐时间和场消隐时间，行消隐时间以像素为单位，帧消隐时间以行为单位。VGA行扫描、场扫描时序示意图如图 <a class="reference internal" href="#fig-vga03"><span class="std std-numref">Fig. 64</span></a> 所示：</p>
+<figure class="align-default" id="fig-vga03">
+<img alt="../_images/vga03.png" src="../_images/vga03.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 64 </span><span class="caption-text">VGA行扫描、场扫描时序示意图</span><a class="headerlink" href="#fig-vga03" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>由图 <a class="reference internal" href="#fig-vga03"><span class="std std-numref">Fig. 64</span></a> 可知，在标准的 <span class="math notranslate nohighlight">\(640\times 480\)</span> 的VGA上有效地显示一行信号需要96+48+640+16=800个像素点的时间，其中行同步负脉冲宽度为96个像素点时间，行消隐后沿需要48个像素点时间，然后每行显示640个像素点，最后行消隐前沿需要16个像素点的时间。所以一行中显示像素的时间为640个像素点时间，一行消隐时间为160个像素点时间。</p>
+<p>在标准的 <span class="math notranslate nohighlight">\(640\times 480\)</span> 的VGA上有效显示一帧图像需要2+33+480+10=525行时间，其中场同步负脉冲宽度为2个行显示时间，场消隐后沿需要33个行显示时间，然后每场显示480行，场消隐前沿需要10个行显示时间，一帧显示时间为525行显示时间，一帧消隐时间为45行显示时间。</p>
+<p>因此，在 <span class="math notranslate nohighlight">\(640\times 480\)</span> 的VGA上的一幅图像需要 <span class="math notranslate nohighlight">\(525\times 800=420k\)</span> 个像素点的时间。而每秒扫描60帧共需要约25M个像素点的时间。</p>
+</section>
+</section>
+<section id="id4">
+<h2>VGA显示的实现<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h2>
+<section id="de10-standardvga">
+<h3>DE10-Standard开发板上的VGA接口<a class="headerlink" href="#de10-standardvga" title="Permalink to this headline"></a></h3>
+<p>DE10-Standard开发板上使用了一块VGA DAC ADV7123芯片来实现VGA功能。该芯片完成FPGA数字信号到VGA模拟信号的转换，具体连接方式如图 <a class="reference internal" href="#fig-vga04"><span class="std std-numref">Fig. 65</span></a> 所示。</p>
+<figure class="align-default" id="fig-vga04">
+<img alt="../_images/vga04.png" src="../_images/vga04.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 65 </span><span class="caption-text">DE10-Standard的VGA连接示意图</span><a class="headerlink" href="#fig-vga04" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>开发板和ADV7123芯片之间的接口引脚包括3组8bit的颜色信号VGA_R[7:0], VGA_G[7:0], VGA_B[7:0]，行同步信号VGA_HS，帧同步信号VGA_VS，VGA时钟信号VGA_CLK，VGA同步（低有效）VGA_SYNC_N, 和VGA消隐信号（低有效）VGA_BLANK_N。如图 <a class="reference internal" href="#fig-vga05"><span class="std std-numref">Fig. 66</span></a> 所示。</p>
+<figure class="align-default" id="fig-vga05">
+<img alt="../_images/vga05.png" src="../_images/vga05.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 66 </span><span class="caption-text">DE10 Standard的VGA引脚</span><a class="headerlink" href="#fig-vga05" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>VGA信号首先需要一个时钟驱动，我们这里使用25MHz的时钟来驱动VGA_CLK。 每个时钟周期扫过一个像素点，因此在 <span class="math notranslate nohighlight">\(640\times 480\)</span> 的分辨率下，我们需要 <span class="math notranslate nohighlight">\(800\times 525=420,000\)</span> 个时钟周期才能扫描完一帧（此处考虑了消隐的时间）。在25MHz的时钟周期下总时长为16.8毫秒，对应约每秒约60帧。</p>
+<p>我们使用一个简单的分频器来从50MHz的时钟来产生所需的VGA_CLK。</p>
+<div class="literal-block-wrapper docutils container" id="list-clock">
+<div class="code-block-caption"><span class="caption-number">Listing 25 </span><span class="caption-text">通用时钟生成代码</span><a class="headerlink" href="#list-clock" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">clkgen</span><span class="p">(</span>
+    <span class="k">input</span> <span class="n">clkin</span><span class="p">,</span>
+    <span class="k">input</span> <span class="n">rst</span><span class="p">,</span>
+    <span class="k">input</span> <span class="n">clken</span><span class="p">,</span>
+    <span class="k">output</span> <span class="kt">reg</span> <span class="n">clkout</span>
+    <span class="p">);</span>
+    <span class="k">parameter</span> <span class="n">clk_freq</span><span class="o">=</span><span class="mh">1000</span><span class="p">;</span>
+    <span class="k">parameter</span> <span class="n">countlimit</span><span class="o">=</span><span class="mh">50000000</span><span class="o">/</span><span class="mh">2</span><span class="o">/</span><span class="n">clk_freq</span><span class="p">;</span> <span class="c1">//自动计算计数次数</span>
+
+  <span class="kt">reg</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">clkcount</span><span class="p">;</span>
+  <span class="k">always</span> <span class="p">@</span> <span class="p">(</span><span class="k">posedge</span> <span class="n">clkin</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">rst</span><span class="p">)</span>
+    <span class="k">begin</span>
+        <span class="n">clkcount</span><span class="o">=</span><span class="mh">0</span><span class="p">;</span>
+        <span class="n">clkout</span><span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="k">else</span>
+    <span class="k">begin</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">clken</span><span class="p">)</span>
+        <span class="k">begin</span>
+            <span class="n">clkcount</span><span class="o">=</span><span class="n">clkcount</span><span class="o">+</span><span class="mh">1</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">clkcount</span><span class="o">&gt;=</span><span class="n">countlimit</span><span class="p">)</span>
+            <span class="k">begin</span>
+                <span class="n">clkcount</span><span class="o">=</span><span class="mh">32</span><span class="mi">&#39;d0</span><span class="p">;</span>
+                <span class="n">clkout</span><span class="o">=~</span><span class="n">clkout</span><span class="p">;</span>
+            <span class="k">end</span>
+            <span class="k">else</span>
+                <span class="n">clkout</span><span class="o">=</span><span class="n">clkout</span><span class="p">;</span>
+        <span class="k">end</span>
+      <span class="k">else</span>
+        <span class="k">begin</span>
+            <span class="n">clkcount</span><span class="o">=</span><span class="n">clkcount</span><span class="p">;</span>
+            <span class="n">clkout</span><span class="o">=</span><span class="n">clkout</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>该生成器可以按照调用时的参数来生成不同频率的时钟：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="n">clkgen</span> <span class="p">#(</span><span class="mh">25000000</span><span class="p">)</span> <span class="n">my_vgaclk</span><span class="p">(</span><span class="n">CLOCK_50</span><span class="p">,</span><span class="n">SW</span><span class="p">[</span><span class="mh">0</span><span class="p">],</span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">,</span><span class="n">VGA_CLK</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>在该时钟的驱动下我们需要生成各类驱动信号。其中VGA同步信号VGA_SYNC_N可以长期置零。其他信号可以参考表 <a class="reference internal" href="#list-vga01"><span class="std std-numref">Listing 26</span></a> 来实现。</p>
+<div class="literal-block-wrapper docutils container" id="list-vga01">
+<div class="code-block-caption"><span class="caption-number">Listing 26 </span><span class="caption-text">VGA参考代码</span><a class="headerlink" href="#list-vga01" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">vga_ctrl</span><span class="p">(</span>
+    <span class="k">input</span>           <span class="n">pclk</span><span class="p">,</span>     <span class="c1">//25MHz时钟</span>
+    <span class="k">input</span>           <span class="n">reset</span><span class="p">,</span>    <span class="c1">//置位</span>
+    <span class="k">input</span>  <span class="p">[</span><span class="mh">23</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span>   <span class="n">vga_data</span><span class="p">,</span> <span class="c1">//上层模块提供的VGA颜色数据</span>
+    <span class="k">output</span> <span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span>    <span class="n">h_addr</span><span class="p">,</span>   <span class="c1">//提供给上层模块的当前扫描像素点坐标</span>
+    <span class="k">output</span> <span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span>    <span class="n">v_addr</span><span class="p">,</span>
+    <span class="k">output</span>          <span class="n">hsync</span><span class="p">,</span>    <span class="c1">//行同步和列同步信号</span>
+    <span class="k">output</span>          <span class="n">vsync</span><span class="p">,</span>
+    <span class="k">output</span>          <span class="n">valid</span><span class="p">,</span>    <span class="c1">//消隐信号</span>
+    <span class="k">output</span> <span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span>    <span class="n">vga_r</span><span class="p">,</span>    <span class="c1">//红绿蓝颜色信号</span>
+    <span class="k">output</span> <span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span>    <span class="n">vga_g</span><span class="p">,</span>
+    <span class="k">output</span> <span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span>    <span class="n">vga_b</span>
+    <span class="p">);</span>
+
+  <span class="c1">//640x480分辨率下的VGA参数设置</span>
+  <span class="k">parameter</span>    <span class="n">h_frontporch</span> <span class="o">=</span> <span class="mh">96</span><span class="p">;</span>
+  <span class="k">parameter</span>    <span class="n">h_active</span> <span class="o">=</span> <span class="mh">144</span><span class="p">;</span>
+  <span class="k">parameter</span>    <span class="n">h_backporch</span> <span class="o">=</span> <span class="mh">784</span><span class="p">;</span>
+  <span class="k">parameter</span>    <span class="n">h_total</span> <span class="o">=</span> <span class="mh">800</span><span class="p">;</span>
+
+  <span class="k">parameter</span>    <span class="n">v_frontporch</span> <span class="o">=</span> <span class="mh">2</span><span class="p">;</span>
+  <span class="k">parameter</span>    <span class="n">v_active</span> <span class="o">=</span> <span class="mh">35</span><span class="p">;</span>
+  <span class="k">parameter</span>    <span class="n">v_backporch</span> <span class="o">=</span> <span class="mh">515</span><span class="p">;</span>
+  <span class="k">parameter</span>    <span class="n">v_total</span> <span class="o">=</span> <span class="mh">525</span><span class="p">;</span>
+
+  <span class="c1">//像素计数值</span>
+  <span class="kt">reg</span> <span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span>    <span class="n">x_cnt</span><span class="p">;</span>
+  <span class="kt">reg</span> <span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span>    <span class="n">y_cnt</span><span class="p">;</span>
+  <span class="kt">wire</span>         <span class="n">h_valid</span><span class="p">;</span>
+  <span class="kt">wire</span>         <span class="n">v_valid</span><span class="p">;</span>
+
+  <span class="k">always</span> <span class="p">@(</span><span class="k">posedge</span> <span class="n">reset</span> <span class="k">or</span> <span class="k">posedge</span> <span class="n">pclk</span><span class="p">)</span> <span class="c1">//行像素计数</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">reset</span> <span class="o">==</span> <span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">)</span>
+        <span class="n">x_cnt</span> <span class="o">&lt;=</span> <span class="mh">1</span><span class="p">;</span>
+      <span class="k">else</span>
+      <span class="k">begin</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">x_cnt</span> <span class="o">==</span> <span class="n">h_total</span><span class="p">)</span>
+            <span class="n">x_cnt</span> <span class="o">&lt;=</span> <span class="mh">1</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="n">x_cnt</span> <span class="o">&lt;=</span> <span class="n">x_cnt</span> <span class="o">+</span> <span class="mh">10</span><span class="mi">&#39;d1</span><span class="p">;</span>
+      <span class="k">end</span>
+
+  <span class="k">always</span> <span class="p">@(</span><span class="k">posedge</span> <span class="n">pclk</span><span class="p">)</span>  <span class="c1">//列像素计数</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">reset</span> <span class="o">==</span> <span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">)</span>
+        <span class="n">y_cnt</span> <span class="o">&lt;=</span> <span class="mh">1</span><span class="p">;</span>
+      <span class="k">else</span>
+      <span class="k">begin</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">y_cnt</span> <span class="o">==</span> <span class="n">v_total</span> <span class="o">&amp;</span> <span class="n">x_cnt</span> <span class="o">==</span> <span class="n">h_total</span><span class="p">)</span>
+            <span class="n">y_cnt</span> <span class="o">&lt;=</span> <span class="mh">1</span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">x_cnt</span> <span class="o">==</span> <span class="n">h_total</span><span class="p">)</span>
+            <span class="n">y_cnt</span> <span class="o">&lt;=</span> <span class="n">y_cnt</span> <span class="o">+</span> <span class="mh">10</span><span class="mi">&#39;d1</span><span class="p">;</span>
+      <span class="k">end</span>
+  <span class="c1">//生成同步信号</span>
+  <span class="k">assign</span> <span class="n">hsync</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_cnt</span> <span class="o">&gt;</span> <span class="n">h_frontporch</span><span class="p">);</span>
+  <span class="k">assign</span> <span class="n">vsync</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_cnt</span> <span class="o">&gt;</span> <span class="n">v_frontporch</span><span class="p">);</span>
+  <span class="c1">//生成消隐信号</span>
+  <span class="k">assign</span> <span class="n">h_valid</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_cnt</span> <span class="o">&gt;</span> <span class="n">h_active</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">x_cnt</span> <span class="o">&lt;=</span> <span class="n">h_backporch</span><span class="p">);</span>
+  <span class="k">assign</span> <span class="n">v_valid</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_cnt</span> <span class="o">&gt;</span> <span class="n">v_active</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">y_cnt</span> <span class="o">&lt;=</span> <span class="n">v_backporch</span><span class="p">);</span>
+  <span class="k">assign</span> <span class="n">valid</span> <span class="o">=</span> <span class="n">h_valid</span> <span class="o">&amp;</span> <span class="n">v_valid</span><span class="p">;</span>
+  <span class="c1">//计算当前有效像素坐标</span>
+  <span class="k">assign</span> <span class="n">h_addr</span> <span class="o">=</span> <span class="n">h_valid</span> <span class="o">?</span> <span class="p">(</span><span class="n">x_cnt</span> <span class="o">-</span> <span class="mh">10</span><span class="mi">&#39;d145</span><span class="p">)</span> <span class="o">:</span> <span class="p">{</span><span class="mh">10</span><span class="p">{</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">}};</span>
+  <span class="k">assign</span> <span class="n">v_addr</span> <span class="o">=</span> <span class="n">v_valid</span> <span class="o">?</span> <span class="p">(</span><span class="n">y_cnt</span> <span class="o">-</span> <span class="mh">10</span><span class="mi">&#39;d36</span><span class="p">)</span> <span class="o">:</span> <span class="p">{</span><span class="mh">10</span><span class="p">{</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">}};</span>
+  <span class="c1">//设置输出的颜色值</span>
+  <span class="k">assign</span> <span class="n">vga_r</span> <span class="o">=</span> <span class="n">vga_data</span><span class="p">[</span><span class="mh">23</span><span class="o">:</span><span class="mh">16</span><span class="p">];</span>
+  <span class="k">assign</span> <span class="n">vga_g</span> <span class="o">=</span> <span class="n">vga_data</span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">8</span><span class="p">];</span>
+  <span class="k">assign</span> <span class="n">vga_b</span> <span class="o">=</span> <span class="n">vga_data</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>此代码对外提供了VGA控制信号，利用对时钟进行计数来判断当前是在扫描第几行的第几个像素，并确定是否要消隐。代码输出的红R、绿G、蓝B三种颜色分别是以vga_r,vga_g,vga_b三个8位的二进制信号表示的，这三组8位数字信号将被传送到开发板上的数模转换器，转换成模拟信号，经VGA接口送入显示器中。</p>
+<p>该控制器的特点是可以方便地实现上层系统对显示内容的控制。例如，如果在模块调用时设置vga_data为常数24’hFF0000，就可以直接显示全屏红色。上层系统也可以根据当前扫描的像素坐标，选择合适的颜色给不同的像素设置不同的vga_data。更重要的是，上层系统可以分配一块显示存储，利用v_addr, h_addr来索引该显存，每次扫描到特定像素点时，按照显存的值来设置vga_data。这样，其他应用就可以直接对显存进行操作，显存改变自动对应到VGA的显示上，而不用关心VGA扫描的具体过程了。</p>
+<p>非常不幸的是，如果每个像素点用3个8bit数来表示，一个像素点需要24bit， <span class="math notranslate nohighlight">\(640\times 480\)</span> 的像素点需要7.372M bit的RAM。我们的FPGA只有5.57M bit片内内存，不够实现24bit颜色的VGA显存。可能的解决方案包括</p>
+<ul class="simple">
+<li><p>降低颜色分辨率至12bit，即RGB各用4bit来表示，颜色数量变少（ <strong>建议方案</strong> ）</p></li>
+<li><p>只给 <span class="math notranslate nohighlight">\(256\times 256\)</span> 的像素范围分配显存</p></li>
+<li><p>调用片外的64M SDRAM（此方案过于复杂，不建议使用）</p></li>
+</ul>
+</section>
+</section>
+<section id="id5">
+<h2>实验验收内容<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">上板验收: 显示图片</p>
+<p>利用上述控制器，在显示器上显示一张静态图片。请自行完成图片格式到mif文件的转换。</p>
+</div>
+<div class="admonition myhint">
+<p class="admonition-title">低比特颜色显示方案</p>
+<p>我们建议可以使用低比特的颜色显示的方式来绕过RAM不足的问题。当然有兴趣的同学可以通过其他方式来实现高分辨率的图像显示。</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>显存分配大小为 <span class="math notranslate nohighlight">\(640\times 512\)</span> word, 每个word为12bit。用h_addr的全部10位和v_addr的低9位合成19位地址来索引显存。为方便寻址，我们给行v_addr分配了512行的空间。这样，可以不用对地址进行复杂的转换。此处只需要分配327680个连续的存储单元，不需要考虑h_addr大于640的情况。</p></li>
+<li><p>assign红、绿、蓝颜色的时候，根据12bit显存数据中对应颜色的4bit值，设置输出8bit数据的高4位，低4位置零。</p></li>
+<li><p>对显存用.mif文件初始化。可以自己用常用的脚本语言生成.mif文件，我们也提供了一张 <span class="math notranslate nohighlight">\(640\times 512\)</span> 的12bit图片的my_picture.mif文件，其中每像素按RGB各4比特，地址按列排列，开头是第一列像素512个点，其中超过480行的像素置为白色。然后顺序排列640列像素。</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="admonition mydanger">
+<p class="admonition-title">显存的实现</p>
+<p>显存占用空间较大，实现时需要用时钟沿驱动的显存，这样系统可以用BLOCK RAM(M10K)来实现。当资源不够时，Quartus可能会无法综合，耗费大量时间编译。</p>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">实现图片弹性碰撞效果</p>
+<p>显示一张在屏幕上按特定速度移动的图片。即图片本身大小远小于显示器分辨率，例如 <span class="math notranslate nohighlight">\(100 \times 100\)</span> 像素大小。图片随时钟按特定方向以随机速度（x方向和y方向速度可不同）在屏幕内移动，当图片边界触及屏幕边界时按弹性碰撞方式改变运动方向。最终效果类似弹球游戏，图片在屏幕内不停反弹。</p>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">在线测试
+- 确定有限状态自动机</p>
+<ul class="simple">
+<li><p>签到题</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="07.html" class="btn btn-neutral float-left" title="实验七 状态机及键盘输入" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="09.html" class="btn btn-neutral float-right" title="实验九 字符输入界面" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, 王炜 吴海军 陈璐.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

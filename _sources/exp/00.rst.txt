@@ -1,0 +1,11 @@
+=========================
+实验零 Quartus使用初步
+=========================
+
+
+
+   The Hitchhiker's Guide to the Galaxy itself has outsold the Encyclopedia Galactica because it is slightly cheaper, and because it has the words 'DON'T PANIC' in large, friendly letters on the cover.
+
+   --"The Hitchhiker's Guide to the Galaxy", Douglas Adams
+
+在本次实验中，我们以Quartus17.1为例，介绍如何利用FPGA开发平台DE10-Standard进行数字逻辑设计。课后可以参考相关资料，在自己的电脑上安装Lite版的开发软件套装。

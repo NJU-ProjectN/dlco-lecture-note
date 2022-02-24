@@ -1,0 +1,237 @@
+实验八 VGA接口控制器实现
+########################
+
+*大约二十瓶颜料在桌子上整整齐齐地排成一溜儿。修拉拿了一支温森特见过的最小号的画笔，把笔尖在其中的一瓶颜料里蘸了一下，就着手在画布上以数学上的那种精确点起色点来。他平静地、毫不动情地工作着，点着，点着，点着。他笔直地握着画笔，只在颜料瓶里蘸一下，就往画布上点啊点的，点上成百上千细小的色点。*
+
+  --- 《渴望生活·梵高传》，欧文·斯通
+
+VGA接口是IBM制定的一种视频数据的传输标准，是电脑显示器最典型的接口。本实验的目的是学习VGA接口原理，学习VGA接口控制器的设计方法。
+
+VGA简介
+*********
+
+VGA接口的外观和引脚功能
+==========================
+
+VGA（Video Graphics Array）接口，即视频图形阵列。 VGA接口最初是用于连接CRT显示器的接口，CRT显示器因为设计制造上的原因，只能接受模拟信号输入，这就需要显卡能输出模拟信号。关于模拟信号和数字信号的区别，请参考( `Analog Signal <https://en.wikipedia.org/wiki/Analog_signal>`_ 及 `Digital Signal <https://en.wikipedia.org/wiki/Digital_signal>`_ )。VGA接口就是显卡上输出模拟信号的接口，在传统的CRT显示器中，使用的都是VGA接口，现在仍有不少液晶显示器或投影仪还支持VGA口。VGA 接口是15针/孔的梯形插头，分成3排，每排5个，如图 :numref:`fig-vga01` 所示：
+
+.. figure:: /images/exp08/vga01.png
+  :name: fig-vga01
+
+  VGA接口形状示意图
+
+VGA接口的接口信号主要有5个：R（Red）、G（Green）、B（Blue）、HS（Horizontal Synchronization）和VS（Vertical Synchronization），即红、绿、蓝、水平同步和垂直同步（也称行同步和帧同步）。
+
+VGA的工作原理
+==============
+
+图像的显示是以像素（点）为单位，显示器的分辨率是指屏幕每行有多少个像素及每帧有多少行，标准的VGA分辨率是 :math:`640\times 480` ，也有更高的分辨率，如 :math:`1024\times 768` 、 :math:`1280\times 1024` 、 :math:`1920\times 1200` 等。从人眼的视觉效果考虑，屏幕刷新的频率（每秒钟显示的帧数）应该大于24，这样屏幕看起来才不会闪烁，VGA显示器一般的刷新频率是60HZ。
+
+每一帧图像的显示都是从屏幕的左上角开始一行一行进行的，行同步信号是一个负脉冲，行同步信号有效后，由RGB端送出当前行显示的各像素点的RGB电压值，当一帧显示结束后，由帧同步信号送出一个负脉冲，重新开始从屏幕的左上端开始显示下一帧图像，如图 :numref:`fig-vga02` 所示。
+
+.. figure:: /images/exp08/vga02.png
+  :name: fig-vga02
+
+  显示器扫描示意图
+
+
+RGB端并不是所有时间都在传送像素信息，由于CRT的电子束从上一行的行尾到下一行的行头需要时间，从屏幕的右下角回到左上角开始下一帧也需要时间，这时RGB送的电压值为0（黑色），这些时间称为电子束的行消隐时间和场消隐时间，行消隐时间以像素为单位，帧消隐时间以行为单位。VGA行扫描、场扫描时序示意图如图 :numref:`fig-vga03` 所示：
+
+.. figure:: /images/exp08/vga03.png
+  :name: fig-vga03
+
+  VGA行扫描、场扫描时序示意图
+
+由图 :numref:`fig-vga03` 可知，在标准的 :math:`640\times 480` 的VGA上有效地显示一行信号需要96+48+640+16=800个像素点的时间，其中行同步负脉冲宽度为96个像素点时间，行消隐后沿需要48个像素点时间，然后每行显示640个像素点，最后行消隐前沿需要16个像素点的时间。所以一行中显示像素的时间为640个像素点时间，一行消隐时间为160个像素点时间。
+
+在标准的 :math:`640\times 480` 的VGA上有效显示一帧图像需要2+33+480+10=525行时间，其中场同步负脉冲宽度为2个行显示时间，场消隐后沿需要33个行显示时间，然后每场显示480行，场消隐前沿需要10个行显示时间，一帧显示时间为525行显示时间，一帧消隐时间为45行显示时间。
+
+因此，在 :math:`640\times 480` 的VGA上的一幅图像需要 :math:`525\times 800=420k` 个像素点的时间。而每秒扫描60帧共需要约25M个像素点的时间。
+
+VGA显示的实现
+**************
+
+DE10-Standard开发板上的VGA接口
+==============================
+
+DE10-Standard开发板上使用了一块VGA DAC ADV7123芯片来实现VGA功能。该芯片完成FPGA数字信号到VGA模拟信号的转换，具体连接方式如图 :numref:`fig-vga04` 所示。
+
+.. figure:: /images/exp08/vga04.png
+  :name: fig-vga04
+
+  DE10-Standard的VGA连接示意图
+
+
+开发板和ADV7123芯片之间的接口引脚包括3组8bit的颜色信号VGA_R[7:0], VGA_G[7:0], VGA_B[7:0]，行同步信号VGA_HS，帧同步信号VGA_VS，VGA时钟信号VGA_CLK，VGA同步（低有效）VGA_SYNC_N, 和VGA消隐信号（低有效）VGA_BLANK_N。如图 :numref:`fig-vga05` 所示。
+
+.. figure:: /images/exp08/vga05.png
+  :name: fig-vga05
+
+  DE10 Standard的VGA引脚
+
+VGA信号首先需要一个时钟驱动，我们这里使用25MHz的时钟来驱动VGA_CLK。 每个时钟周期扫过一个像素点，因此在 :math:`640\times 480` 的分辨率下，我们需要 :math:`800\times 525=420,000` 个时钟周期才能扫描完一帧（此处考虑了消隐的时间）。在25MHz的时钟周期下总时长为16.8毫秒，对应约每秒约60帧。
+
+我们使用一个简单的分频器来从50MHz的时钟来产生所需的VGA_CLK。
+
+.. code-block:: Verilog
+  :caption: 通用时钟生成代码
+  :name: list-clock
+
+  module clkgen(
+      input clkin,
+      input rst,
+      input clken,
+      output reg clkout
+      );
+      parameter clk_freq=1000;
+      parameter countlimit=50000000/2/clk_freq; //自动计算计数次数
+
+    reg[31:0] clkcount;
+    always @ (posedge clkin)
+      if(rst)
+      begin
+          clkcount=0;
+          clkout=1'b0;
+      end
+      else
+      begin
+      if(clken)
+          begin
+              clkcount=clkcount+1;
+              if(clkcount>=countlimit)
+              begin
+                  clkcount=32'd0;
+                  clkout=~clkout;
+              end
+              else
+                  clkout=clkout;
+          end
+        else
+          begin
+              clkcount=clkcount;
+              clkout=clkout;
+          end
+      end
+  endmodule
+
+
+该生成器可以按照调用时的参数来生成不同频率的时钟：
+
+.. code-block:: Verilog
+
+  clkgen #(25000000) my_vgaclk(CLOCK_50,SW[0],1'b1,VGA_CLK);
+
+在该时钟的驱动下我们需要生成各类驱动信号。其中VGA同步信号VGA_SYNC_N可以长期置零。其他信号可以参考表 :numref:`list-vga01` 来实现。
+
+.. code-block:: Verilog
+  :caption: VGA参考代码
+  :name: list-vga01
+
+  module vga_ctrl(
+      input           pclk,     //25MHz时钟
+      input           reset,    //置位
+      input  [23:0]   vga_data, //上层模块提供的VGA颜色数据
+      output [9:0]    h_addr,   //提供给上层模块的当前扫描像素点坐标
+      output [9:0]    v_addr,
+      output          hsync,    //行同步和列同步信号
+      output          vsync,
+      output          valid,    //消隐信号
+      output [7:0]    vga_r,    //红绿蓝颜色信号
+      output [7:0]    vga_g,
+      output [7:0]    vga_b
+      );
+
+    //640x480分辨率下的VGA参数设置
+    parameter    h_frontporch = 96;
+    parameter    h_active = 144;
+    parameter    h_backporch = 784;
+    parameter    h_total = 800;
+
+    parameter    v_frontporch = 2;
+    parameter    v_active = 35;
+    parameter    v_backporch = 515;
+    parameter    v_total = 525;
+
+    //像素计数值
+    reg [9:0]    x_cnt;
+    reg [9:0]    y_cnt;
+    wire         h_valid;
+    wire         v_valid;
+
+    always @(posedge reset or posedge pclk) //行像素计数
+        if (reset == 1'b1)
+          x_cnt <= 1;
+        else
+        begin
+          if (x_cnt == h_total)
+              x_cnt <= 1;
+          else
+              x_cnt <= x_cnt + 10'd1;
+        end
+
+    always @(posedge pclk)  //列像素计数
+        if (reset == 1'b1)
+          y_cnt <= 1;
+        else
+        begin
+          if (y_cnt == v_total & x_cnt == h_total)
+              y_cnt <= 1;
+          else if (x_cnt == h_total)
+              y_cnt <= y_cnt + 10'd1;
+        end
+    //生成同步信号
+    assign hsync = (x_cnt > h_frontporch);
+    assign vsync = (y_cnt > v_frontporch);
+    //生成消隐信号
+    assign h_valid = (x_cnt > h_active) & (x_cnt <= h_backporch);
+    assign v_valid = (y_cnt > v_active) & (y_cnt <= v_backporch);
+    assign valid = h_valid & v_valid;
+    //计算当前有效像素坐标
+    assign h_addr = h_valid ? (x_cnt - 10'd145) : {10{1'b0}};
+    assign v_addr = v_valid ? (y_cnt - 10'd36) : {10{1'b0}};
+    //设置输出的颜色值
+    assign vga_r = vga_data[23:16];
+    assign vga_g = vga_data[15:8];
+    assign vga_b = vga_data[7:0];
+  endmodule
+
+
+此代码对外提供了VGA控制信号，利用对时钟进行计数来判断当前是在扫描第几行的第几个像素，并确定是否要消隐。代码输出的红R、绿G、蓝B三种颜色分别是以vga_r,vga_g,vga_b三个8位的二进制信号表示的，这三组8位数字信号将被传送到开发板上的数模转换器，转换成模拟信号，经VGA接口送入显示器中。
+
+该控制器的特点是可以方便地实现上层系统对显示内容的控制。例如，如果在模块调用时设置vga_data为常数24'hFF0000，就可以直接显示全屏红色。上层系统也可以根据当前扫描的像素坐标，选择合适的颜色给不同的像素设置不同的vga_data。更重要的是，上层系统可以分配一块显示存储，利用v_addr, h_addr来索引该显存，每次扫描到特定像素点时，按照显存的值来设置vga_data。这样，其他应用就可以直接对显存进行操作，显存改变自动对应到VGA的显示上，而不用关心VGA扫描的具体过程了。
+
+非常不幸的是，如果每个像素点用3个8bit数来表示，一个像素点需要24bit， :math:`640\times 480` 的像素点需要7.372M bit的RAM。我们的FPGA只有5.57M bit片内内存，不够实现24bit颜色的VGA显存。可能的解决方案包括
+
+- 降低颜色分辨率至12bit，即RGB各用4bit来表示，颜色数量变少（ **建议方案** ）
+- 只给 :math:`256\times 256` 的像素范围分配显存
+- 调用片外的64M SDRAM（此方案过于复杂，不建议使用）
+
+实验验收内容
+**************
+
+.. mytodo:: 上板验收: 显示图片
+
+  利用上述控制器，在显示器上显示一张静态图片。请自行完成图片格式到mif文件的转换。
+
+.. myhint:: 低比特颜色显示方案
+
+  我们建议可以使用低比特的颜色显示的方式来绕过RAM不足的问题。当然有兴趣的同学可以通过其他方式来实现高分辨率的图像显示。
+
+	- 显存分配大小为 :math:`640\times 512` word, 每个word为12bit。用h_addr的全部10位和v_addr的低9位合成19位地址来索引显存。为方便寻址，我们给行v_addr分配了512行的空间。这样，可以不用对地址进行复杂的转换。此处只需要分配327680个连续的存储单元，不需要考虑h_addr大于640的情况。
+	- assign红、绿、蓝颜色的时候，根据12bit显存数据中对应颜色的4bit值，设置输出8bit数据的高4位，低4位置零。
+	- 对显存用.mif文件初始化。可以自己用常用的脚本语言生成.mif文件，我们也提供了一张 :math:`640\times 512` 的12bit图片的my_picture.mif文件，其中每像素按RGB各4比特，地址按列排列，开头是第一列像素512个点，其中超过480行的像素置为白色。然后顺序排列640列像素。
+
+
+.. mydanger:: 显存的实现
+
+  显存占用空间较大，实现时需要用时钟沿驱动的显存，这样系统可以用BLOCK RAM(M10K)来实现。当资源不够时，Quartus可能会无法综合，耗费大量时间编译。	
+
+.. myoption:: 实现图片弹性碰撞效果
+
+  显示一张在屏幕上按特定速度移动的图片。即图片本身大小远小于显示器分辨率，例如 :math:`100 \times 100` 像素大小。图片随时钟按特定方向以随机速度（x方向和y方向速度可不同）在屏幕内移动，当图片边界触及屏幕边界时按弹性碰撞方式改变运动方向。最终效果类似弹球游戏，图片在屏幕内不停反弹。
+
+
+.. myoption:: 在线测试
+   - 确定有限状态自动机
+
+   - 签到题

@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>实验七 状态机及键盘输入 &mdash; 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="实验八 VGA接口控制器实现" href="08.html" />
+    <link rel="prev" title="实验六 移位寄存器及桶形移位器" href="06.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">实验一 选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">实验二 译码器和编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">实验三 加法器与ALU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">实验四 计数器和时钟</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">实验五 寄存器组及存储器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">实验六 移位寄存器及桶形移位器</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">实验七 状态机及键盘输入</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">状态机</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">有限状态机</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">简单状态机</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">状态机的编码方式</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ps-2">PS/2接口控制器及键盘输入</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">PS/2接口的工作时序</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">键盘扫描码</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ps-2fpga">PS/2接口与FPGA的连接</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">PS/2键盘控制器的设计</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fpga">FPGA调试指导</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">实验验收内容</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">实验八 VGA接口控制器实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">实验九 字符输入界面</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">实验十 CPU数据通路</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">实验十一 RV32I单周期CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">实验十二 计算机系统</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>实验七 状态机及键盘输入</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/exp/07.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>实验七 状态机及键盘输入<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
+<p><em>We know the state of the system if we know the sequence of symbols on the tape, which of these are observed by the computer (possibly with a special order), and the state of mind of the computer.</em></p>
+<blockquote>
+<div><p>—“On Computable Numbers, with an Application to the Entscheidungsproblem”, A. M. Turing</p>
+</div></blockquote>
+<p>有限状态机FSM（Finite State Machine）简称状态机，是一个在有限个状态间进行转换和动作的计算模型。有限状态机含有一个起始状态、一个输入列表（列表中包含了所有可能的输入信号序列）、一个状态转移函数和一个输出端，状态机在工作时由状态转移函数根据当前状态和输入信号确定下一个状态和输出。状态机一般都从起始状态开始，根据输入信号由状态转移函数决定状态机的下一个状态。</p>
+<p>有限状态机是数字电路系统中十分重要的电路模块，是一种输出取决于过去输入和当前输入的时序逻辑电路，它是组合逻辑电路和时序逻辑电路的组合。其中组合逻辑分为两个部分，一个是用于产生有限状态机下一个状态的次态逻辑，另一个是用于产生输出信号的输出逻辑，次态逻辑的功能是确定有限状态机的下一个状态；输出逻辑的功能是确定有限状态机的输出。除了输入和输出外，状态机还有一组具有“记忆”功能的寄存器，这些寄存器的功能是记忆有限状态机的内部状态，常被称作状态寄存器。</p>
+<p>本实验的目的是学习状态机的工作原理，了解状态机的编码方式，并利用PS/2键盘输入实现简单状态机的设计。</p>
+<section id="id2">
+<h2>状态机<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h2>
+<section id="id3">
+<h3>有限状态机<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h3>
+<p>在实际应用中，有限状态机被分为两种：Moore（摩尔）型有限状态机和Mealy（米里）型有限状态机。Moore 型有限状态机的输出信号只与有限状态机的当前状态有关，与输入信号的当前值无关，输入信号的当前值只会影响到状态机的次态，不会影响状态机当前的输出。即Moore 型有限状态机的输出信号是直接由状态寄存器译码得到。 Moore型有限状态机在时钟CLK信号有效后经过一段时间的延迟，输出达到稳定值。即使在这个时钟周期内输入信号发生变化，输出也会在这个完整的时钟周期内保持稳定值而不变。输入对输出的影响要到下一个时钟周期才能反映出来。Moore有限状态机最重要的特点就是将输入与输出信号隔离开来。Mealy 状态机与Moore有限状态机不同，Mealy有限状态机的输出不仅仅与状态机的当前状态有关，而且与输入信号的当前值也有关。Mealy有限状态机的输出直接受输入信号的当前值影响，而输入信号可能在一个时钟周期内任意时刻变化，这使得Mealy有限状态机对输入的响应发生在当前时钟周期，比Moore有限状态机对输入信号的响应要早一个周期。因此，输入信号的噪声可能影响到输出的信号。</p>
+</section>
+<section id="id4">
+<h3>简单状态机<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h3>
+<p>本节通过设计一个实际的状态机来了解状态机的工作过程和设计方法。</p>
+<p>请设计一个区别两种特定时序的有限状态机FSM：该有限状态机有一个输入w和一个输出z。当w是4个连续的0或4个连续的1时，输出z=1，否则z=0，时序允许重叠。即：若w是连续的5个1时，则在第4个和第5个时钟之后，z均为1。图 <a class="reference internal" href="#fig-state01"><span class="std std-numref">Fig. 52</span></a> 是这个有限状态机的时序图。</p>
+<figure class="align-default" id="fig-state01">
+<img alt="../_images/state01.png" src="../_images/state01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 52 </span><span class="caption-text">FSM的时序图</span><a class="headerlink" href="#fig-state01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>这个状态机的状态图如图 <a class="reference internal" href="#fig-state02"><span class="std std-numref">Fig. 53</span></a> 所示。</p>
+<figure class="align-default" id="fig-state02">
+<img alt="../_images/state02.png" src="../_images/state02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 53 </span><span class="caption-text">FSM的时序图</span><a class="headerlink" href="#fig-state02" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>用Verilog代码实现如图 <a class="reference internal" href="#fig-state02"><span class="std std-numref">Fig. 53</span></a> 所示的状态机。此状态机有9个状态，至少需要4个状态寄存器按二进制编码形式来寄存这些状态值，如表 <a class="reference internal" href="#tab-state01"><span class="std std-numref">Table 7</span></a> 所示。</p>
+<table class="docutils align-default" id="tab-state01">
+<caption><span class="caption-number">Table 7 </span><span class="caption-text">FSM的二进制编码</span><a class="headerlink" href="#tab-state01" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>状态</p></th>
+<th class="head"><p>y3</p></th>
+<th class="head"><p>y2</p></th>
+<th class="head"><p>y1</p></th>
+<th class="head"><p>y0</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>A</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>B</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>C</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>D</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>E</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>F</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>G</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>H</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>I</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+<p>建立一个Verilog文件，用SW0作为FSM低电平有效同步复位端，用SW1作为输入w，用KEY0作为手动的时钟输入，用LEDR0作为输出z，用LEDR4-LEDR7显示4个触发器的状态，完成该状态机的具体设计。</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-number">Listing 21 </span><span class="caption-text">区别两种输入状态的状态机</span><a class="headerlink" href="#id11" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">FSM_bin</span>
+<span class="p">(</span>
+  <span class="k">input</span>   <span class="n">clk</span><span class="p">,</span> <span class="n">in</span><span class="p">,</span> <span class="n">reset</span><span class="p">,</span>
+  <span class="k">output</span> <span class="kt">reg</span> <span class="n">out</span>
+<span class="p">);</span>
+
+<span class="k">parameter</span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">S0</span> <span class="o">=</span> <span class="mh">0</span><span class="p">,</span> <span class="n">S1</span> <span class="o">=</span> <span class="mh">1</span><span class="p">,</span> <span class="n">S2</span> <span class="o">=</span> <span class="mh">2</span><span class="p">,</span> <span class="n">S3</span> <span class="o">=</span> <span class="mh">3</span><span class="p">,</span>
+          <span class="n">S4</span> <span class="o">=</span> <span class="mh">4</span><span class="p">,</span> <span class="n">S5</span> <span class="o">=</span> <span class="mh">5</span><span class="p">,</span> <span class="n">S6</span> <span class="o">=</span> <span class="mh">6</span><span class="p">,</span> <span class="n">S7</span> <span class="o">=</span> <span class="mh">7</span><span class="p">,</span> <span class="n">S8</span> <span class="o">=</span> <span class="mh">8</span><span class="p">;</span>
+
+<span class="kt">wire</span> <span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">state_din</span><span class="p">,</span> <span class="n">state_dout</span><span class="p">;</span>
+<span class="kt">wire</span> <span class="n">state_wen</span><span class="p">;</span>
+
+<span class="n">SimReg</span><span class="p">#(</span><span class="mh">4</span><span class="p">,</span><span class="mh">0</span><span class="p">)</span> <span class="n">state</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span> <span class="n">reset</span><span class="p">,</span> <span class="n">state_din</span><span class="p">,</span> <span class="n">state_dout</span><span class="p">,</span> <span class="n">state_wen</span><span class="p">);</span>
+
+<span class="k">assign</span> <span class="n">state_wen</span> <span class="o">=</span> <span class="mh">1</span><span class="p">;</span>
+
+<span class="n">MuxKeyWithDefault</span><span class="p">#(</span><span class="mh">9</span><span class="p">,</span> <span class="mh">4</span><span class="p">,</span> <span class="mh">1</span><span class="p">)</span> <span class="n">outMux</span><span class="p">(.</span><span class="n">out</span><span class="p">(</span><span class="n">out</span><span class="p">),</span> <span class="p">.</span><span class="n">key</span><span class="p">(</span><span class="n">state_dout</span><span class="p">),</span> <span class="p">.</span><span class="n">default_out</span><span class="p">(</span><span class="mh">0</span><span class="p">),</span> <span class="p">.</span><span class="n">lut</span><span class="p">({</span>
+  <span class="n">S0</span><span class="p">,</span> <span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+  <span class="n">S1</span><span class="p">,</span> <span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+  <span class="n">S2</span><span class="p">,</span> <span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+  <span class="n">S3</span><span class="p">,</span> <span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+  <span class="n">S4</span><span class="p">,</span> <span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">,</span>
+  <span class="n">S5</span><span class="p">,</span> <span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+  <span class="n">S6</span><span class="p">,</span> <span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+  <span class="n">S7</span><span class="p">,</span> <span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+  <span class="n">S8</span><span class="p">,</span> <span class="mh">1</span><span class="mb">&#39;b1</span>
+<span class="p">}));</span>
+
+<span class="n">MuxKeyWithDefault</span><span class="p">#(</span><span class="mh">9</span><span class="p">,</span> <span class="mh">4</span><span class="p">,</span> <span class="mh">4</span><span class="p">)</span> <span class="n">stateMux</span><span class="p">(.</span><span class="n">out</span><span class="p">(</span><span class="n">state_din</span><span class="p">),</span> <span class="p">.</span><span class="n">key</span><span class="p">(</span><span class="n">state_dout</span><span class="p">),</span> <span class="p">.</span><span class="n">default_out</span><span class="p">(</span><span class="n">S0</span><span class="p">),</span> <span class="p">.</span><span class="n">lut</span><span class="p">({</span>
+  <span class="n">S0</span><span class="p">,</span> <span class="n">in</span> <span class="o">?</span> <span class="n">S5</span> <span class="o">:</span> <span class="n">S1</span><span class="p">,</span>
+  <span class="n">S1</span><span class="p">,</span> <span class="n">in</span> <span class="o">?</span> <span class="n">S5</span> <span class="o">:</span> <span class="n">S2</span><span class="p">,</span>
+  <span class="n">S2</span><span class="p">,</span> <span class="n">in</span> <span class="o">?</span> <span class="n">S5</span> <span class="o">:</span> <span class="n">S3</span><span class="p">,</span>
+  <span class="n">S3</span><span class="p">,</span> <span class="n">in</span> <span class="o">?</span> <span class="n">S5</span> <span class="o">:</span> <span class="n">S4</span><span class="p">,</span>
+  <span class="n">S4</span><span class="p">,</span> <span class="n">in</span> <span class="o">?</span> <span class="n">S5</span> <span class="o">:</span> <span class="n">S4</span><span class="p">,</span>
+  <span class="n">S5</span><span class="p">,</span> <span class="n">in</span> <span class="o">?</span> <span class="n">S6</span> <span class="o">:</span> <span class="n">S1</span><span class="p">,</span>
+  <span class="n">S6</span><span class="p">,</span> <span class="n">in</span> <span class="o">?</span> <span class="n">S7</span> <span class="o">:</span> <span class="n">S1</span><span class="p">,</span>
+  <span class="n">S7</span><span class="p">,</span> <span class="n">in</span> <span class="o">?</span> <span class="n">S8</span> <span class="o">:</span> <span class="n">S1</span><span class="p">,</span>
+  <span class="n">S8</span><span class="p">,</span> <span class="n">in</span> <span class="o">?</span> <span class="n">S8</span> <span class="o">:</span> <span class="n">S1</span>
+<span class="p">}));</span>
+</pre></div>
+</div>
+</div>
+<p>endmodule</p>
+<p>编译工程，编写测试代码，对此状态机进行仿真。
+图 <a class="reference internal" href="#fig-statesim01"><span class="std std-numref">Fig. 54</span></a> 是此状态机的功能仿真结果。</p>
+<figure class="align-default" id="fig-statesim01">
+<img alt="../_images/statesim01.png" src="../_images/statesim01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 54 </span><span class="caption-text">FSM的功能仿真图</span><a class="headerlink" href="#fig-statesim01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>请自行对电路进行引脚约束，并下载到开发板上，验证其功能。</p>
+<p>上述为一个摩尔型的状态机设计实例，请查阅相关资料，研究米里型状态的设计与此有何不同？</p>
+</section>
+<section id="id5">
+<h3>状态机的编码方式<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h3>
+<p>上一节例子中的状态机的状态寄存器采用顺序二进制编码binary方式，即将状态机的状态依次编码为顺序的二进制数，用顺序二进制数编码可使状态向量的位数最少。如本例中只需要4位二进制数来编码。节省了保存状态向量的逻辑资源。但是在输出时要对状态向量进行解码以产生输出（某个状态有特定的输出，因此输出时要对此状态进行解码，满足状态编号时才可输出特定值），这个解码过程往往需要许多组合逻辑。</p>
+<p>另外，当芯片受到辐射或者其他干扰时，可能会造成状态机跳转失常，甚至跳转到无效的编码状态而出现死机。如：状态机因异常跳转到某状态，而此状态需要等待输入，并作出应答，此时因为状态运转不正常，不会出现输入，状态机就会进入死等状态。</p>
+<p>One-hot编码也是状态机设计中常用的编码，在one-hot编码中，对于任何给定的状态，其状态向量中只有1位是 <code class="docutils literal notranslate"><span class="pre">1</span></code> ，其他所有位的状态都为 <code class="docutils literal notranslate"><span class="pre">0</span></code> ，n个状态就需要n位的状态向量，所以one-hot编码最长。one-hot编码对于状态的判断非常方便，如果某位为 <code class="docutils literal notranslate"><span class="pre">1</span></code> 就是某状态， <code class="docutils literal notranslate"><span class="pre">0</span></code> 则不是此状态。因此判断状态输出时非常简单，只要一、两个简单的 <code class="docutils literal notranslate"><span class="pre">与门</span></code> 或者 <code class="docutils literal notranslate"><span class="pre">或门</span></code> 即可。</p>
+<p>One-hot编码的状态机从一个状态到另一个状态的状态跳转速度非常快，而顺序二进制编码从一个状态跳转到另外一个状态需要较多次跳转，并且随着状态的增加，速度急剧下降。
+在芯片受到干扰时，one-hot编码一般只能跳转到无效状态（如果跳到另一有效状态必须是当前为 <code class="docutils literal notranslate"><span class="pre">1</span></code> 的为变为 <code class="docutils literal notranslate"><span class="pre">0</span></code> ，同时另外一位变成由 <code class="docutils literal notranslate"><span class="pre">0</span></code> 变为 <code class="docutils literal notranslate"><span class="pre">1</span></code> ，这种可能性很小），因此one-hot编码的状态机稳定性高。</p>
+<p>格雷码 gray-code也是状态机设计中常用一种编码方式，它的优点是gray-code状态机在发生状态跳转时，状态向量只有1位发生变化。</p>
+<p>一般而言，顺序二进制编码和gray-code的状态机使用了最少的触发器，较多的组合逻辑，适用于提供更多的组合逻辑的CPLD芯片。对于具有更多触发器资源的FPGA，用one-hot编码实现状态机则更加有效。所以CPLD多使用gray-code，而FPGA多使用one-hot 编码。对于触发器资源非常丰富的FPGA器件，使用one-hot是常用的。</p>
+<p>在表 <a class="reference internal" href="#tab-state02"><span class="std std-numref">Table 8</span></a> 中，状态机有9个状态，我们可以用9个触发器来实现这个状态机的电路，这9个状态触发器用y8 y7 y6 y5 y4 y3 y2 y1 y0表示。该状态机的one-hot编码如表 <a class="reference internal" href="#tab-state02"><span class="std std-numref">Table 8</span></a> 所示。</p>
+<table class="docutils align-default" id="tab-state02">
+<caption><span class="caption-number">Table 8 </span><span class="caption-text">FSM的One-Hot编码</span><a class="headerlink" href="#tab-state02" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>状态</p></th>
+<th class="head"><p>y8</p></th>
+<th class="head"><p>y7</p></th>
+<th class="head"><p>y6</p></th>
+<th class="head"><p>y5</p></th>
+<th class="head"><p>y4</p></th>
+<th class="head"><p>y3</p></th>
+<th class="head"><p>y2</p></th>
+<th class="head"><p>y1</p></th>
+<th class="head"><p>y0</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>A</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>B</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>C</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>D</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>E</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>F</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>G</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>H</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>I</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ps-2">
+<h2>PS/2接口控制器及键盘输入<a class="headerlink" href="#ps-2" title="Permalink to this headline"></a></h2>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/IBM_Personal_System/2">PS/2</a> 是个人计算机串行I/O接口的一种标准，因其首次在IBM PS/2（Personal System/2）机器上使用而得名，PS/2接口可以连接PS/2键盘和PS/2鼠标。
+所谓串行接口是指信息是在单根信号线上按序一位一位发送的。</p>
+<section id="id7">
+<h3>PS/2接口的工作时序<a class="headerlink" href="#id7" title="Permalink to this headline"></a></h3>
+<p>PS/2接口使用两根信号线，一根信号线传输时钟PS2_CLK，另一根传输数据PS2_DAT。时钟信号主要用于指示数据线上的比特位在什么时候是有效的。键盘和主机间可以进行数据双向传送，这里只讨论键盘向主机传送数据的情况。当PS2_DAT和PS2_CLK信号线都为高电平（空闲）时，键盘才可以给主机发送信号。如果主机将PS2_CLK信号置低，键盘将准备接受主机发来的命令。在我们的实验中， 主机不需要发命令，只需将这两根信号线做为输入即可。</p>
+<p>当用户按键或松开时，键盘以每帧11位的格式串行传送数据给主机，同时在PS2_CLK时钟信号上传输对应的时钟（一般为10.0–16.7kHz）。第一位是开始位（逻辑0），后面跟8位数据位（低位在前），一个奇偶校验位（奇校验）和一位停止位（逻辑1）。每位都在时钟的 <strong>下降沿</strong> 有效，图 <a class="reference internal" href="#fig-ps01"><span class="std std-numref">Fig. 55</span></a> 显示了键盘传送一字节数据的时序。在下降沿有效的主要原因是下降沿正好在数据位的中间，因此可以让数据位从开始变化到接收采样时能有一段信号建立时间。</p>
+<figure class="align-default" id="fig-ps01">
+<img alt="../_images/ps01.png" src="../_images/ps01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 55 </span><span class="caption-text">键盘输出数据时序图</span><a class="headerlink" href="#fig-ps01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>键盘通过PS2_DAT引脚发送的信息称为扫描码，每个扫描码可以由单个数据帧或连续多个数据帧构成。当按键被按下时送出的扫描码被称为 <code class="docutils literal notranslate"><span class="pre">通码（Make</span> <span class="pre">Code）</span></code> ，当按键被释放时送出的扫描码称为 <code class="docutils literal notranslate"><span class="pre">断码（Break</span> <span class="pre">Code）</span></code> 。以 <code class="docutils literal notranslate"><span class="pre">W</span></code> 键为例， <code class="docutils literal notranslate"><span class="pre">W</span></code> 键的通码是1Dh，如果 <code class="docutils literal notranslate"><span class="pre">W</span></code> 键被按下，则PS2_DAT引脚将输出一帧数据，其中的8位数据位为1Dh，如果 <code class="docutils literal notranslate"><span class="pre">W</span></code> 键一直没有释放，则不断输出扫描码1Dh 1Dh … 1Dh，直到有其他键按下或者 <code class="docutils literal notranslate"><span class="pre">W</span></code> 键被放开。某按键的断码是F0h加此按键的通码，如释放 <code class="docutils literal notranslate"><span class="pre">W</span></code> 键时输出的断码为F0h 1Dh，分两帧传输。</p>
+<p>多个键被同时按下时，将逐个输出扫描码，如：先按左 <code class="docutils literal notranslate"><span class="pre">Shift</span></code> 键（扫描码为12h）、再按 <code class="docutils literal notranslate"><span class="pre">W</span></code> 键、放开 <code class="docutils literal notranslate"><span class="pre">W</span></code> 键、再放开左 <code class="docutils literal notranslate"><span class="pre">Shift</span></code> 键，则此过程送出的全部扫描码为：12h 1Dh F0h 1Dh F0h 12h。</p>
+</section>
+<section id="id8">
+<h3>键盘扫描码<a class="headerlink" href="#id8" title="Permalink to this headline"></a></h3>
+<p>每个键都有唯一的通码和断码。键盘所有键的扫描码组成的集合称为扫描码集。共有三套标准的扫描码集，所有现代的键盘默认使用第二套扫描码。图 <a class="reference internal" href="#fig-ps02"><span class="std std-numref">Fig. 56</span></a> 显示了键盘各键的扫描码（以十六进制表示），如Caps键的扫描码是58h。
+由图 <a class="reference internal" href="#fig-ps02"><span class="std std-numref">Fig. 56</span></a> 可以看出，键盘上各按键的扫描码是随机排列的，如果想迅速的将键盘扫描码转换为ASCII码，一个最简单的方法就是利用查找表 <a class="reference external" href="https://en.wikipedia.org/wiki/Lookup_table">LookUp Table, LUT</a> ，扫描码到ASCII码的转换表格请读者自己生成。</p>
+<figure class="align-default" id="fig-ps02">
+<img alt="../_images/ps02.png" src="../_images/ps02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 56 </span><span class="caption-text">键盘扫描码</span><a class="headerlink" href="#fig-ps02" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>图 <a class="reference internal" href="#fig-ps03"><span class="std std-numref">Fig. 57</span></a> 是扩展键盘和数字键盘的扫描码。</p>
+<figure class="align-default" id="fig-ps03">
+<img alt="../_images/ps03.png" src="../_images/ps03.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 57 </span><span class="caption-text">扩展键盘和数字键盘的扫描码</span><a class="headerlink" href="#fig-ps03" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="ps-2fpga">
+<h3>PS/2接口与FPGA的连接<a class="headerlink" href="#ps-2fpga" title="Permalink to this headline"></a></h3>
+<p>图 <a class="reference internal" href="#fig-ps05"><span class="std std-numref">Fig. 58</span></a> 描述了DE10-Standard开发板上的PS/2接口。该接口可以通过如图 <a class="reference internal" href="#fig-ps06"><span class="std std-numref">Fig. 59</span></a> 的Y型转接口连接两个设备。
+当只连接一个设备时，信号连接至PS2_DAT和PS2_CLK。</p>
+<figure class="align-default" id="fig-ps05">
+<img alt="../_images/ps05.png" src="../_images/ps05.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 58 </span><span class="caption-text">PS/2连线</span><a class="headerlink" href="#fig-ps05" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-ps06">
+<img alt="../_images/ps06.png" src="../_images/ps06.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 59 </span><span class="caption-text">Y型转接口</span><a class="headerlink" href="#fig-ps06" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>图 <a class="reference internal" href="#fig-ps07"><span class="std std-numref">Fig. 60</span></a> 为DE10-Standard上的PS/2接口引脚列表。</p>
+<figure class="align-default" id="fig-ps07">
+<img alt="../_images/ps07.png" src="../_images/ps07.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 60 </span><span class="caption-text">DE10-Standard开发板PS/2引脚</span><a class="headerlink" href="#fig-ps07" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="id9">
+<h3>PS/2键盘控制器的设计<a class="headerlink" href="#id9" title="Permalink to this headline"></a></h3>
+<p>以下为接收键盘数据的Verilog HDL代码，此代码只负责接收键盘送来的数据，如何识别出按下的到底是什么按键由其他模块来处理。如何显示出这些数据或键符也请读者自行设计。</p>
+<div class="literal-block-wrapper docutils container" id="list-ps02">
+<div class="code-block-caption"><span class="caption-number">Listing 22 </span><span class="caption-text">键盘控制器</span><a class="headerlink" href="#list-ps02" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">ps2_keyboard</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="n">clrn</span><span class="p">,</span><span class="n">ps2_clk</span><span class="p">,</span><span class="n">ps2_data</span><span class="p">,</span><span class="n">data</span><span class="p">,</span>
+                    <span class="n">ready</span><span class="p">,</span><span class="n">nextdata_n</span><span class="p">,</span><span class="n">overflow</span><span class="p">);</span>
+    <span class="k">input</span> <span class="n">clk</span><span class="p">,</span><span class="n">clrn</span><span class="p">,</span><span class="n">ps2_clk</span><span class="p">,</span><span class="n">ps2_data</span><span class="p">;</span>
+    <span class="k">input</span> <span class="n">nextdata_n</span><span class="p">;</span>
+    <span class="k">output</span> <span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">data</span><span class="p">;</span>
+    <span class="k">output</span> <span class="kt">reg</span> <span class="n">ready</span><span class="p">;</span>
+    <span class="k">output</span> <span class="kt">reg</span> <span class="n">overflow</span><span class="p">;</span>     <span class="c1">// fifo overflow</span>
+    <span class="c1">// internal signal, for test</span>
+    <span class="kt">reg</span> <span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">buffer</span><span class="p">;</span>        <span class="c1">// ps2_data bits</span>
+    <span class="kt">reg</span> <span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">fifo</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>     <span class="c1">// data fifo</span>
+    <span class="kt">reg</span> <span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">w_ptr</span><span class="p">,</span><span class="n">r_ptr</span><span class="p">;</span>   <span class="c1">// fifo write and read pointers</span>
+    <span class="kt">reg</span> <span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">count</span><span class="p">;</span>  <span class="c1">// count ps2_data bits</span>
+    <span class="c1">// detect falling edge of ps2_clk</span>
+    <span class="kt">reg</span> <span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">ps2_clk_sync</span><span class="p">;</span>
+
+    <span class="k">always</span> <span class="p">@(</span><span class="k">posedge</span> <span class="n">clk</span><span class="p">)</span> <span class="k">begin</span>
+        <span class="n">ps2_clk_sync</span> <span class="o">&lt;=</span>  <span class="p">{</span><span class="n">ps2_clk_sync</span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">],</span><span class="n">ps2_clk</span><span class="p">};</span>
+    <span class="k">end</span>
+
+    <span class="kt">wire</span> <span class="n">sampling</span> <span class="o">=</span> <span class="n">ps2_clk_sync</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">ps2_clk_sync</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+
+    <span class="k">always</span> <span class="p">@(</span><span class="k">posedge</span> <span class="n">clk</span><span class="p">)</span> <span class="k">begin</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">clrn</span> <span class="o">==</span> <span class="mh">0</span><span class="p">)</span> <span class="k">begin</span> <span class="c1">// reset</span>
+            <span class="n">count</span> <span class="o">&lt;=</span> <span class="mh">0</span><span class="p">;</span> <span class="n">w_ptr</span> <span class="o">&lt;=</span> <span class="mh">0</span><span class="p">;</span> <span class="n">r_ptr</span> <span class="o">&lt;=</span> <span class="mh">0</span><span class="p">;</span> <span class="n">overflow</span> <span class="o">&lt;=</span> <span class="mh">0</span><span class="p">;</span> <span class="n">ready</span><span class="o">&lt;=</span> <span class="mh">0</span><span class="p">;</span>
+        <span class="k">end</span>
+        <span class="k">else</span> <span class="k">begin</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="n">ready</span> <span class="p">)</span> <span class="k">begin</span> <span class="c1">// read to output next data</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">nextdata_n</span> <span class="o">==</span> <span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">)</span> <span class="c1">//read next data</span>
+                <span class="k">begin</span>
+                    <span class="n">r_ptr</span> <span class="o">&lt;=</span> <span class="n">r_ptr</span> <span class="o">+</span> <span class="mh">3</span><span class="mb">&#39;b1</span><span class="p">;</span>
+                    <span class="k">if</span><span class="p">(</span><span class="n">w_ptr</span><span class="o">==</span><span class="p">(</span><span class="n">r_ptr</span><span class="o">+</span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">))</span> <span class="c1">//empty</span>
+                        <span class="n">ready</span> <span class="o">&lt;=</span> <span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+                <span class="k">end</span>
+            <span class="k">end</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">sampling</span><span class="p">)</span> <span class="k">begin</span>
+              <span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">==</span> <span class="mh">4</span><span class="mi">&#39;d10</span><span class="p">)</span> <span class="k">begin</span>
+                <span class="k">if</span> <span class="p">((</span><span class="n">buffer</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span> <span class="o">==</span> <span class="mh">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span>  <span class="c1">// start bit</span>
+                    <span class="p">(</span><span class="n">ps2_data</span><span class="p">)</span>       <span class="o">&amp;&amp;</span>  <span class="c1">// stop bit</span>
+                    <span class="p">(</span><span class="o">^</span><span class="n">buffer</span><span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">1</span><span class="p">]))</span> <span class="k">begin</span>      <span class="c1">// odd  parity</span>
+                    <span class="n">fifo</span><span class="p">[</span><span class="n">w_ptr</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">buffer</span><span class="p">[</span><span class="mh">8</span><span class="o">:</span><span class="mh">1</span><span class="p">];</span>  <span class="c1">// kbd scan code</span>
+                    <span class="n">w_ptr</span> <span class="o">&lt;=</span> <span class="n">w_ptr</span><span class="o">+</span><span class="mh">3</span><span class="mb">&#39;b1</span><span class="p">;</span>
+                    <span class="n">ready</span> <span class="o">&lt;=</span> <span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+                    <span class="n">overflow</span> <span class="o">&lt;=</span> <span class="n">overflow</span> <span class="o">|</span> <span class="p">(</span><span class="n">r_ptr</span> <span class="o">==</span> <span class="p">(</span><span class="n">w_ptr</span> <span class="o">+</span> <span class="mh">3</span><span class="mb">&#39;b1</span><span class="p">));</span>
+                <span class="k">end</span>
+                <span class="n">count</span> <span class="o">&lt;=</span> <span class="mh">0</span><span class="p">;</span>     <span class="c1">// for next</span>
+              <span class="k">end</span> <span class="k">else</span> <span class="k">begin</span>
+                <span class="n">buffer</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">ps2_data</span><span class="p">;</span>  <span class="c1">// store ps2_data</span>
+                <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">count</span> <span class="o">+</span> <span class="mh">3</span><span class="mb">&#39;b1</span><span class="p">;</span>
+              <span class="k">end</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">assign</span> <span class="n">data</span> <span class="o">=</span> <span class="n">fifo</span><span class="p">[</span><span class="n">r_ptr</span><span class="p">];</span> <span class="c1">//always set output data</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>代码首先通过ps2_clk_sync记录PS2时钟信号的历史信息，并检测时钟的下降沿，当发现下降沿时将sampling置一。然后开始逐位接收数据并放入缓冲区fifo队列,收集完11个bit后将缓冲区转移至数据队列fifo。</p>
+<p>键盘控制器模块设置了一个8字节的fifo队列，以防止键盘数据发送过快，处理模块来不及取走数据而丢失。这类fifo队列在数字系统中很常见，它主要用于在两个处理速度不同的模块之间传递数据。
+上游模块负责在队列中添加数据，下游模块负责取出数据进行处理。fifo队列的缓冲作用可以在下游处理模块来不及处理数据时临时存放数据。
+fifo是一个先进先出的队列，配有写指针和读指针。当队列不空时，送出ready信号，表示此时有数据要处理；
+当队列溢出时，送出overflow信号。按键处理系统调用该模块时，需要在键盘控制器ready信号为1的情况下读取键盘数据，确认读取完毕后将nextdata_n置零 <strong>一个周期</strong> 。
+这时，键盘控制器模块收到确认读取完毕的信号，将读指针前移，准备提供下一数据。请读者自行考虑处理模块与本模块的配合时序，避免漏键或者重复读取。当然，也可自行设计两个模块交互的时序。</p>
+<p>图 <a class="reference internal" href="#fig-ps08"><span class="std std-numref">Fig. 61</span></a> 是这段代码的仿真波形，显示的是接收左 <code class="docutils literal notranslate"><span class="pre">Shift</span></code> 键和 <code class="docutils literal notranslate"><span class="pre">W</span></code> 键的扫描码 <code class="docutils literal notranslate"><span class="pre">12h</span></code> 和 <code class="docutils literal notranslate"><span class="pre">1Dh</span></code> 的情形。请注意，以接收 <code class="docutils literal notranslate"><span class="pre">12h</span></code> 为例，PS/2接口数据传送顺序为：起始位（1’b0）+八位数据位（由低到高）+奇校验位+停止位(1’b1)，那么传送 <code class="docutils literal notranslate"><span class="pre">12h</span></code> 时从PS2_DAT端送出的数据顺序应该为 <code class="docutils literal notranslate"><span class="pre">0010</span> <span class="pre">0100</span> <span class="pre">011</span></code> 。</p>
+<figure class="align-default" id="fig-ps08">
+<img alt="../_images/ps08.png" src="../_images/ps08.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 61 </span><span class="caption-text">键盘仿真波形</span><a class="headerlink" href="#fig-ps08" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="fpga">
+<h2>FPGA调试指导<a class="headerlink" href="#fpga" title="Permalink to this headline"></a></h2>
+<p>本次实验涉及到FPGA连接键盘，相比switch，led等，键盘的接口逻辑要复杂很多，加上需要状态机处理输入数据，不可避免需要多个模块。工程复杂后，选择合适的调试工具会很重要。如果使用开发板逐步调试，这将是一件费时费力的事情，因为生成bitstream文件是个比较漫长的过程。这种情况下，我们一般会选择先做仿真，验证代码逻辑部分是否正确。</p>
+<p>前面的实验中，输入的器件一般是button和switch，他们很容易使用input array仿真模拟。本次实验需要自己编写仿真模型，模拟前文所述的键盘接口时序。</p>
+<div class="literal-block-wrapper docutils container" id="list-ps03">
+<div class="code-block-caption"><span class="caption-number">Listing 23 </span><span class="caption-text">键盘仿真模型</span><a class="headerlink" href="#list-ps03" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="no">`timescale</span> <span class="mh">1</span><span class="n">ns</span> <span class="o">/</span> <span class="mh">1</span><span class="n">ps</span>
+<span class="k">module</span> <span class="n">ps2_keyboard_model</span><span class="p">(</span>
+    <span class="k">output</span> <span class="kt">reg</span> <span class="n">ps2_clk</span><span class="p">,</span>
+    <span class="k">output</span> <span class="kt">reg</span> <span class="n">ps2_data</span>
+    <span class="p">);</span>
+<span class="k">parameter</span> <span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">kbd_clk_period</span> <span class="o">=</span> <span class="mh">60</span><span class="p">;</span>
+<span class="k">initial</span> <span class="n">ps2_clk</span> <span class="o">=</span> <span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+
+<span class="k">task</span> <span class="n">kbd_sendcode</span><span class="p">;</span>
+    <span class="k">input</span> <span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">code</span><span class="p">;</span> <span class="c1">// key to be sent</span>
+    <span class="k">integer</span> <span class="n">i</span><span class="p">;</span>
+
+    <span class="kt">reg</span><span class="p">[</span><span class="mh">10</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">send_buffer</span><span class="p">;</span>
+    <span class="k">begin</span>
+        <span class="n">send_buffer</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span>   <span class="o">=</span> <span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>  <span class="c1">// start bit</span>
+        <span class="n">send_buffer</span><span class="p">[</span><span class="mh">8</span><span class="o">:</span><span class="mh">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">code</span><span class="p">;</span>  <span class="c1">// code</span>
+        <span class="n">send_buffer</span><span class="p">[</span><span class="mh">9</span><span class="p">]</span>   <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="o">^</span><span class="n">code</span><span class="p">);</span> <span class="c1">// odd parity bit</span>
+        <span class="n">send_buffer</span><span class="p">[</span><span class="mh">10</span><span class="p">]</span>  <span class="o">=</span> <span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>  <span class="c1">// stop bit</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mh">0</span><span class="p">;</span>
+        <span class="k">while</span><span class="p">(</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mh">11</span><span class="p">)</span> <span class="k">begin</span>
+            <span class="c1">// set kbd_data</span>
+            <span class="n">ps2_data</span> <span class="o">=</span> <span class="n">send_buffer</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+            <span class="p">#(</span><span class="n">kbd_clk_period</span><span class="o">/</span><span class="mh">2</span><span class="p">)</span> <span class="n">ps2_clk</span> <span class="o">=</span> <span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+            <span class="p">#(</span><span class="n">kbd_clk_period</span><span class="o">/</span><span class="mh">2</span><span class="p">)</span> <span class="n">ps2_clk</span> <span class="o">=</span> <span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mh">1</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+<span class="k">endtask</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="list-ps04">
+<div class="code-block-caption"><span class="caption-number">Listing 24 </span><span class="caption-text">键盘测试代码</span><a class="headerlink" href="#list-ps04" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="no">`timescale</span> <span class="mh">1</span><span class="n">ns</span> <span class="o">/</span> <span class="mh">1</span><span class="n">ps</span>
+<span class="k">module</span> <span class="n">keyboard_sim</span><span class="p">;</span>
+
+<span class="cm">/* parameter */</span>
+<span class="k">parameter</span> <span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">clock_period</span> <span class="o">=</span> <span class="mh">10</span><span class="p">;</span>
+
+<span class="cm">/* ps2_keyboard interface signals */</span>
+<span class="kt">reg</span> <span class="n">clk</span><span class="p">,</span><span class="n">clrn</span><span class="p">;</span>
+<span class="kt">wire</span> <span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">data</span><span class="p">;</span>
+<span class="kt">wire</span> <span class="n">ready</span><span class="p">,</span><span class="n">overflow</span><span class="p">;</span>
+<span class="kt">wire</span> <span class="n">kbd_clk</span><span class="p">,</span> <span class="n">kbd_data</span><span class="p">;</span>
+<span class="kt">reg</span> <span class="n">nextdata_n</span><span class="p">;</span>
+
+<span class="n">ps2_keyboard_model</span> <span class="n">model</span><span class="p">(</span>
+    <span class="p">.</span><span class="n">ps2_clk</span><span class="p">(</span><span class="n">kbd_clk</span><span class="p">),</span>
+    <span class="p">.</span><span class="n">ps2_data</span><span class="p">(</span><span class="n">kbd_data</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="n">ps2_keyboard</span> <span class="n">inst</span><span class="p">(</span>
+    <span class="p">.</span><span class="n">clk</span><span class="p">(</span><span class="n">clk</span><span class="p">),</span>
+    <span class="p">.</span><span class="n">clrn</span><span class="p">(</span><span class="n">clrn</span><span class="p">),</span>
+    <span class="p">.</span><span class="n">ps2_clk</span><span class="p">(</span><span class="n">kbd_clk</span><span class="p">),</span>
+    <span class="p">.</span><span class="n">ps2_data</span><span class="p">(</span><span class="n">kbd_data</span><span class="p">),</span>
+    <span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+    <span class="p">.</span><span class="n">ready</span><span class="p">(</span><span class="n">ready</span><span class="p">),</span>
+    <span class="p">.</span><span class="n">nextdata_n</span><span class="p">(</span><span class="n">nextdata_n</span><span class="p">),</span>
+    <span class="p">.</span><span class="n">overflow</span><span class="p">(</span><span class="n">overflow</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">initial</span> <span class="k">begin</span> <span class="cm">/* clock driver */</span>
+    <span class="n">clk</span> <span class="o">=</span> <span class="mh">0</span><span class="p">;</span>
+    <span class="k">forever</span>
+        <span class="p">#(</span><span class="n">clock_period</span><span class="o">/</span><span class="mh">2</span><span class="p">)</span> <span class="n">clk</span> <span class="o">=</span> <span class="o">~</span><span class="n">clk</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="k">initial</span> <span class="k">begin</span>
+    <span class="n">clrn</span> <span class="o">=</span> <span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>  <span class="p">#</span><span class="mh">20</span><span class="p">;</span>
+    <span class="n">clrn</span> <span class="o">=</span> <span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>  <span class="p">#</span><span class="mh">20</span><span class="p">;</span>
+    <span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;h1C</span><span class="p">);</span> <span class="c1">// press &#39;A&#39;</span>
+    <span class="p">#</span><span class="mh">20</span> <span class="n">nextdata_n</span> <span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span> <span class="p">#</span><span class="mh">20</span> <span class="n">nextdata_n</span> <span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="c1">//read data</span>
+    <span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;hF0</span><span class="p">);</span> <span class="c1">// break code</span>
+    <span class="p">#</span><span class="mh">20</span> <span class="n">nextdata_n</span> <span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span> <span class="p">#</span><span class="mh">20</span> <span class="n">nextdata_n</span> <span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span> <span class="c1">//read data</span>
+    <span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;h1C</span><span class="p">);</span> <span class="c1">// release &#39;A&#39;</span>
+    <span class="p">#</span><span class="mh">20</span> <span class="n">nextdata_n</span> <span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span> <span class="p">#</span><span class="mh">20</span> <span class="n">nextdata_n</span> <span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span> <span class="c1">//read data</span>
+    <span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;h1B</span><span class="p">);</span> <span class="c1">// press &#39;S&#39;</span>
+    <span class="p">#</span><span class="mh">20</span> <span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;h1B</span><span class="p">);</span> <span class="c1">// keep pressing &#39;S&#39;</span>
+    <span class="p">#</span><span class="mh">20</span> <span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;h1B</span><span class="p">);</span> <span class="c1">// keep pressing &#39;S&#39;</span>
+    <span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;hF0</span><span class="p">);</span> <span class="c1">// break code</span>
+    <span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;h1B</span><span class="p">);</span> <span class="c1">// release &#39;S&#39;</span>
+    <span class="p">#</span><span class="mh">20</span><span class="p">;</span>
+    <span class="nb">$stop</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>表 <a class="reference internal" href="#list-ps03"><span class="std std-numref">Listing 23</span></a> 中，我们创建了ps2_keyboard_model模块，这个模块的输出对应键盘的两个接口信号，模块中主要是kbd_sendcode task。</p>
+<p>Verilog语言中具有类似C语言函数的结构有task和function，他们可以增加代码可读性和重复使用性。Function用来描述组合逻辑，只能有一个返回值，function的内部不能包含时序控制。Task类似procedure，执行一段verilog代码，task中可以有任意数量的输入和输出，task也可以包含时序控制。</p>
+<p>kbd_sendcode task用来控制键盘接口发送一个键盘码，通码或断码，只需要将8bit码输入，task内部会添加start bit，odd parity bit和stop bit。
+注意：kbd_clk_period设置为60ns，实际的键盘时钟没有这么快，这里是为了加速仿真。</p>
+<p>keyboard_sim中，分别将ps2_keyboard_model和ps2_keyboard实例化，并连接起来。在initial部分，可以直接调用model.kbd_sendcode发送特定的扫描码，请修改这部分代码，模拟实验需要的键盘按键序列。模拟代码中对读取信号采用直接设置的方式，也可以根据自己实现上层模块控制读取信号。</p>
+<p>在实际物理键盘测试时，建议先将键盘控制模块的ready、sampling或overflow等重要信号引至顶层模块用LED显示，确保键盘基本通信正常。
+然后如果需要测试键码的准确性，可将收到的每个键码用2个七段数码管显示出来。开发板上的6个七段数码管可以显示三位键码，如果每次将前面收到的键码左移，就可以看到历史记录中最新收到的三个键码。
+在这种情况下认真反复测试，确保没有丢键码，重复键码的情况。例如按下并放开 <code class="docutils literal notranslate"><span class="pre">A</span></code> 键一次，七段数码管上应该显示 <code class="docutils literal notranslate"><span class="pre">1C</span> <span class="pre">F0</span> <span class="pre">1C</span></code> 。</p>
+</section>
+<section id="id10">
+<h2>实验验收内容<a class="headerlink" href="#id10" title="Permalink to this headline"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">上板验收: 实现单个按键的ASCII码显示</p>
+<ul class="simple">
+<li><p>七段数码管低两位显示当前按键的键码，中间两位显示对应的ASCII码（转换可以考虑自行设计一个ROM并初始化）。只需完成字符和数字键的输入，不需要实现组合键和小键盘。</p></li>
+<li><p>当按键松开时，七段数码管的低四位全灭。</p></li>
+<li><p>七段数码管的高两位显示按键的总次数。按住不放只算一次按键。只考虑顺序按下和放开的情况，不考虑同时按多个键的情况。</p></li>
+</ul>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">高级选做内容</p>
+<ul class="simple">
+<li><p>支持Shift，CTRL等组合键，在LED上显示组合键是否按下的状态指示</p></li>
+<li><p>支持Shift键与字母/数字键同时按下，相互不冲突</p></li>
+<li><p>支持输入大写字符，显示对应的ASCII码</p></li>
+</ul>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">在线测试</p>
+<p>PS/2键盘仿真</p>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">在线测试</p>
+<p>比特流加密</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="06.html" class="btn btn-neutral float-left" title="实验六 移位寄存器及桶形移位器" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="08.html" class="btn btn-neutral float-right" title="实验八 VGA接口控制器实现" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, 王炜 吴海军 陈璐.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

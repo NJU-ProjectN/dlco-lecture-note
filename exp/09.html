@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>实验九 字符输入界面 &mdash; 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="实验十 CPU数据通路" href="10.html" />
+    <link rel="prev" title="实验八 VGA接口控制器实现" href="08.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">实验一 选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">实验二 译码器和编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">实验三 加法器与ALU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">实验四 计数器和时钟</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">实验五 寄存器组及存储器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">实验六 移位寄存器及桶形移位器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">实验七 状态机及键盘输入</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">实验八 VGA接口控制器实现</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">实验九 字符输入界面</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">字符显示</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">系统设计</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">扫描显示</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">显存读写</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">实验验收内容</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">实验十 CPU数据通路</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">实验十一 RV32I单周期CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">实验十二 计算机系统</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>实验九 字符输入界面</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/exp/09.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>实验九 字符输入界面<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
+<p><em>第一代计算机的输入，靠的不过是美化了的打字机键盘，其输出则靠高速印刷或直观显示。哈尔在必要时也可以做这些，但他和同舟共济的人们打交道大多数时间是通过说话。</em></p>
+<blockquote>
+<div><p>— 《2001：太空奥德赛》， 阿瑟.克拉克</p>
+</div></blockquote>
+<p>本实验将利用前面实现过的键盘和显示器功能来搭建一个简单的字符输入界面，通过该系统的实现深入理解多个模块之间的交互和接口的设计。</p>
+<section id="id2">
+<h2>字符显示<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h2>
+<p>从之前的VGA图片显示实验，我们体会到图形界面需要大量的资源支持，在FPGA上实现高精度、高分辨率的图形界面在资源上有些捉襟见肘。但是，FPGA上的资源比几十年前的第一代PC机要丰富许多。用FPGA来实现一个简单的字符输入和显示界面并不难。</p>
+<p>字符显示界面只在屏幕上显示ASCII字符，其所需的资源比较少。首先，ASCII字符用7bit表示，共128个字符。大部分情况下，我们会用8bit来表示单个字符，所以一般系统会预留256个字符。我们可以在系统中预先存储这256个字符的字模点阵，如图 <a class="reference internal" href="#fig-ascii"><span class="std std-numref">Fig. 67</span></a> 所示。</p>
+<figure class="align-default" id="fig-ascii">
+<img alt="../_images/Codepage-737.png" src="../_images/Codepage-737.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 67 </span><span class="caption-text">ASCII字符字模</span><a class="headerlink" href="#fig-ascii" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>这里每个字符高为16个点，宽为9个点。因此单个字符可以用16个9bit数来表示，每个9bit数代表字符的一行，对应的点为 <code class="docutils literal notranslate"><span class="pre">1</span></code> 时显示白色，为 <code class="docutils literal notranslate"><span class="pre">0</span></code> 时显示黑色。因此，我们只需要 <span class="math notranslate nohighlight">\(256\times 16 \times 9 \approx 37\)</span> kbit的空间即可存储整个点阵。同学们可以自己用高级语言生成点阵存储文件。我们也提供了可通过$readmemh语句读取的 <a class="reference external" href="../resources/vga_font.txt">点阵文本文件</a> ，其中每3个16进制数(共12bit)表示单个字符的一行，该行的9个点中的最左边点在12bit中的最低位（ <strong>请注意高低位顺序</strong> ），然后依次类推，最高的3个bit始终为0。每个字符16行，共256个字符。</p>
+<p>例如，ASCII字符 <code class="docutils literal notranslate"><span class="pre">A</span></code> 的编码是41h（十进制65）。因此其字模对应的地址是 <span class="math notranslate nohighlight">\(16\times65=1040\)</span> （文本文件起始从1行开始，因此在第1041行）。以A字符的第4行为例，文件中存储的是038h，二进制对应是0000 0011 1000。最低位为0，所以左边第一个像素为0，左起第4到第6个像素为1。如图 <a class="reference internal" href="#fig-chara"><span class="std std-numref">Fig. 68</span></a> 所示，此处为方便显示颜色是黑白颠倒的。</p>
+<figure class="align-default" id="fig-chara">
+<img alt="../_images/chara.png" src="../_images/chara.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 68 </span><span class="caption-text">字模 <code class="docutils literal notranslate"><span class="pre">A</span></code> 与存储器的关系</span><a class="headerlink" href="#fig-chara" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>有了字符点阵后，系统就不再需要记录屏幕上每个点的颜色信息了，只需要记录屏幕上显示的ASCII字符即可。在显示时，根据当前屏幕位置，确定应该显示那个字符，再查找对应的字符点阵即可完成显示。对于 <span class="math notranslate nohighlight">\(640\times 480\)</span> 的屏幕，可以显示30行（ <span class="math notranslate nohighlight">\(30\times 16=480\)</span> ），70列（ <span class="math notranslate nohighlight">\(70\times 9=630\)</span> ）的ASCII字符。系统的显存只需要 <span class="math notranslate nohighlight">\(30\times70\)</span> 大小，每单元存储8bit的ASCII字符即可。这样，我们的字符显存只需要2.1kByte，加上点阵的6.144kByte，总共只需要不到10kByte的存储，FPGA片上的存储足够实现了。</p>
+</section>
+<section id="id4">
+<h2>系统设计<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h2>
+<section id="id5">
+<h3>扫描显示<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h3>
+<p>我们之前已经实现了VGA控制模块，该模块可以输出当前扫描到的行和列的位置信息，我们只需要稍加改动，即可让其输出当前扫描的位置对应 <span class="math notranslate nohighlight">\(30\times 70\)</span> 字符阵列的坐标( <span class="math notranslate nohighlight">\(0\leq x \leq 69\)</span> ,  <span class="math notranslate nohighlight">\(0\leq y\leq 29\)</span> )。利用该坐标，我们可以查询字符显存，获取对应字符的ASCII编码。利用ASCII编码，我们可以查询对应的点阵ROM，再根据扫描线的行和列信息，可以知道当前扫描到的是字符内的哪个点。这时，可以根据该点对应的bit是1还是0，选择输出白色还是黑色。</p>
+<figure class="align-default" id="fig-ascii01">
+<img alt="../_images/ascii02.png" src="../_images/ascii02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 69 </span><span class="caption-text">字符显示流程示意图</span><a class="headerlink" href="#fig-ascii01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>我们将显示的过程总结如下：</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>根据当前扫描位置，获取对应的字符的x,y坐标，以及扫描到单个字符点阵内的行列信息</p></li>
+<li><p>根据字符的x,y坐标，查询字符显存，获取对应ASCII编码</p></li>
+<li><p>根据ASCII编码和字符内的行信息，查询点阵ROM，获取对应行的9bit数据</p></li>
+<li><p>根据字符内的列信息，取出对应的bit，并根据该bit设置颜色。此处可以显示黑底白字或其他彩色字符，只需要按自己的需求分别设置背景颜色和字符颜色即可。</p></li>
+</ul>
+</div></blockquote>
+<p>由于VGA的扫描频率是25MHz，每个点扫过的时间非常短。因此，在扫过一个点的时间内要完成这一系列操作需要仔细地设计时序。首先，FPGA在这么短的时间内是很难完成乘除法的。因此，设计时要合理选择存储器的大小和寻址方式，将地址计算简化为简单的计数和逻辑操作。其次，对每个点我们要查询多个存储器，每个存储器的查询方式需要合理设计：是采用RAM还是ROM？是上升沿读出还是下降沿读出？这些都有可能影响系统最终的性能。存在性能问题的显示有可能会出现彩色边缘或者模糊的现象，这些都说明系统实现上存在潜在问题。</p>
+<div class="admonition mydanger">
+<p class="admonition-title">不要使用寄存器来实现大容量存储</p>
+<p>如果用寄存器来实现所需的存储器，而不用片上的M10K或MLAB，则有可能会占用大量资源，造成FPGA资源紧张，编译时间大大增加。</p>
+</div>
+</section>
+<section id="id6">
+<h3>显存读写<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h3>
+<p>对于键盘输入，我们可以复用之前实现的键盘控制器。在键盘有输入的时候对字符显存进行改写，将按键对应的ASCII码写入显存的合适位置，这样输入就可以直接反馈到屏幕上了。</p>
+<div class="admonition mydanger">
+<p class="admonition-title">注意显存的读写</p>
+<p>存储ASCII码的字符显存会经常被VGA扫描模块高速读取，而键盘模块需要对显存进行写入，需要注意两者的协调。</p>
+</div>
+</section>
+</section>
+<section id="id7">
+<h2>实验验收内容<a class="headerlink" href="#id7" title="Permalink to this headline"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">上板验收: 实现字符交互界面</p>
+<p>实现一个可以用键盘输入，并在VGA显示器上回显的交互界面。界面实现要求可以参考DOS字符界面，Window命令行或Linux的字符终端。</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>支持所有小写英文字母和数字输入，以及不用Shift即可输入的符号。</p></li>
+<li><p>一直按压某个键时，重复输出该字符。</p></li>
+<li><p>输入至行尾后自动换行，输入回车也换行。</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">可选扩展要求（只需要完成五种以上即可满分）</p>
+<ul class="simple">
+<li><p>可以显示光标，建议可以用显示闪烁的竖线或横线作为光标。</p></li>
+<li><p>支持BackSpace键删除光标前的字符。</p></li>
+<li><p>BackSpace删除至本行开始后，再按BackSpace可以删除回车键，光标停留在上一行末尾的非空字符后。</p></li>
+<li><p>支持自动滚屏，即输入到最后一行后回车出现新空白行，并且所有已输入的行自动上移一行。</p></li>
+<li><p>支持Shift键以及大小写字符输入。</p></li>
+<li><p>支持方向键移动光标。</p></li>
+<li><p>在行首显示命令提示符。</p></li>
+</ul>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">更酷炫的效果</p>
+<p>感兴趣的同学还可以考虑如何实现彩色字符、绘制ASCII艺术图或实现类似Matrix开头的字符雨效果。</p>
+</div>
+<div class="admonition myhint">
+<p class="admonition-title">最低要求</p>
+<p>本实验有一定难度，最低完成要求是能够在显示器上显示预先设定好的字符，但 <strong>仅满足最低要求无法获得全部分数</strong> 。</p>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">在线测试</p>
+<p>简单图灵机实现</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="08.html" class="btn btn-neutral float-left" title="实验八 VGA接口控制器实现" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="10.html" class="btn btn-neutral float-right" title="实验十 CPU数据通路" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, 王炜 吴海军 陈璐.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
