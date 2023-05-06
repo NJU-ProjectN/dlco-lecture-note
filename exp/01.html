@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>实验一 选择器 &mdash; 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="实验二 译码器和编码器" href="02.html" />
+    <link rel="prev" title="南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">实验一 选择器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2选1多路选择器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">数据流建模</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">结构化建模</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">行为建模</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">4选1多路选择器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">一个通用的选择器模板</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">实验验收内容</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">实验二 译码器和编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">实验三 加法器与ALU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">实验四 计数器和时钟</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">实验五 寄存器组及存储器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">实验六 移位寄存器及桶形移位器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">实验七 状态机及键盘输入</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">实验八 VGA接口控制器实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">实验九 字符输入界面</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">实验十 CPU数据通路</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">实验十一 RV32I单周期CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">实验十二 计算机系统</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">实验一 选择器</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>实验一 选择器<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h1>
+<blockquote>
+<div><p>To be, or not to be, that is the question.</p>
+<p class="attribution">—《哈姆雷特》，莎士比亚</p>
+</div></blockquote>
+<p>选择器是数字逻辑系统的常用电路，是组合逻辑电路中的主要组成元件之一，它是由多路数据输入、一位或多位的选择控制端，和一路数据输出所组成的。多路选择器从多路输入中，选取其中一路将其传送到输出端，由选择控制信号决定输出的是第几路输入信号。数字电路中存在大量的并行运算，通常的设计思路是使用电路同时生成所有可能用到的数字信号，再利用选择器选择最终输出哪一路信号。</p>
+<p>本次实验将介绍几种常用的多路选择器的设计方法；Verilog语言中的always语句块、if-else语句和case语句的使用等。最后请读者自行设计一个多路选择器，熟悉电路设计的基本流程和Quartus的使用。</p>
+<section id="id2">
+<h2>2选1多路选择器<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>下图是2选1选择器的模块图和真值表，图中 <span class="math notranslate nohighlight">\(a\)</span> 和 <span class="math notranslate nohighlight">\(b\)</span> 为输入端； <span class="math notranslate nohighlight">\(y\)</span> 为输出端， <span class="math notranslate nohighlight">\(s\)</span> 是选择端，选择两个输入的其中一个输出。当 <span class="math notranslate nohighlight">\(s\)</span> 为0时， <span class="math notranslate nohighlight">\(y\)</span> 的输出值为 <span class="math notranslate nohighlight">\(a\)</span> 。当 <span class="math notranslate nohighlight">\(s\)</span> 为1时， <span class="math notranslate nohighlight">\(y\)</span> 的输出值为 <span class="math notranslate nohighlight">\(b\)</span> 。</p>
+<figure class="align-default" id="id9">
+<img alt="../_images/mux01.png" src="../_images/mux01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">2选1选择器模块和真值表</span><a class="headerlink" href="#id9" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>下图是2选1选择器的卡诺图，根据卡诺图可以得出2选1选择器的的表达式为 <span class="math notranslate nohighlight">\(y=(\sim s\&amp;a)|(s\&amp;b)\)</span> 。</p>
+<figure class="align-default" id="id10">
+<img alt="../_images/mux02.png" src="../_images/mux02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">2选1选择器的卡诺图</span><a class="headerlink" href="#id10" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>根据表达式画出其逻辑电路如下图所示。</p>
+<figure class="align-default" id="id11">
+<img alt="../_images/mux03.png" src="../_images/mux03.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">2选1选择器的逻辑电路</span><a class="headerlink" href="#id11" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<section id="id3">
+<h3>数据流建模<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<p>数据流建模主要是通过连续赋值语句 <code class="docutils literal notranslate"><span class="pre">assign</span></code> 来描述电路的功能。
+根据这一逻辑电路图，利用Verilog HDL实现2选1选择器的逻辑电路，示例如下：</p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-number">Listing 1 </span><span class="caption-text">用数据流建模方式描述 2 选 1 选择器代码</span><a class="headerlink" href="#id12" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">m_mux21</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">   </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">;</span><span class="w">        </span><span class="c1">// 声明3个wire型输入变量a,b,和s，其宽度为1位。</span>
+<span class="w">  </span><span class="k">output</span><span class="w">  </span><span class="n">y</span><span class="p">;</span><span class="w">           </span><span class="c1">// 声明1个wire型输出变量y，其宽度为1位。</span>
+
+<span class="w">  </span><span class="k">assign</span><span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">s</span><span class="o">&amp;</span><span class="n">a</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="n">s</span><span class="o">&amp;</span><span class="n">b</span><span class="p">);</span><span class="w">  </span><span class="c1">// 实现电路的逻辑功能。</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>设计一个激励代码，对设计的选择器的功能进行仿真：</p>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-number">Listing 2 </span><span class="caption-text">2 选 1 选择器仿真代码</span><a class="headerlink" href="#id13" title="Permalink to this code"></a></div>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;verilated.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;verilated_vcd_c.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;obj_dir/Vmux21.h&quot;</span>
+
+<span class="n">VerilatedContext</span><span class="o">*</span><span class="w"> </span><span class="n">contextp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="n">VerilatedVcdC</span><span class="o">*</span><span class="w"> </span><span class="n">tfp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">Vmux21</span><span class="o">*</span><span class="w"> </span><span class="n">top</span><span class="p">;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">step_and_dump_wave</span><span class="p">(){</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">eval</span><span class="p">();</span>
+<span class="w">  </span><span class="n">contextp</span><span class="o">-&gt;</span><span class="n">timeInc</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">  </span><span class="n">tfp</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">contextp</span><span class="o">-&gt;</span><span class="n">time</span><span class="p">());</span>
+<span class="p">}</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">sim_init</span><span class="p">(){</span>
+<span class="w">  </span><span class="n">contextp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">VerilatedContext</span><span class="p">;</span>
+<span class="w">  </span><span class="n">tfp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">VerilatedVcdC</span><span class="p">;</span>
+<span class="w">  </span><span class="n">top</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">Vmux21</span><span class="p">;</span>
+<span class="w">  </span><span class="n">contextp</span><span class="o">-&gt;</span><span class="n">traceEverOn</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">trace</span><span class="p">(</span><span class="n">tfp</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">  </span><span class="n">tfp</span><span class="o">-&gt;</span><span class="n">open</span><span class="p">(</span><span class="s">&quot;dump.vcd&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">sim_exit</span><span class="p">(){</span>
+<span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">  </span><span class="n">tfp</span><span class="o">-&gt;</span><span class="n">close</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">sim_init</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span><span class="w">   </span><span class="c1">// 将s，a和b均初始化为“0”</span>
+<span class="w">                      </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span><span class="w">   </span><span class="c1">// 将b改为“1”，s和a的值不变，继续保持“0”，</span>
+<span class="w">            </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span><span class="w">   </span><span class="c1">// 将a，b分别改为“1”和“0”，s的值不变，</span>
+<span class="w">                      </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span><span class="w">   </span><span class="c1">// 将b改为“1”，s和a的值不变，维持10个时间单位</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span><span class="w">   </span><span class="c1">// 将s，a，b分别变为“1,0,0”，维持10个时间单位</span>
+<span class="w">                      </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">            </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">                      </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">sim_exit</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>上述代码分析与综合后的仿真结果如下图所示，由图中可以看出，当 <span class="math notranslate nohighlight">\(s=0\)</span> 时， <span class="math notranslate nohighlight">\(y=a\)</span> ，即 <span class="math notranslate nohighlight">\(y\)</span> 随着 <span class="math notranslate nohighlight">\(a\)</span> 值的改变而改变，此时的 <span class="math notranslate nohighlight">\(b\)</span> 值无论如何改变都不影响 <span class="math notranslate nohighlight">\(y\)</span> 的值。当 <span class="math notranslate nohighlight">\(s=1\)</span> 时， <span class="math notranslate nohighlight">\(y=b\)</span> ，即 <span class="math notranslate nohighlight">\(y\)</span> 随着 <span class="math notranslate nohighlight">\(b\)</span> 值的改变而改变，此时的 <span class="math notranslate nohighlight">\(a\)</span> 值无论如何改变都不影响 <span class="math notranslate nohighlight">\(y\)</span> 的值。</p>
+<figure class="align-default" id="id14">
+<img alt="../_images/muxtest.png" src="../_images/muxtest.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">2选1选择器仿真结果</span><a class="headerlink" href="#id14" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="id4">
+<h3>结构化建模<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>结构化建模主要通过逐层实例化子模块的方式来描述电路的功能。用结构化建模方式来设计选择器的程序清单如下所示：</p>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-number">Listing 3 </span><span class="caption-text">用结构化建模方式描述 2 选 1 选择器代码</span><a class="headerlink" href="#id15" title="Permalink to this code"></a></div>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="w"> </span><span class="nf">my_and</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">);</span>
+<span class="w">  </span><span class="n">input</span><span class="w">  </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
+<span class="w">  </span><span class="n">output</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">assign</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="n">endmodule</span>
+
+<span class="n">module</span><span class="w"> </span><span class="n">my_or</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">);</span>
+<span class="w">  </span><span class="n">input</span><span class="w">  </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
+<span class="w">  </span><span class="n">output</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">assign</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="n">endmodule</span>
+
+<span class="n">module</span><span class="w"> </span><span class="n">my_not</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">);</span>
+<span class="w">  </span><span class="n">input</span><span class="w">  </span><span class="n">a</span><span class="p">;</span>
+<span class="w">  </span><span class="n">output</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">assign</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="n">a</span><span class="p">;</span>
+<span class="n">endmodule</span>
+
+<span class="n">module</span><span class="w"> </span><span class="n">mux21b</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="n">input</span><span class="w">  </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">;</span>
+<span class="w">  </span><span class="n">output</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">wire</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">s_n</span><span class="p">;</span><span class="w"> </span><span class="c1">// 内部网线声明</span>
+<span class="w">  </span><span class="n">my_not</span><span class="w"> </span><span class="nf">i1</span><span class="p">(.</span><span class="n">a</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">b</span><span class="p">(</span><span class="n">s_n</span><span class="p">));</span><span class="w">        </span><span class="c1">// 实例化非门，实现~s</span>
+<span class="w">  </span><span class="n">my_and</span><span class="w"> </span><span class="nf">i2</span><span class="p">(.</span><span class="n">a</span><span class="p">(</span><span class="n">s_n</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">b</span><span class="p">(</span><span class="n">a</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">c</span><span class="p">(</span><span class="n">l</span><span class="p">));</span><span class="w"> </span><span class="c1">// 实例化与门，实现(~s&amp;a)</span>
+<span class="w">  </span><span class="n">my_and</span><span class="w"> </span><span class="nf">i3</span><span class="p">(.</span><span class="n">a</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w">   </span><span class="p">.</span><span class="n">b</span><span class="p">(</span><span class="n">b</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">c</span><span class="p">(</span><span class="n">r</span><span class="p">));</span><span class="w"> </span><span class="c1">// 实例化与门，实现(s&amp;b)</span>
+<span class="w">  </span><span class="n">my_or</span><span class="w">  </span><span class="nf">i4</span><span class="p">(.</span><span class="n">a</span><span class="p">(</span><span class="n">l</span><span class="p">),</span><span class="w">   </span><span class="p">.</span><span class="n">b</span><span class="p">(</span><span class="n">r</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">c</span><span class="p">(</span><span class="n">y</span><span class="p">));</span><span class="w"> </span><span class="c1">// 实例化或门，实现(~s&amp;a)|(s&amp;b)</span>
+<span class="n">endmodule</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="id5">
+<h3>行为建模<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<p>行为建模是通过类似面向过程的编程语言来描述电路的行为。例如，在Verilog中也可以用if语句来实现2选1多路选择器的行为。用if语句来设计选择器的程序清单如下所示：</p>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-number">Listing 4 </span><span class="caption-text">2 选 1 选择器 if 语句实现</span><a class="headerlink" href="#id16" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">mux21c</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">   </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w">  </span><span class="n">y</span><span class="p">;</span><span class="w">   </span><span class="c1">// y在always块中被赋值，一定要声明为reg型的变量</span>
+
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="o">==</span><span class="mh">0</span><span class="p">)</span>
+<span class="w">      </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">      </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition myinfo">
+<p class="admonition-title">Verilog语句的执行</p>
+<p>在Verilog中，各语句是并发执行的，模块中所有的assign语句、always语句块和实例化语句，其执行顺序不分先后。而if语句是顺序执行的语句，其执行过程中必须先判断if后的条件，如果满足条件则执行if后的语句，否则执行else后的语句。Verilog语法规定，顺序执行的语句必须包含中always块中，always块中的语句按照它们中代码中出现的顺序执行。</p>
+</div>
+<div class="admonition myhint">
+<p class="admonition-title">always 语句块的使用</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span>always @(&lt;敏感事件列表&gt;)
+各可执行的语句;
+......
+</pre></div>
+</div>
+<p>其中敏感事件列表中列出了所有影响always块中输出的信号清单，也就是说，如果敏感事件列表中的任何一个变量发生了变化，都要执行always语句块中的语句。如 <code class="docutils literal notranslate"><span class="pre">always</span> <span class="pre">&#64;</span> <span class="pre">(a</span> <span class="pre">or</span> <span class="pre">b</span> <span class="pre">or</span> <span class="pre">s)</span></code> 表示：只要a、b、s中的任何一个变量发生了变化，就立刻执行always语句块中的语句。</p>
+<p>为了方便起见，敏感列表也可以用 <span class="math notranslate nohighlight">\(*\)</span> 代替，如 <code class="docutils literal notranslate"><span class="pre">always</span> <span class="pre">&#64;</span> <span class="pre">(*)</span></code> ，这里， <span class="math notranslate nohighlight">\(*\)</span> 号将自动包含always语句块中语句或条件表达式右边出现的所有信号。如上述代码第5行的always语句块，只要always语句块中表达式右边出现的变量a和b，或者条件表达式中出现的变量s，这三个变量中的任何一个变量发生了变化，就立刻执行always语句块中的语句。</p>
+<p>always语句还有另外一种形式，即：always后面不带任何有关敏感事件列表的信息，只有 <code class="docutils literal notranslate"><span class="pre">always</span></code> 这个保留字，那么这个时候表明在任何情况下都执行always语句块中的语句。</p>
+<p>另外，always块中的输出信号必须被描述成reg型，而不是默认的wire型。</p>
+</div>
+<div class="admonition myhint">
+<p class="admonition-title">关于if语句</p>
+<p>if语句是Verilog HDL中常用的条件语句，可以和else语句配对使用，也可以单独使用。</p>
+<p>但是，如果if语句在使用时没有else语句与其配对则会发生这样的情况：编译器判断if后面的条件表达式是否满足，如果满足则执行其后的语句，那如果条件表达式不满足呢？这时，编译器就会自动产生一个寄存器来寄存当前的值，在条件不满足时保输出的过去值。这样就会产生用户没有设计的多余的寄存器出来。因此建议读者在使用if语句的时候要加上else语句与其配对。防止产生多余的寄存器。</p>
+<p>另外，编译器默认if语句的功能语句只有一条，如果有多条功能语句，要把这些语句用关键词 <code class="docutils literal notranslate"><span class="pre">begin</span></code> 和 <code class="docutils literal notranslate"><span class="pre">end</span></code> 将其括起来。如：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="o">==</span><span class="mh">0</span><span class="p">)</span>
+<span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="k">else</span>
+<span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>是错误的写法，应改为:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="o">==</span><span class="mh">0</span><span class="p">)</span>
+<span class="w">  </span><span class="k">begin</span><span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="k">end</span>
+<span class="k">else</span>
+<span class="w">  </span><span class="k">begin</span><span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="k">end</span>
+</pre></div>
+</div>
+<p>在编程中也可以用条件判断语句代替if语句，如果此时不用顺序语句就不需要always语句块，比如也可以使用 <code class="docutils literal notranslate"><span class="pre">?</span></code> 来代替if语句，其用法如下：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>其含义如下：如果s = 1，那么 y = b；否则y = a。
+则此2选1选择器代码可另写如下：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">mux21d</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">   </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w">  </span><span class="n">y</span><span class="p">;</span><span class="w">   </span><span class="c1">// y不用声明为reg型的了。</span>
+<span class="w">  </span><span class="k">assign</span><span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition mydanger">
+<p class="admonition-title">强烈建议初学者不要使用行为建模方式设计电路</p>
+<p>Verilog一开始并不是为了设计可综合电路而提出的，它的本质是一门基于事件队列模型的电路建模语言。因此，行为建模很容易会让初学者偏离描述电路的初衷: 开发者需要看着电路图，心里想象电路的行为，然后转化成事件队列模型的思考方式，最后再用行为建模方式来描述电路的行为，综合器再来根据这样的描述推导出相应的电路。从这个过程来看，这不仅是没有必要的，而且还很容易引入错误：</p>
+<ul class="simple">
+<li><p>如果开发者心里本身就已经有电路图，直接描述它是最方便的</p></li>
+<li><p>如果开发者心里本身就已经有电路图，而开发者对行为建模方式的理解所有偏差，可能会采用了错误的描述方式，从而设计出非预期的电路</p></li>
+<li><p>如果开发者心里没有电路图，而是期望通过行为建模方式让综合器生成某种行为的电路，这就已经偏离“描述电路”的本质了。大部分同学非常容易犯这样的错误，把行为建模当作过程式的C语言来写，尝试把任意复杂的行为描述映射到电路，最终综合器只会生成出延迟大，面积大，功耗高的低质量电路</p></li>
+</ul>
+<p>所以，直到大家掌握“描述电路”的思维而不被行为建模误导之前，我们强烈建议初学者远离行为建模方式，仅通过数据流建模和结构化建模方式直接描述电路。例如，上文关于if和always的说法从某种程度上来说是正确的，但下面的问题可以帮助大家测试自己是否已经掌握了Verilog的本质：</p>
+<ul class="simple">
+<li><p>在硬件描述语言中，“执行”的精确含义是什么？</p></li>
+<li><p>是谁在执行Verilog的语句？ 是电路，综合器，还是其它的？</p></li>
+<li><p>if的条件满足，就不执行else后的语句，这里的“不执行”又是什么意思？ 和描述电路有什么联系？</p></li>
+<li><p>有“并发执行”，又有“顺序执行”，还有“任何一个变量发生变化就立即执行”，以及“在任何情况下都执行”，它们都是如何在设计出来的电路中体现的？</p></li>
+</ul>
+<p>如果你无法对这些问题作出明确的回答，我们强烈建议你不要使用行为建模方式。如果你真的想弄懂它们，你需要阅读 <a class="reference external" href="https://inst.eecs.berkeley.edu/~cs150/fa06/Labs/verilog-ieee.pdf">Verilog标准手册</a> 。</p>
+</div>
+<div class="admonition mydanger">
+<p class="admonition-title">真正的描述电路 = 实例化 + 连线</p>
+<p>忘记行为建模方式，就可以很容易回归到描述电路的简单本质。想象一下，你手中有一张电路图纸，如果你需要向其它人描述图纸上的内容，你将会如何描述？ 你一定会说出类似“有一个A元件/模块，它的x引脚和另一个B元件/模块的y引脚相连”的描述，因为这才是描述电路的最自然的方式。用HDL设计电路，就是在用HDL来描述电路图纸，图纸上有什么，就直接描述什么。所以，用HDL描述电路，无非是做两件事情：</p>
+<ul class="simple">
+<li><p>实例化：在电路板上放一个元件/模块，可以是一个门电路，或者是由门电路组成的模块</p></li>
+<li><p>连线：用导线将元件/模块的引脚正确地连起来</p></li>
+</ul>
+<p>大家可以体会一下，数据流建模和结构化建模是如何体现这两件事的，而行为建模又是如何把这两件简单的事情复杂化的。</p>
+</div>
+</section>
+</section>
+<section id="id6">
+<h2>4选1多路选择器<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<p>4选1多路选择器的模块图和真值表如下图所示， <span class="math notranslate nohighlight">\(a_0 - a_3\)</span> 为4个输入端， <span class="math notranslate nohighlight">\(s_0\)</span> 和 <span class="math notranslate nohighlight">\(s_1\)</span> 是选择端， <span class="math notranslate nohighlight">\(y\)</span> 是输出端，根据 <span class="math notranslate nohighlight">\(s_0\)</span> 和 <span class="math notranslate nohighlight">\(s_1\)</span> 值的不同， <span class="math notranslate nohighlight">\(y\)</span> 选择 <span class="math notranslate nohighlight">\(a_0-a_3\)</span> 中的一个作为输出，具体请见真值表。</p>
+<figure class="align-default" id="id17">
+<img alt="../_images/mux41.png" src="../_images/mux41.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 5 </span><span class="caption-text">4选1选择器模块及真值表</span><a class="headerlink" href="#id17" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Verilog语言中的case语句可以综合出“多路选择器”的电路，它的可读性非常强。如下所示的是用case语句实现4选1多路选择器的方法：</p>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-number">Listing 5 </span><span class="caption-text">4选1选择器case语句实现</span><a class="headerlink" href="#id18" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">mux41</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w">  </span><span class="c1">// 声明一个wire型输入变量a，其变量宽度是4位的。</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w">  </span><span class="c1">// 声明一个wire型输入变量s，其变量宽度是2位的。</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="n">y</span><span class="p">;</span><span class="w">   </span><span class="c1">// 声明一个1位reg型的输出变量y。</span>
+
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="n">a</span><span class="p">)</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="w">      </span><span class="mh">0</span><span class="o">:</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">      </span><span class="mh">1</span><span class="o">:</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+<span class="w">      </span><span class="mh">2</span><span class="o">:</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">2</span><span class="p">];</span>
+<span class="w">      </span><span class="mh">3</span><span class="o">:</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">3</span><span class="p">];</span>
+<span class="w">      </span><span class="k">default</span><span class="o">:</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">endcase</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>上述设计的测试代码如下所示</p>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-number">Listing 6 </span><span class="caption-text">4选1选择器激励代码</span><a class="headerlink" href="#id19" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">sim_init</span><span class="p">();</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">s</span><span class="o">=</span><span class="mh">0</span><span class="n">b00</span><span class="p">;</span><span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b1110</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">                </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b0001</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">s</span><span class="o">=</span><span class="mh">0</span><span class="n">b01</span><span class="p">;</span><span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b1110</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">                </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b0010</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">s</span><span class="o">=</span><span class="mh">0</span><span class="n">b10</span><span class="p">;</span><span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b1010</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">                </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b0100</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">s</span><span class="o">=</span><span class="mh">0</span><span class="n">b11</span><span class="p">;</span><span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b0111</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">                </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b1001</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">  </span><span class="n">sim_exit</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>上述程序的仿真结果如下图所示</p>
+<figure class="align-default" id="id20">
+<img alt="../_images/mux41test.png" src="../_images/mux41test.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 6 </span><span class="caption-text">4选1选择器仿真图</span><a class="headerlink" href="#id20" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<div class="admonition myhint">
+<p class="admonition-title">case 语句的使用</p>
+<p>case语句是以关键字case和一个被括起来的“选择表达式”开头，表达式的结果表示一个整数。下面是case选项，每个选项由选择列表和过程语句构成，选择列表可以是一个整数值，也可以是多个整数值，多个整数值之间以逗号分开，选择列表和过程语句之间以冒号连接，如 <code class="docutils literal notranslate"><span class="pre">0,1:</span> <span class="pre">y</span> <span class="pre">=</span> <span class="pre">a[0];</span></code> 。</p>
+<p>case语句的执行过程是这样的：先计算出选择表达式的值，在case选项中找到和选择表达式值相同的第一个选择，然后执行此选择值后面的过程语句。</p>
+<p>case语句列出的选择列表，有时候不能全部包含选择表达式所有的可能值，这时关键词default就要被作为case语句的最后一个选项，它表示表达式中那些未被选择列表覆盖的所有其他值。一般情况下即使选择列表列出了选择表达式的所有选项，还是建议保留default这一选项。如果选择列表中没有包含选择表达式的所有选项，而此时又没有default选项的话，综合器会综合出一个锁存器以保存未被覆盖的情况下输出的过去值。这一般是不希望出现的情况，所以在case语句中建议无论如何保留default选项。</p>
+<p>如果在满足某个表达式值时要执行多条语句，也要用关键词 <code class="docutils literal notranslate"><span class="pre">begin</span></code> 和 <code class="docutils literal notranslate"><span class="pre">end</span></code> 将这些语句其括起来。</p>
+</div>
+<div class="admonition mydanger">
+<p class="admonition-title">同样地，我们建议初学者不要使用case语句</p>
+<p>因为使用case语句描述电路属于行为建模方式。随着电路变得越来越复杂，你可能会写出case语句中包含if语句，if语句中由嵌套case语句的代码，但你很可能已经理解不了它描述的电路是什么样的了。</p>
+</div>
+</section>
+<section id="id7">
+<h2>一个通用的选择器模板<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<p>我们向大家提供一个经过泛化的选择器模板，它可以很方便地替代case语句的功能。这个选择器模板的Verilog代码如下：</p>
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-number">Listing 7 </span><span class="caption-text">选择器模板</span><a class="headerlink" href="#id21" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">MuxKeyInternal</span><span class="w"> </span><span class="p">#(</span><span class="n">NR_KEY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">,</span><span class="w"> </span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">HAS_DEFAULT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">)</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">out</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">KEY_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">key</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">default_out</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">NR_KEY</span><span class="o">*</span><span class="p">(</span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="p">)</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">lut</span>
+<span class="p">);</span>
+
+<span class="w">  </span><span class="k">localparam</span><span class="w"> </span><span class="n">PAIR_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="n">PAIR_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">pair_list</span><span class="w"> </span><span class="p">[</span><span class="n">NR_KEY</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="n">KEY_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">key_list</span><span class="w"> </span><span class="p">[</span><span class="n">NR_KEY</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">data_list</span><span class="w"> </span><span class="p">[</span><span class="n">NR_KEY</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="w">  </span><span class="k">generate</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">genvar</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NR_KEY</span><span class="p">;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">      </span><span class="k">assign</span><span class="w"> </span><span class="n">pair_list</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lut</span><span class="p">[</span><span class="n">PAIR_LEN</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mh">1</span><span class="p">)</span><span class="o">-</span><span class="mh">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">PAIR_LEN</span><span class="o">*</span><span class="n">n</span><span class="p">];</span>
+<span class="w">      </span><span class="k">assign</span><span class="w"> </span><span class="n">data_list</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pair_list</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">      </span><span class="k">assign</span><span class="w"> </span><span class="n">key_list</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">pair_list</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">PAIR_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="n">DATA_LEN</span><span class="p">];</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">  </span><span class="k">endgenerate</span>
+
+<span class="w">  </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">lut_out</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">reg</span><span class="w"> </span><span class="n">hit</span><span class="p">;</span>
+<span class="w">  </span><span class="k">integer</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">lut_out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">hit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NR_KEY</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">      </span><span class="n">lut_out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lut_out</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">({</span><span class="n">DATA_LEN</span><span class="p">{</span><span class="n">key</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">key_list</span><span class="p">[</span><span class="n">i</span><span class="p">]}}</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">data_list</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">      </span><span class="n">hit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hit</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">key_list</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">HAS_DEFAULT</span><span class="p">)</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lut_out</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">hit</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">lut_out</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">default_out</span><span class="p">);</span>
+<span class="w">  </span><span class="k">end</span>
+
+<span class="k">endmodule</span>
+
+<span class="k">module</span><span class="w"> </span><span class="n">MuxKey</span><span class="w"> </span><span class="p">#(</span><span class="n">NR_KEY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">,</span><span class="w"> </span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">out</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">KEY_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">key</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">NR_KEY</span><span class="o">*</span><span class="p">(</span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="p">)</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">lut</span>
+<span class="p">);</span>
+<span class="w">  </span><span class="n">MuxKeyInternal</span><span class="w"> </span><span class="p">#(</span><span class="n">NR_KEY</span><span class="p">,</span><span class="w"> </span><span class="n">KEY_LEN</span><span class="p">,</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="p">,</span><span class="w"> </span><span class="mh">0</span><span class="p">)</span><span class="w"> </span><span class="n">i0</span><span class="w"> </span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">DATA_LEN</span><span class="p">{</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">}},</span><span class="w"> </span><span class="n">lut</span><span class="p">);</span>
+<span class="k">endmodule</span>
+
+<span class="k">module</span><span class="w"> </span><span class="n">MuxKeyWithDefault</span><span class="w"> </span><span class="p">#(</span><span class="n">NR_KEY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">,</span><span class="w"> </span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">out</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">KEY_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">key</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">default_out</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">NR_KEY</span><span class="o">*</span><span class="p">(</span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="p">)</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">lut</span>
+<span class="p">);</span>
+<span class="w">  </span><span class="n">MuxKeyInternal</span><span class="w"> </span><span class="p">#(</span><span class="n">NR_KEY</span><span class="p">,</span><span class="w"> </span><span class="n">KEY_LEN</span><span class="p">,</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="n">i0</span><span class="w"> </span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">default_out</span><span class="p">,</span><span class="w"> </span><span class="n">lut</span><span class="p">);</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">MuxKey</span></code> 模块实现了“键值选择”功能，即在一个 <code class="docutils literal notranslate"><span class="pre">(键值，数据)</span></code> 的列表 <code class="docutils literal notranslate"><span class="pre">lut</span></code> 中，根据给定的键值 <code class="docutils literal notranslate"><span class="pre">key</span></code> ，将 <code class="docutils literal notranslate"><span class="pre">out</span></code> 设置为与其匹配的数据。若列表中不存在键值为 <code class="docutils literal notranslate"><span class="pre">key</span></code> 的数据，则 <code class="docutils literal notranslate"><span class="pre">out</span></code> 为 <code class="docutils literal notranslate"><span class="pre">0</span></code> 。特别地， <code class="docutils literal notranslate"><span class="pre">MuxKeyWithDefault</span></code> 模块可以提供一个默认值 <code class="docutils literal notranslate"><span class="pre">default_out</span></code> ，当列表中不存在键值为 <code class="docutils literal notranslate"><span class="pre">key</span></code> 的数据，则 <code class="docutils literal notranslate"><span class="pre">out</span></code> 为 <code class="docutils literal notranslate"><span class="pre">default_out</span></code> 。实例化这两个模块时需要注意如下两点：</p>
+<ul class="simple">
+<li><p>需要使用者提供键值对的数量 <code class="docutils literal notranslate"><span class="pre">NR_KEY</span></code>，键值的位宽 <code class="docutils literal notranslate"><span class="pre">KEY_LEN</span></code> 以及数据的位宽 <code class="docutils literal notranslate"><span class="pre">DATA_LEN</span></code> 这三个参数，并保证端口的信号宽度与提供的参数一致，否则将会输出错误的结果</p></li>
+<li><p>若列表中存在多个键值为 <code class="docutils literal notranslate"><span class="pre">key</span></code> 的数据，则 <code class="docutils literal notranslate"><span class="pre">out</span></code> 的值是未定义的，需要使用者来保证列表中的键值互不相同</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">MuxKeyInternal</span></code> 模块的实现中用到了很多高级的功能，如 <code class="docutils literal notranslate"><span class="pre">generate</span></code> 和 <code class="docutils literal notranslate"><span class="pre">for</span></code> 循环等，为了方便编写还使用了行为建模方式，在这里我们不展开介绍，通过结构化建模的抽象，使用者可以无需关心这些细节。</p>
+<p>以下代码通过使用选择器模板来分别实现2选1多路选择器和4选1多路选择器：</p>
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-number">Listing 8 </span><span class="caption-text">使用选择器模板实现选择器</span><a class="headerlink" href="#id22" title="Permalink to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">mux21e</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">   </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w">  </span><span class="n">y</span><span class="p">;</span>
+<span class="w">  </span><span class="n">MuxKey</span><span class="w"> </span><span class="p">#(</span><span class="mh">2</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="n">i0</span><span class="w"> </span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span>
+<span class="w">    </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">,</span><span class="w"> </span><span class="n">b</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="k">endmodule</span>
+
+<span class="k">module</span><span class="w"> </span><span class="n">mux41b</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="w">  </span><span class="n">MuxKeyWithDefault</span><span class="w"> </span><span class="p">#(</span><span class="mh">4</span><span class="p">,</span><span class="w"> </span><span class="mh">2</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="n">i0</span><span class="w"> </span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="mh">2</span><span class="mb">&#39;b00</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">0</span><span class="p">],</span>
+<span class="w">    </span><span class="mh">2</span><span class="mb">&#39;b01</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">1</span><span class="p">],</span>
+<span class="w">    </span><span class="mh">2</span><span class="mb">&#39;b10</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">2</span><span class="p">],</span>
+<span class="w">    </span><span class="mh">2</span><span class="mb">&#39;b11</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">3</span><span class="p">]</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="id8">
+<h2>实验验收内容<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">上板实验: 二位四选一选择器</p>
+<p>用选择器模板实现一个2位4选1的选择器，如下图所示，选择器有5个2位输入端，分别为X0, X1, X2, X3和Y，输出端为F；X0, X1, X2, X3是四个2位的输入变量。输出F端受控制端Y的控制，选择其中的一个X输出，当Y = 00时，输出端输出X0，即F = X0；当Y = 01时，输出端输出X1，即F = X1；以此类推。</p>
+<figure class="align-default" id="id23">
+<img alt="../_images/mux241.png" src="../_images/mux241.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 7 </span><span class="caption-text">2位4选1选择器</span><a class="headerlink" href="#id23" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>选择开发板上的SW0和SW1作为控制端Y，SW2—SW9作为四个两位数据输入端X0–X3，将两位的输出端F接到发光二极管LEDR0和LEDR1上显示输出，完成设计，对自己的设计进行功能仿真，并下载到开发板上验证电路性能。</p>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">在线测试</p>
+<p>实现一个简单的二位四选一选择器。</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="02.html" class="btn btn-neutral float-right" title="实验二 译码器和编码器" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, 王炜 吴海军 陈璐.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

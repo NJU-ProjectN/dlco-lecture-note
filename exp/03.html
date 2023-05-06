@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>实验三 加法器与ALU &mdash; 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="实验四 计数器和时钟" href="04.html" />
+    <link rel="prev" title="实验二 译码器和编码器" href="02.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">实验一 选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">实验二 译码器和编码器</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">实验三 加法器与ALU</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">加法器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">八位加法器实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">简单加减法运算器的设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">ALU设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">实验验收内容</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">实验四 计数器和时钟</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">实验五 寄存器组及存储器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">实验六 移位寄存器及桶形移位器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">实验七 状态机及键盘输入</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">实验八 VGA接口控制器实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">实验九 字符输入界面</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">实验十 CPU数据通路</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">实验十一 RV32I单周期CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">实验十二 计算机系统</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">实验三 加法器与ALU</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="alu">
+<h1>实验三 加法器与ALU<a class="headerlink" href="#alu" title="Permalink to this heading"></a></h1>
+<p><em>“Six by nine. Forty-two.”</em></p>
+<p><em>“That’s it. That’s all there is.”</em></p>
+<p><em>“I always thought something was fundamentally wrong with the universe.”</em></p>
+<blockquote>
+<div><p>— “The Restaurant at the End of the Universe”， Douglas Adams</p>
+</div></blockquote>
+<p>加法是数字系统中最常执行的运算，加法器是ALU（算术逻辑部件 <a class="reference external" href="https://en.wikipedia.org/wiki/Arithmetic_logic_unit">Arithmetic-Logic Unit</a> ）的核心部件。
+减法可以看作是被减数与取负后的减数进行加法。即用加法器同时实现加法和减法两种运算。乘法也可以利用移位相加的算法来实现。因此，加法器可以说是计算机中最“繁忙”的部件了。</p>
+<p>本实验的目的是复习加法器的原理，学习用简单ALU的设计方式。</p>
+<section id="id1">
+<h2>加法器<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>多位加法器可以由一位加法器级联而成，图 <a class="reference internal" href="#adder01"><span class="std std-numref">Fig. 17</span></a> 是一位全加器真值表，输入为 <span class="math notranslate nohighlight">\(a_i\)</span> 、 <span class="math notranslate nohighlight">\(b_i\)</span> 和 <span class="math notranslate nohighlight">\(c_i\)</span> （两个加数及进位位），
+输出为 <span class="math notranslate nohighlight">\(s_i\)</span> 和 <span class="math notranslate nohighlight">\(c_{i+1}\)</span> （结果和下一位进位）；图 <a class="reference internal" href="#adder02"><span class="std std-numref">Fig. 18</span></a> 是一位加法器电路图，图 <a class="reference internal" href="#adder04"><span class="std std-numref">Fig. 20</span></a> 是四位行波进位加法器框图。
+输入为 <span class="math notranslate nohighlight">\(a\)</span> （ <span class="math notranslate nohighlight">\(a_0-a_3\)</span> ）、 <span class="math notranslate nohighlight">\(b\)</span> （ <span class="math notranslate nohighlight">\(b_0-b_3\)</span> ）和 <span class="math notranslate nohighlight">\(c_{in}\)</span> ，输出为 <span class="math notranslate nohighlight">\(s\)</span> （ <span class="math notranslate nohighlight">\(s_0-s_3\)</span> ）和 <span class="math notranslate nohighlight">\(c_{out}\)</span> ；</p>
+<table class="docutils align-default" id="id6">
+<caption><span class="caption-number">Table 3 </span><span class="caption-text">全加器</span><a class="headerlink" href="#id6" title="Permalink to this table"></a></caption>
+<tbody>
+<tr class="row-odd"><td><figure class="align-default" id="adder01">
+<img alt="../_images/adder01.png" src="../_images/adder01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 17 </span><span class="caption-text">一位全加器真值表</span><a class="headerlink" href="#adder01" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+<td><figure class="align-default" id="adder02">
+<img alt="../_images/adder02.png" src="../_images/adder02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 18 </span><span class="caption-text">一位全加器电路图</span><a class="headerlink" href="#adder02" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-even"><td><figure class="align-default" id="adder03">
+<img alt="../_images/adder03.png" src="../_images/adder03.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 19 </span><span class="caption-text">一位全加器框图</span><a class="headerlink" href="#adder03" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+<td><figure class="align-default" id="adder04">
+<img alt="../_images/adder04.png" src="../_images/adder04.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 20 </span><span class="caption-text">四位串行全加器</span><a class="headerlink" href="#adder04" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+<p>一位全加器的设计相对简单，请读者根据电路图自行思考如果设计一个串行进位加法器电路。
+串行加法器速度很慢，因为进位必须从最低位传至最高位。要想构建速度较快的加法器，就要利用附加逻辑，提前算出进位信息，这就是先行进位加法器的设计思想，先行进位加法有几种常用的算法，感兴趣的同学可以查找资料阅读。</p>
+</section>
+<section id="id2">
+<h2>八位加法器实现<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>上述四位串行加法器的设计，如果推广到更多位加法器的设计，程序代码将会变得异常复杂，运行效率也将很低。在Verilog语言中，可以使用算术赋值语句和向量来执行这种算术运算。如果我们定义如下向量：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="n">in_x</span><span class="p">,</span><span class="w"> </span><span class="n">in_y</span><span class="p">;</span>
+<span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="n">out_s</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>则算术赋值语句</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="n">out_s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in_x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">in_y</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>就可以实现n位加法器了。</p>
+<p>请注意，该代码定义了可以生成n位加法器的电路，但是该加法器电路并不包含加法过程中产生的进位输出信号和算术溢出信号。</p>
+<p>溢出信号是用于判断运算结果 <span class="math notranslate nohighlight">\(out\_s\)</span> 是否正确的信号。可以证明，对于有符号的补码运算的算术溢出信号可以用下面的表达式得到：</p>
+<div class="math notranslate nohighlight">
+\[Overflow=(in\_x_{n-1} == in\_y_{n-1})\&amp;\&amp;(out\_s_{n-1} != in\_x_{n-1})\]</div>
+<p>其判断原理是：如果两个参加加法运算的变量符号相同，而运算结果的符号与其不相同，则运算结果不准确，产生溢出。即两个正数相加结果为负数，或者两个负数相加结果为正数，则发生了溢出。一正一负两个数相加是不会产生溢出的。当然，还有其他的判断溢出位的方式，请大家参考相关资料，了解其他判断运算是否溢出的方法。</p>
+<p>对于进位信号可以用下面的表达式得到：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="n">out_c</span><span class="p">,</span><span class="n">out_s</span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="n">in_x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">in_y</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>此表达式执行后， <span class="math notranslate nohighlight">\(out\_c\)</span> 即为进位位， <span class="math notranslate nohighlight">\(out\_s\)</span> 即为加法运算结果，这里的进位位仅用于表示在加法运算过程中，操作数的最高位是否对外有进位，和X86体系中借位CF的概念在减法操作中是相反的，即X86中的 <span class="math notranslate nohighlight">\(CF=out_c\oplus cin\)</span> ，其中 <span class="math notranslate nohighlight">\(cin\)</span> 在减法时置1。在有符号的加减法中，溢出判断依据为溢出位，进位位不用。而在无符号数的加减法中，溢出判断依据进位位，溢出位不用。</p>
+<div class="admonition mycomment">
+<p class="admonition-title">减法的进位</p>
+<p>对于加法的进位位是有公认的定义的，但是对于减法的进位方式有两种截然不同的定义方法，具体可以参考 <a class="reference external" href="https://en.wikipedia.org/wiki/Carry_flag">Carry flag</a> 。在ICS课程中介绍的X86处理器中，减法的进位是以借位方式实现的。</p>
+</div>
+</section>
+<section id="id3">
+<h2>简单加减法运算器的设计<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>上述加法器只能实现加法运算，如果要执行减法运算，必须再设计一个减法运算器。其实，在实际的运算器中，如果参加运算的操作数都是补码的话，可以用加法器同时实现加法和减法运算。</p>
+<figure class="align-default" id="alu0">
+<img alt="../_images/alu1.png" src="../_images/alu1.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 21 </span><span class="caption-text">简单加减ALU</span><a class="headerlink" href="#alu0" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>图 <a class="reference internal" href="#alu0"><span class="std std-numref">Fig. 21</span></a> 是一个32位加减法器的参考逻辑图，输入信号有：两个32位的参与运算的数据的补码操作数A和操作数B，一个控制做加法还是做减法的加/减控制端Sub/Add，为1时进行减法运算。输出信号有：一个32位的结果Result、一位进位位，一位溢出位和一位判断结果是否为零的输出位。</p>
+<p>在图中已经加入了对减数进行求补操作，将减法变成加法的过程。即：如A – B，可以先求出（– B）的值，然后再和A相加，即A – B = A +（–B）。对于补码而言，– B的补码就是将B连同符号位在内全部取反再加一的过程。</p>
+<p>请查找资料，自行设计具有加减功能的加法器。</p>
+<div class="admonition myquestion">
+<p class="admonition-title">减法Overflow</p>
+<p>虽然减法也是利用加法器实现的，但减法运算在减数是最小负数时溢出判断需要特殊处理。考虑以下两种实现，那一种是正确的？</p>
+<p>方法一：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">t_no_Cin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">n</span><span class="p">{</span><span class="w"> </span><span class="n">Cin</span><span class="w"> </span><span class="p">}}</span><span class="o">^</span><span class="n">B</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="p">{</span><span class="n">Carry</span><span class="p">,</span><span class="n">Result</span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">t_no_Cin</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Cin</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">Overflow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">t_no_Cin</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">])</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">Result</span><span class="w"> </span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>方法二：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">t_add_Cin</span><span class="w"> </span><span class="o">=</span><span class="p">(</span><span class="w"> </span><span class="p">{</span><span class="n">n</span><span class="p">{</span><span class="n">Cin</span><span class="p">}}</span><span class="o">^</span><span class="n">B</span><span class="w"> </span><span class="p">)</span><span class="o">+</span><span class="w"> </span><span class="n">Cin</span><span class="p">;</span><span class="w">  </span><span class="c1">//  在这里请注意^运算和+运算的顺序</span>
+<span class="k">assign</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Carry</span><span class="p">,</span><span class="w"> </span><span class="n">Result</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">t_add_Cin</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">Overflow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">t_add_Cin</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">])</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">Result</span><span class="w"> </span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition myquestion">
+<p class="admonition-title">Zero输出</p>
+<p>在判断输出结果是否为零的时候有两种判断方式，一种是用if语句，将Result和 <code class="docutils literal notranslate"><span class="pre">0</span></code> 相比较，这样在硬件上会产生一个比较器。
+还可以使用如下语句：</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">zero</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="p">(</span><span class="o">|</span><span class="w"> </span><span class="n">Result</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">|Result</span></code> 操作称为一元约简运算，这个运算在硬件上几个逻辑门就可以实现了，请查阅Verilog相关语法资料，了解此运算的操作过程。</p>
+<p>选择你认为好的方式来进行结果是否为 <code class="docutils literal notranslate"><span class="pre">0</span></code> 的判断。</p>
+</div>
+<div class="admonition myhint">
+<p class="admonition-title">关于加法器测试值的设计</p>
+<p>在本实验的测试过程中，操作数比较多，位数也比较长，如果使用枚举的方式对每一个值都进行测试，当然测试得非常充分，但是，测试结果过长，阅读不方便而且也没有完全的必要。因此在测试的时候，选取一些关键、边界和具有典型意义的值很重要。例如这里我们要求设计一个4位的补码加减法器，输入和输出全部是补码，操作数的取值范围为-8 到 +7，我们可以对两个操作数进行如下取值：7，6， 2， 1， 0，-1，-2，-7，-8等。观察仿真结果，然后根据需要再添加其他的测试值。</p>
+<p>在测试加法器中，可以利用test bench中的task功能来进行自动测试。注意：task主要用于测试中对结果进行计算和验证，不建议在实现电路时使用task。</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">task</span><span class="w"> </span><span class="n">check</span><span class="p">;</span><span class="w">  </span><span class="c1">//测试任务</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">results</span><span class="p">;</span><span class="w">  </span><span class="c1">//ALU的结果预期正确输出</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="n">resultof</span><span class="p">,</span><span class="w"> </span><span class="n">resultc</span><span class="p">,</span><span class="w"> </span><span class="n">resultz</span><span class="p">;</span><span class="w">  </span><span class="c1">//ALU的预期溢出，进位，零位</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">outputs</span><span class="o">!=</span><span class="n">results</span><span class="p">)</span><span class="w">  </span><span class="c1">//比较预期结果和测试单元输出的outputs</span>
+<span class="w">      </span><span class="k">begin</span><span class="w">               </span><span class="c1">//出错时显示</span>
+<span class="w">        </span><span class="nb">$display</span><span class="p">(</span><span class="s">&quot;Error:x=%h,y=%h,ctrl=%b,s should be %h,</span>
+<span class="w">          </span><span class="n">get</span><span class="w"> </span><span class="o">%</span><span class="n">h</span><span class="s">&quot;, inputa, inputb, inputaluop, results, outputs);</span>
+<span class="w">      </span><span class="k">end</span>
+<span class="w">    </span><span class="c1">//自行添加溢出，进位和零位的比较</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">endtask</span>
+</pre></div>
+</div>
+<p>在测试时，可以调用check任务来判断结果是否正确。</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=-</span><span class="mh">8</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="mh">7</span><span class="p">;</span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="c1">//建议i和j可以是5位以上的带符号数</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="o">=-</span><span class="mh">8</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;=</span><span class="mh">7</span><span class="p">;</span><span class="n">j</span><span class="o">=</span><span class="n">j</span><span class="o">+</span><span class="mh">1</span><span class="p">)</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">      </span><span class="n">inputa</span><span class="o">=</span><span class="n">i</span><span class="p">;</span>
+<span class="w">      </span><span class="n">inputb</span><span class="o">=</span><span class="n">j</span><span class="p">;</span><span class="w">  </span><span class="c1">//设置两个输入</span>
+<span class="w">      </span><span class="n">inputaluop</span><span class="o">=</span><span class="mh">4</span><span class="mb">&#39;b0000</span><span class="p">;</span><span class="w"> </span><span class="c1">//ALU的操作码</span>
+<span class="w">      </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">;</span><span class="w">    </span><span class="c1">//此处自行计算正确的输出，填入*处</span>
+<span class="w">      </span><span class="n">of</span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">;</span><span class="w">    </span><span class="c1">//可分不同情况手工填写</span>
+<span class="w">      </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">;</span>
+<span class="w">      </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">;</span>
+<span class="w">      </span><span class="p">#</span><span class="mh">20</span><span class="w"> </span><span class="n">check</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">],</span><span class="n">of</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">z</span><span class="p">);</span>
+<span class="w">    </span><span class="k">end</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="id4">
+<h2>ALU设计<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>在CPU中，ALU的功能除了加减法运算之外，往往还包含逻辑运算、移位、乘除法、比较大小等等。我们这里按照RISC-V中基础指令集RV32I的ALU的设计要求来进行介绍。</p>
+<p>RISC-V基础指令集RV32I只支持32位整型数值的操作。操作数可以是带符号补码整数或无符号数。ALU不需要完成乘除法，不需要进行溢出判断，相关操作由软件来完成。RV32I的ALU需要完成以下操作：</p>
+<ul class="simple">
+<li><p><strong>加减法操作</strong> ：完成带符号补码数和无符号数的加减法操作，无需判断溢出和进位。此条件下，可以统一处理带符号数和无符号数。</p></li>
+<li><p><strong>逻辑运算</strong> ：完成XOR、AND及OR操作，其他操作采用软件实现。例如，NOT可以使用与全一操作数进行XOR实现。</p></li>
+<li><p><strong>移位运算</strong> ：完成逻辑左移，逻辑右移、算术右移等功能。移位运算将在后面的移位寄存器实验中介绍。</p></li>
+<li><p><strong>比较运算</strong> ：完成带符号数与无符号数的全等和大小比较。此类运算均可利用减法实现。</p>
+<ul>
+<li><p>全等可以用减法Zero输出判断。</p></li>
+<li><p>带符号数的大小比较，可以用减法比较，即比较A、B两数大小时，首先B取反加一，然后与A相加。在不溢出时，结果的符号位为1则A小于B。如果减法溢出，则A和B原始符号一定不同。此时，如果结果符号位为0，说明A为负数，B为正数，B取反加一后为负，两者相加为正，所以A应小于B。在溢出时如果结果符号位为1，则B小于等于A。所以，可以用 <span class="math notranslate nohighlight">\(Less_s=out\_s_{n-1}\oplus Overflow\)</span> 来进行判断。具体原因请自行分析。</p></li>
+<li><p>无符号数大小比较也可以用减法判断。此时，如果最高位进位，则A大于或等于B，否则A小于B。实际电路中常常用 <span class="math notranslate nohighlight">\(Less_u=cin\oplus Carry\)</span> 来实现。具体原因请自行分析。</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id5">
+<h2>实验验收内容<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">上板实验: 实现一个带有逻辑运算的简单ALU</p>
+<p>设计一个能实现如下功能的4位带符号位的 <strong>补码</strong> ALU：</p>
+<table class="docutils align-default" id="id7">
+<caption><span class="caption-number">Table 4 </span><span class="caption-text">ALU 功能列表</span><a class="headerlink" href="#id7" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>功能选择</p></th>
+<th class="head"><p>功能</p></th>
+<th class="head"><p>操作</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>000</p></td>
+<td><p>加法</p></td>
+<td><p>A+B</p></td>
+</tr>
+<tr class="row-odd"><td><p>001</p></td>
+<td><p>减法</p></td>
+<td><p>A-B</p></td>
+</tr>
+<tr class="row-even"><td><p>010</p></td>
+<td><p>取反</p></td>
+<td><p>Not A</p></td>
+</tr>
+<tr class="row-odd"><td><p>011</p></td>
+<td><p>与</p></td>
+<td><p>A and B</p></td>
+</tr>
+<tr class="row-even"><td><p>100</p></td>
+<td><p>或</p></td>
+<td><p>A or B</p></td>
+</tr>
+<tr class="row-odd"><td><p>101</p></td>
+<td><p>异或</p></td>
+<td><p>A xor B</p></td>
+</tr>
+<tr class="row-even"><td><p>110</p></td>
+<td><p>比较大小</p></td>
+<td><p>If A&lt;B then out=1; else out=0;</p></td>
+</tr>
+<tr class="row-odd"><td><p>111</p></td>
+<td><p>判断相等</p></td>
+<td><p>If A==B then out=1; else out=0;</p></td>
+</tr>
+</tbody>
+</table>
+<p>ALU进行加减运算时，需要能够判断结果是否为0，是否溢出，是否有进位等。这里，输入的操作数A和B都已经是补码。比较大小请按带符号数的方式设置。</p>
+<p>执行逻辑操作时不需要考虑overflow和进位。</p>
+<p>由于开发板上输入有限，可以使用SW作为数据输入，button作为选择端。</p>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">在线测试</p>
+<ul class="simple">
+<li><p>四位补码加减法器</p></li>
+<li><p>简单四位ALU</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02.html" class="btn btn-neutral float-left" title="实验二 译码器和编码器" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="04.html" class="btn btn-neutral float-right" title="实验四 计数器和时钟" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, 王炜 吴海军 陈璐.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>实验十 CPU数据通路 &mdash; 南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="实验十一 RV32I单周期CPU" href="11.html" />
+    <link rel="prev" title="实验九 字符输入界面" href="09.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">实验一 选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">实验二 译码器和编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">实验三 加法器与ALU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">实验四 计数器和时钟</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">实验五 寄存器组及存储器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">实验六 移位寄存器及桶形移位器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">实验七 状态机及键盘输入</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">实验八 VGA接口控制器实现</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">实验九 字符输入界面</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">实验十 CPU数据通路</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">寄存器堆</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#rv32i">RV32I中的通用寄存器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">寄存器堆实现</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#alu">ALU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">数据存储器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">实验验收要求</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">实验十一 RV32I单周期CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">实验十二 计算机系统</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">南京大学 计算机科学与技术系 数字逻辑与计算机组成 课程实验</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">实验十 CPU数据通路</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cpu">
+<h1>实验十 CPU数据通路<a class="headerlink" href="#cpu" title="Permalink to this heading"></a></h1>
+<p><em>我梦见自己慢慢地升了起来，穿过数据平面，穿过数据网，进入并穿过万方网，最后来到了一个不认识的地方，我从没梦见过的地方……这个地方，空间无限，颜色悠闲、难以形容，没有地平线，没有天，没有地或者人类称为地面的实体区。</em></p>
+<blockquote>
+<div><p>— 《海伯利安的陨落》, 丹·西蒙斯</p>
+</div></blockquote>
+<p>本实验的目标是利在单周期CPU的实现之前，先完成CPU数据通路中的三个重要部分：寄存器堆、ALU和数据存储器，并通过功能仿真测试。</p>
+<section id="id1">
+<h2>寄存器堆<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>寄存器堆是CPU中用于存放指令执行过程中临时数据的存储单元。
+我们将要实现的RISC-V的基础版本CPU RV32I具有32个寄存器。
+RV32I采用 <a class="reference external" href="https://en.wikipedia.org/wiki/Load%E2%80%93store_architecture">Load Store</a> 架构，即所有数据都需要先用Load语句从内存中读取到寄存器里才可以进行算术和逻辑操作。
+因此，RV32I有32个通用寄存器，且每条算术运算可能要同时读取两个源寄存器并写入一个目标寄存器。
+为支持高速，多端口并行存取的寄存器堆，我们不能直接调用通用的RAM，而需要用Verilog语言单独编写寄存器堆。</p>
+<section id="rv32i">
+<h3>RV32I中的通用寄存器<a class="headerlink" href="#rv32i" title="Permalink to this heading"></a></h3>
+<p>RV32I共32个32bit的通用寄存器x0~x31（寄存器地址为5bit编码），其中寄存器x0中的内容总是0，无法改变。</p>
+<p>其他寄存器的别名和寄存器使用约定参见表 <a class="reference internal" href="11.html#tab-regname"><span class="std std-numref">Table 12</span></a> 。需要注意的是，部分寄存器在函数调用时是由调用方（Caller）来负责保存的，部分寄存器是由被调用方（Callee）来保存的。在进行C语言和汇编混合编程时需要注意。</p>
+<table class="docutils align-default" id="tab-regname">
+<caption><span class="caption-number">Table 9 </span><span class="caption-text">RV32I中通用寄存器的定义与用法</span><a class="headerlink" href="#tab-regname" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Register</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Use</p></th>
+<th class="head"><p>Saver</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>x0</p></td>
+<td><p>zero</p></td>
+<td><p>Constant 0</p></td>
+<td><p>–</p></td>
+</tr>
+<tr class="row-odd"><td><p>x1</p></td>
+<td><p>ra</p></td>
+<td><p>Return Address</p></td>
+<td><p>Caller</p></td>
+</tr>
+<tr class="row-even"><td><p>x2</p></td>
+<td><p>sp</p></td>
+<td><p>Stack Pointer</p></td>
+<td><p>Callee</p></td>
+</tr>
+<tr class="row-odd"><td><p>x3</p></td>
+<td><p>gp</p></td>
+<td><p>Global Pointer</p></td>
+<td><p>–</p></td>
+</tr>
+<tr class="row-even"><td><p>x4</p></td>
+<td><p>tp</p></td>
+<td><p>Thread Pointer</p></td>
+<td><p>–</p></td>
+</tr>
+<tr class="row-odd"><td><p>x5~x7</p></td>
+<td><p>t0~t2</p></td>
+<td><p>Temp</p></td>
+<td><p>Caller</p></td>
+</tr>
+<tr class="row-even"><td><p>x8</p></td>
+<td><p>s0/fp</p></td>
+<td><p>Saved/Frame pointer</p></td>
+<td><p>Callee</p></td>
+</tr>
+<tr class="row-odd"><td><p>x9</p></td>
+<td><p>s1</p></td>
+<td><p>Saved</p></td>
+<td><p>Callee</p></td>
+</tr>
+<tr class="row-even"><td><p>x10~x11</p></td>
+<td><p>a0~a1</p></td>
+<td><p>Arguments/Return Value</p></td>
+<td><p>Caller</p></td>
+</tr>
+<tr class="row-odd"><td><p>x12~x17</p></td>
+<td><p>a2~a7</p></td>
+<td><p>Arguments</p></td>
+<td><p>Caller</p></td>
+</tr>
+<tr class="row-even"><td><p>x18~x27</p></td>
+<td><p>s2~s11</p></td>
+<td><p>Saved</p></td>
+<td><p>Callee</p></td>
+</tr>
+<tr class="row-odd"><td><p>x28~x31</p></td>
+<td><p>t3~t6</p></td>
+<td><p>Temp</p></td>
+<td><p>Caller</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id2">
+<h3>寄存器堆实现<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<figure class="align-default" id="fig-regfile">
+<img alt="../_images/regfile.png" src="../_images/regfile.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 70 </span><span class="caption-text">寄存器堆接口示意图</span><a class="headerlink" href="#fig-regfile" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>图 <a class="reference internal" href="#fig-regfile"><span class="std std-numref">Fig. 70</span></a> 描述了寄存器堆的接口，该寄存器堆中有32个32bit的寄存器。
+寄存器堆需要支持同时两个读操作和一个写操作。因此需要有2个读地址Ra和Rb，分别对应RISC-V汇编中的rs1和rs2。写地址为Rw，对应rd。地址均是5位。
+写入数据busW为32位，写入有效控制为一位高电平有效的RegWr信号。
+寄存器堆的输出是2个32位的寄存器数据，分别是busA和busB。
+寄存器堆有一个控制写入的时钟WrClk。
+在时序上我们可以让读取是非同步的，即地址改变立刻输出。写入可以在时钟下降沿写入。
+注意，寄存器x0需要特殊处理，不论何时都是全零。请自行思考如何实现x0寄存器。</p>
+</section>
+</section>
+<section id="alu">
+<h2>ALU<a class="headerlink" href="#alu" title="Permalink to this heading"></a></h2>
+<p>ALU是CPU中的核心数据通路部件之一，它主要完成CPU中需要进行的算术逻辑运算，
+我们在前面的实验中已经实现了一个简单的ALU。在本实验中只需要对该ALU稍加改造即可。
+针对RV32I的运算需求，我们对ALU的控制信号进行了重新定义，如表 <a class="reference internal" href="#tab-aluctr"><span class="std std-numref">Table 10</span></a> 所示。
+该ALU的逻辑图如图 <a class="reference internal" href="#fig-alu2"><span class="std std-numref">Fig. 71</span></a> 所示。
+ALU对输入数据并行地进行加减法、移位、比较大小、异或等操作。
+最终ALUout输出是通过一个八选一选择器选择不同运算部件的结果，选择器的控制端可以用ALUctr[2:0]直接生成。
+ALU中其他部件的控制信号包括：A/L控制移位器进行算术移位还是逻辑移位，L/R控制是左移还是右移，U/S控制比较大小是带符号比较还是无符号比较，S/A控制是加法还是减法。
+这些控制信号需要按照所需进行的操作对应设置，请同学们自行设计。注意：比较大小或判断相等时应使用减法操作。</p>
+<figure class="align-default" id="fig-alu2">
+<img alt="../_images/alu2.png" src="../_images/alu2.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 71 </span><span class="caption-text">ALU电路示意图</span><a class="headerlink" href="#fig-alu2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="tab-aluctr">
+<caption><span class="caption-number">Table 10 </span><span class="caption-text">控制信号ALUctr的含义</span><a class="headerlink" href="#tab-aluctr" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>ALUctr[3]</p></th>
+<th class="head"><p>ALUctr[2:0]}</p></th>
+<th class="head"><p>ALU操作</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>000</p></td>
+<td><p>选择加法器输出，做加法</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>000</p></td>
+<td><p>选择加法器输出，做减法</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>001</p></td>
+<td><p>选择移位器输出，左移</p></td>
+</tr>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>010</p></td>
+<td><p>做减法，选择带符号小于置位结果输出, Less按带符号结果设置</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>010</p></td>
+<td><p>做减法，选择无符号小于置位结果输出, Less按无符号结果设置</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>011</p></td>
+<td><p>选择ALU输入B的结果直接输出</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>100</p></td>
+<td><p>选择异或输出</p></td>
+</tr>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>101</p></td>
+<td><p>选择移位器输出，逻辑右移</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>101</p></td>
+<td><p>选择移位器输出，算术右移</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>110</p></td>
+<td><p>选择逻辑或输出</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>111</p></td>
+<td><p>选择逻辑与输出</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id3">
+<h2>数据存储器<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<p>数据存储器在CPU运行中存储全局变量、堆栈等数据。我们建议大家实现至少128kB大小的数据存储器容量。
+并且，该数据存储器需要支持在沿上进行读取和写入操作。RV32I的字长是32bit，但是，数据存储器不仅要支持32bit数据的存取，同时也需要支持按字节（8bit）或半字（16bit）大小的读取。
+由于单周期CPU需要在一个周期内完成一条指令的所有操作，我们需要数据RAM有独立的读时钟和写时钟。其中读取操作在系统时钟的上升沿进行（即一个时钟周期的一半时刻），写操作在系统时钟的下降沿进行（即一个时钟周期的结束时刻）。建议使用双端口RAM（RAM 2 PORT）来实现数据存储器。DE10-Standard开发板上的大容量SRAM是支持独立的读写时钟的。一般可以支持128KB以上的数据存储容量。</p>
+<p>要实现按字节（8 bit）或按半字（16 bit）大小的读写，需要同学们对IP核生成的存储器进行一定程度的改造。
+在实现过程中不需要考虑4字节读写或2字节读写时地址未对齐的情况。默认4字节读写时地址低2位为00，2字节读写时地址最低位为0。</p>
+<p>具体地，MemOP信号定义如下：
+宽度为3bit，控制数据存储器读写格式，为 010 时为4字节读写，为001 时为2字节读写带符号扩展，为000时为1字节读写带符号扩展为 101时为2 字节读写无符号扩展为100时为1字节读写无符号扩展。</p>
+<p>MemOP与RV32中的存储器操作对应关系如下：</p>
+<table class="docutils align-default" id="tab-memop">
+<caption><span class="caption-number">Table 11 </span><span class="caption-text">存储访问指令与Memop对应关系</span><a class="headerlink" href="#tab-memop" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>指令</p></th>
+<th class="head"><p>MemOP</p></th>
+<th class="head"><p>操作</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>lb  rd,imm12(rs1)}</p></td>
+<td><p>000</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow SEXT(M_{1B}[ R[rs1] + SEXT(imm12) ])\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>lh  rd,imm12(rs1)}</p></td>
+<td><p>001</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow SEXT(M_{2B}[ R[rs1] + SEXT(imm12) ])\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>lw  rd,imm12(rs1)}</p></td>
+<td><p>010</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow M_{4B}[ R[rs1] + SEXT(imm12) ]\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>lbu rd,imm12(rs1)}</p></td>
+<td><p>100</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow \{24'b0, M_{1B}[ R[rs1] + SEXT(imm12) ]\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>lhu rd,imm12(rs1)}</p></td>
+<td><p>101</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow \{16'b0, M_{2B}[ R[rs1] + SEXT(imm12) ]\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>sb  rs2,imm12(rs1)}</p></td>
+<td><p>000</p></td>
+<td><p><span class="math notranslate nohighlight">\(M_{1B}[ R[rs1] + SEXT(imm12) ] \leftarrow R[rs2][7:0]\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>sh  rs2,imm12(rs1)}</p></td>
+<td><p>001</p></td>
+<td><p><span class="math notranslate nohighlight">\(M_{2B}[ R[rs1] + SEXT(imm12) ] \leftarrow R[rs2][15:0]\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>sw  rs2,imm12(rs1)}</p></td>
+<td><p>010</p></td>
+<td><p><span class="math notranslate nohighlight">\(M_{4B}[ R[rs1] + SEXT(imm12) ] \leftarrow R[rs2]\)</span></p></td>
+</tr>
+</tbody>
+</table>
+<p>对于读取操作，我们可以每次均读取32bit的数据，然后根据MemOP来判断是需要8bit，16bit还是32bit的数据，再根据地址的低2位选择合适的数据拼接扩展成读取的结果即可。</p>
+<p>对于写入操作，由于需要对32bit中特定的8bit或16bit数据进行写入，而不能破坏其他比特。因此在实现上需要慎重思考。我们提供以下三种解决思路，供大家参考。</p>
+<ol class="arabic simple">
+<li><p>利用IP核中支持单字节写入使能信号的双口RAM来实现。</p></li>
+</ol>
+<p>这种方式是我们推荐的方式。如图 <a class="reference internal" href="#fig-rammask"><span class="std std-numref">Fig. 72</span></a> 所示，在Quartus中配置双端口RAM的第3步时，我们可以选择生成单字节写入使能信号。例如，我们生成了位宽为32bit的RAM后，系统会对应生成byteena_a[3:0]的单字节写入使能信号，该信号是高有效。如果需要对32位四个Byte同时写入，可以将这个信号置为4’b1111。如果只需要写入低8位，可以将这个信号置为4’b0001。所以，在进行字节或半字写入时，我们只需要对应设置单字节写使能信号，并将写入的数据按正确的方式组成32bit一次性写入即可。</p>
+<figure class="align-default" id="fig-rammask">
+<img alt="../_images/rammask.png" src="../_images/rammask.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 72 </span><span class="caption-text">双端口RAM中的单字节写入使能配置</span><a class="headerlink" href="#fig-rammask" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<ol class="arabic simple" start="2">
+<li><p>在写入之前先读取原有数据，修改后一次性写入32比特。</p></li>
+</ol>
+<p>IP核生成的RAM不支持在仿真过程中对数据进行多次初始化，我们也可以用自己改写的RAM替代上述IP核中的带单字节写使能的RAM用于仿真。
+我们观察到，在单周期CPU中，CPU在一个周期内只可能对内存执行读操作或写操作中的一种。因此，如果我们要写入8bit的数据又不想改变与它相邻的其他比特，我们可以在时钟上升沿读取将要写入的单元而不是读地址对应的单元。对读取的数据进行修改后，在下降沿将数据再次写回去即可。
+注意，此时要求写使能信号和写地址要在时钟上升沿就准备好。我们提供了如下的实现示例，其接口和IP核生成的双端口RAM是一致的。</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">testdmem</span><span class="p">(</span>
+<span class="w">  </span><span class="n">byteena_a</span><span class="p">,</span>
+<span class="w">  </span><span class="n">data</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rdaddress</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rdclock</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wraddress</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wrclock</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wren</span><span class="p">,</span>
+<span class="w">  </span><span class="n">q</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">input</span><span class="w">   </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">   </span><span class="n">byteena_a</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">       </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="n">data</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">       </span><span class="p">[</span><span class="mh">14</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="n">rdaddress</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">       </span><span class="n">rdclock</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">       </span><span class="p">[</span><span class="mh">14</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="n">wraddress</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">       </span><span class="n">wrclock</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">       </span><span class="n">wren</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w">  </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="n">q</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">reg</span><span class="w">  </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">tempout</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">tempin</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ram</span><span class="w"> </span><span class="p">[</span><span class="mh">32767</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="w">  </span><span class="k">always</span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">rdclock</span><span class="p">)</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">wren</span><span class="p">)</span>
+<span class="w">      </span><span class="n">tempout</span><span class="o">&lt;=</span><span class="n">ram</span><span class="p">[</span><span class="n">wraddress</span><span class="p">];</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">      </span><span class="n">q</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="n">rdaddress</span><span class="p">];</span>
+<span class="w">  </span><span class="k">end</span>
+
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">tempin</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">byteena_a</span><span class="p">[</span><span class="mh">0</span><span class="p">])</span><span class="o">?</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="n">tempout</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">tempin</span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">8</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">byteena_a</span><span class="p">[</span><span class="mh">1</span><span class="p">])</span><span class="o">?</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">8</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">tempout</span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">8</span><span class="p">];</span>
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">tempin</span><span class="p">[</span><span class="mh">23</span><span class="o">:</span><span class="mh">16</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">byteena_a</span><span class="p">[</span><span class="mh">2</span><span class="p">])</span><span class="o">?</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mh">23</span><span class="o">:</span><span class="mh">16</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="n">tempout</span><span class="p">[</span><span class="mh">23</span><span class="o">:</span><span class="mh">16</span><span class="p">];</span>
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">tempin</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">24</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">byteena_a</span><span class="p">[</span><span class="mh">3</span><span class="p">])</span><span class="o">?</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">24</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="n">tempout</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">24</span><span class="p">];</span>
+
+<span class="w">  </span><span class="k">always</span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">wrclock</span><span class="p">)</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">wren</span><span class="p">)</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">      </span><span class="n">ram</span><span class="p">[</span><span class="n">wraddress</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">tempin</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+<div class="admonition mydanger">
+<p class="admonition-title">非标准的RAM模块</p>
+<p>这类自己写的RAM模块Quartus很有可能不会将其映射到M10K内存模块上来实现，直接导致系统资源不够或编译时间较长。在实际上板的代码中建议对于容量大于64k的存储都采用IP核生成的RAM。</p>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>利用4片8bit RAM拼接成一个32bit的存储器。</p></li>
+</ol>
+<p>这种方法用4片8bit的RAM拼接成一个32bit的RAM，每个8bitRAM负责32比特的给定部分。例如，RAM0负责提供地址低两位为00的数据，RAM1负责提供地址低两位为01的数据，以此类推。
+如果需要一次性读写32bit数据，我们将对应的数据和地址前30位连接到4片RAM上即可同时对4片RAM进行操作，一次读写 <span class="math notranslate nohighlight">\(4\times8=32\)</span> bit数据。
+如果只需要写入8bit数据，可以根据地址低两位来控制RAM写使能端口，只对一片RAM进行写入。
+这种方法主要的问题是内存初始化的时候需要对四片RAM分别进行初始化，有一些麻烦。</p>
+</section>
+<section id="id4">
+<h2>实验验收要求<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">在线测试</p>
+<p>请单独完成CPU的寄存器堆、ALU和数据存储器的实现，并能够顺利通过两个在线测试。</p>
+</div>
+<div class="admonition myinfo">
+<p class="admonition-title">可申请现场验收</p>
+<p>课程在线测试系统对时序和实现要求较高，如果无法通过在线测试，可以自行编写test bench由助教现场验收通过也可以完成验收。</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="09.html" class="btn btn-neutral float-left" title="实验九 字符输入界面" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="11.html" class="btn btn-neutral float-right" title="实验十一 RV32I单周期CPU" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, 王炜 吴海军 陈璐.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
