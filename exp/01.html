@@ -257,7 +257,7 @@
 </div>
 <div class="admonition myinfo">
 <p class="admonition-title">Verilog语句的执行</p>
-<p>在Verilog中，各语句是并发执行的，模块中所有的assign语句、always语句块和实例化语句，其执行顺序不分先后。而if语句是顺序执行的语句，其执行过程中必须先判断if后的条件，如果满足条件则执行if后的语句，否则执行else后的语句。Verilog语法规定，顺序执行的语句必须包含中always块中，always块中的语句按照它们中代码中出现的顺序执行。</p>
+<p>在Verilog中，各语句是并发执行的，模块中所有的assign语句、always语句块和实例化语句，其执行顺序不分先后。而if语句是顺序执行的语句，其执行过程中必须先判断if后的条件，如果满足条件则执行if后的语句，否则执行else后的语句。Verilog语法规定，顺序执行的语句必须包含在always或initial块中，always块中的语句按照它们中代码中出现的顺序执行。</p>
 </div>
 <div class="admonition myhint">
 <p class="admonition-title">always 语句块的使用</p>
