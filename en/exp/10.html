@@ -1,0 +1,447 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en-US" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 10: CPU Datapath &mdash; NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=b5540729" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8fdbbf67"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lab 11: RV32I Single Cycle CPU" href="11.html" />
+    <link rel="prev" title="Lab 9: Character Input Interface" href="09.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">Lab 1: Multiplexers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">Lab 2: Decoders and Encoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">Lab 3: Adders and ALUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">Lab 4: Counters and Clocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">Lab 5: Register File and Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">Lab 6: Shift Registers and Barrel Shifters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">Lab 7: Finite State Machines and Keyboard Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">Lab 8:  VGA interface controller’s implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">Lab 9: Character Input Interface</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lab 10: CPU Datapath</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#register-file">Register file</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#general-purpose-registers-in-rv32i">General Purpose Registers in RV32I</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#register-file-implementation">Register file Implementation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#alu">ALU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-memory">Data memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lab-check-in-contents">Lab check-in contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">Lab 11: RV32I Single Cycle CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">Lab 12: Computer Systems</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Lab 10: CPU Datapath</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lab-10-cpu-datapath">
+<h1>Lab 10: CPU Datapath<a class="headerlink" href="#lab-10-cpu-datapath" title="Link to this heading"></a></h1>
+<p><em>I dreamed that I slowly rose up, passing through the data plane, through the data network, into and through Wanfang Network, and finally arrived at an unfamiliar place—a place I had never dreamed of before… This place had infinite space, colors that were serene and indescribable, no horizon, no sky, no earth, or any physical area that humans call the ground.</em></p>
+<blockquote>
+<div><p>— “The Fall of Hyperion”, Dan Simmons</p>
+</div></blockquote>
+<p>The goal of this experiment is to complete three important parts of the CPU data path—the register file, ALU, and data memory—before implementing a single-cycle CPU, and test them through functional simulation.</p>
+<section id="register-file">
+<h2>Register file<a class="headerlink" href="#register-file" title="Link to this heading"></a></h2>
+<p>A register file is a storage unit in a CPU used to store temporary data during instruction execution.
+The basic version of the RISC-V CPU RV32I that we are going to implement has 32 registers.
+RV32I uses the <a class="reference external" href="https://en.wikipedia.org/wiki/Load%E2%80%93store_architecture">Load Store</a> architecture, which means that all data must first be read from memory into the register using a Load statement before arithmetic and logical operations can be performed.
+Therefore, RV32I has 32 general-purpose registers, and each arithmetic operation may need to read two source registers and write to one destination register at the same time.
+To support high-speed, multi-port parallel access to the register file, we cannot directly call general-purpose RAM, but need to write the register file separately in Verilog language.</p>
+<section id="general-purpose-registers-in-rv32i">
+<h3>General Purpose Registers in RV32I<a class="headerlink" href="#general-purpose-registers-in-rv32i" title="Link to this heading"></a></h3>
+<p>RV32I has a total of 32 32-bit general-purpose registers x0 to x31 (register addresses are 5-bit encoded), among which the content of register x0 is always 0 and cannot be changed.</p>
+<p>For aliases of other registers and register usage conventions, see Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-regname</span></code>. It should be noted that some registers are saved by the caller when a function is called, while others are saved by the callee. This should be taken into consideration when mixing C and assembly language programming.</p>
+<table class="docutils align-default" id="tab-regname">
+<caption><span class="caption-number">Table 9 </span><span class="caption-text">Definition and usage of general-purpose registers in RV32I</span><a class="headerlink" href="#tab-regname" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Register</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Use</p></th>
+<th class="head"><p>Saver</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>x0</p></td>
+<td><p>zero</p></td>
+<td><p>Constant 0</p></td>
+<td><p>–</p></td>
+</tr>
+<tr class="row-odd"><td><p>x1</p></td>
+<td><p>ra</p></td>
+<td><p>Return Address</p></td>
+<td><p>Caller</p></td>
+</tr>
+<tr class="row-even"><td><p>x2</p></td>
+<td><p>sp</p></td>
+<td><p>Stack Pointer</p></td>
+<td><p>Callee</p></td>
+</tr>
+<tr class="row-odd"><td><p>x3</p></td>
+<td><p>gp</p></td>
+<td><p>Global Pointer</p></td>
+<td><p>–</p></td>
+</tr>
+<tr class="row-even"><td><p>x4</p></td>
+<td><p>tp</p></td>
+<td><p>Thread Pointer</p></td>
+<td><p>–</p></td>
+</tr>
+<tr class="row-odd"><td><p>x5~x7</p></td>
+<td><p>t0~t2</p></td>
+<td><p>Temp</p></td>
+<td><p>Caller</p></td>
+</tr>
+<tr class="row-even"><td><p>x8</p></td>
+<td><p>s0/fp</p></td>
+<td><p>Saved/Frame pointer</p></td>
+<td><p>Callee</p></td>
+</tr>
+<tr class="row-odd"><td><p>x9</p></td>
+<td><p>s1</p></td>
+<td><p>Saved</p></td>
+<td><p>Callee</p></td>
+</tr>
+<tr class="row-even"><td><p>x10~x11</p></td>
+<td><p>a0~a1</p></td>
+<td><p>Arguments/Return Value</p></td>
+<td><p>Caller</p></td>
+</tr>
+<tr class="row-odd"><td><p>x12~x17</p></td>
+<td><p>a2~a7</p></td>
+<td><p>Arguments</p></td>
+<td><p>Caller</p></td>
+</tr>
+<tr class="row-even"><td><p>x18~x27</p></td>
+<td><p>s2~s11</p></td>
+<td><p>Saved</p></td>
+<td><p>Callee</p></td>
+</tr>
+<tr class="row-odd"><td><p>x28~x31</p></td>
+<td><p>t3~t6</p></td>
+<td><p>Temp</p></td>
+<td><p>Caller</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="register-file-implementation">
+<h3>Register file Implementation<a class="headerlink" href="#register-file-implementation" title="Link to this heading"></a></h3>
+<figure class="align-default" id="fig-regfile">
+<img alt="../_images/regfile.png" src="../_images/regfile.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 70 </span><span class="caption-text">Register file block diagram</span><a class="headerlink" href="#fig-regfile" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-regfile</span></code> describes the interface of the register file, which contains 32 32-bit registers.
+The register file needs to support two read operations and one write operation simultaneously. Therefore, two read addresses Ra and Rb are required, corresponding to rs1 and rs2 in RISC-V assembly, respectively. The write address is Rw, corresponding to rd. All addresses are 5 bits.
+The write data busW is 32 bits, and the write enable control is a one-bit high-level enable RegWr signal.
+The output of the register file is two 32-bit register data, busA and busB, respectively.
+The register file has a control clock WrClk for writing.
+In terms of timing, we can make the read operation asynchronous, that is, the output is immediate when the address changes. Writing can be done on the falling edge of the clock.
+Note that register x0 requires special treatment and is always all zeros. Please think about how to implement the x0 register yourself.</p>
+</section>
+</section>
+<section id="alu">
+<h2>ALU<a class="headerlink" href="#alu" title="Link to this heading"></a></h2>
+<p>The ALU is one of the core data path components in the CPU, primarily responsible for performing arithmetic and logical operations within the CPU.
+We have already implemented a simple ALU in previous experiments. In this experiment, only minor modifications to the ALU are required.
+To meet the computational requirements of the RV32I, we have redefined the control signals for the ALU, as shown in Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-aluctr</span></code>.
+The logic diagram of the ALU is shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-alu2</span></code>.
+The ALU performs parallel addition, subtraction, shifting, comparison, and XOR operations on the input data.
+The final ALUout output is the result of selecting different arithmetic components through an 8-to-1 multiplexer, and the control end of the multiplexer can be directly generated by ALUctr[2:0].
+Other control signals in the ALU include: A/L controls whether the shifter performs arithmetic or logical shifting, L/R controls left or right shifting, U/S controls whether the comparison is signed or unsigned, and S/A controls addition or subtraction.
+These control signals must be set according to the required operation. Please design them accordingly. Note: Subtraction should be used for comparisons or equality checks.</p>
+<figure class="align-default" id="fig-alu2">
+<img alt="../_images/alu2.png" src="../_images/alu2.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 71 </span><span class="caption-text">ALU logic diagram</span><a class="headerlink" href="#fig-alu2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="tab-aluctr">
+<caption><span class="caption-number">Table 10 </span><span class="caption-text">Meaning of control signal ALUctr</span><a class="headerlink" href="#tab-aluctr" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>ALUctr[3]</p></th>
+<th class="head"><p>ALUctr[2:0]}</p></th>
+<th class="head"><p>ALU Operation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>000</p></td>
+<td><p>Select the adder output and perform addition</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>000</p></td>
+<td><p>Select the adder output and perform subtraction</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>001</p></td>
+<td><p>Select shift register output, left shift</p></td>
+</tr>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>010</p></td>
+<td><p>Perform subtraction, select the signed result with the less-than bit set, and output the result. Set Less according to the signed result</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>010</p></td>
+<td><p>Perform subtraction, select unsigned less than set result output, Less set according to unsigned result</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>011</p></td>
+<td><p>Select the result of ALU input B for direct output</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>100</p></td>
+<td><p>Select XOR output</p></td>
+</tr>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>101</p></td>
+<td><p>Select shift register output, logical right shift</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>101</p></td>
+<td><p>Select shift register output, arithmetic right shift</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>110</p></td>
+<td><p>Select logic OR output</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>111</p></td>
+<td><p>Selection Logic AND Output</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-memory">
+<h2>Data memory<a class="headerlink" href="#data-memory" title="Link to this heading"></a></h2>
+<p>The data memory stores global variables, stacks, and other data during CPU operation. We recommend implementing a data memory capacity of at least 128 kB.
+In addition, the data memory needs to support read and write operations on the rising edge. The word length of RV32I is 32 bits, but the data memory not only needs to support 32-bit data access, but also needs to support byte (8-bit) or half-word (16-bit) size reads.
+Since a single-cycle CPU needs to complete all operations of an instruction within one cycle, we need the data RAM to have independent read and write clocks. The read operation is performed on the rising edge of the system clock (i.e., half of a clock cycle), and the write operation is performed on the falling edge of the system clock (i.e., the end of a clock cycle). It is recommended to use dual-port RAM (RAM 2 PORT) to implement the data memory. The large-capacity SRAM on the DE10-Standard development board supports independent read and write clocks. It generally supports a data storage capacity of more than 128 KB.</p>
+<p>To achieve byte-sized (8-bit) or half-byte-sized (16-bit) read/write operations, students need to modify the memory generated by the IP core to a certain extent.
+During implementation, there is no need to consider address misalignment when performing 4-byte or 2-byte read/write operations. By default, when performing 4-byte read/write operations, the lower two bits of the address are 00, and when performing 2-byte read/write operations, the lowest bit of the address is 0.</p>
+<p>Specifically, the MemOP signal is defined as follows:
+The width is 3 bits, controlling the data memory read/write format. When set to 010, it enables 4-byte read/write operations; when set to 001, it enables 2-byte read/write operations with signed extension; when set to 000, it enables 1-byte read/write operations with signed extension; when set to 101, it enables 2-byte read/write operations with unsigned extension; and when set to 100, it enables 1-byte read/write operations with unsigned extension.</p>
+<p>The correspondence between MemOP and memory operations in RV32 is as follows:</p>
+<table class="docutils align-default" id="tab-memop">
+<caption><span class="caption-number">Table 11 </span><span class="caption-text">Correspondence between memory access instructions and Memop</span><a class="headerlink" href="#tab-memop" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction</p></th>
+<th class="head"><p>MemOP</p></th>
+<th class="head"><p>Operation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>lb  rd,imm12(rs1)}</p></td>
+<td><p>000</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow SEXT(M_{1B}[ R[rs1] + SEXT(imm12) ])\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>lh  rd,imm12(rs1)}</p></td>
+<td><p>001</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow SEXT(M_{2B}[ R[rs1] + SEXT(imm12) ])\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>lw  rd,imm12(rs1)}</p></td>
+<td><p>010</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow M_{4B}[ R[rs1] + SEXT(imm12) ]\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>lbu rd,imm12(rs1)}</p></td>
+<td><p>100</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow \{24'b0, M_{1B}[ R[rs1] + SEXT(imm12) ]\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>lhu rd,imm12(rs1)}</p></td>
+<td><p>101</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow \{16'b0, M_{2B}[ R[rs1] + SEXT(imm12) ]\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>sb  rs2,imm12(rs1)}</p></td>
+<td><p>000</p></td>
+<td><p><span class="math notranslate nohighlight">\(M_{1B}[ R[rs1] + SEXT(imm12) ] \leftarrow R[rs2][7:0]\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>sh  rs2,imm12(rs1)}</p></td>
+<td><p>001</p></td>
+<td><p><span class="math notranslate nohighlight">\(M_{2B}[ R[rs1] + SEXT(imm12) ] \leftarrow R[rs2][15:0]\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>sw  rs2,imm12(rs1)}</p></td>
+<td><p>010</p></td>
+<td><p><span class="math notranslate nohighlight">\(M_{4B}[ R[rs1] + SEXT(imm12) ] \leftarrow R[rs2]\)</span></p></td>
+</tr>
+</tbody>
+</table>
+<p>For read operations, we can read 32 bits of data at a time, then determine whether 8 bits, 16 bits, or 32 bits of data are needed based on MemOP, and finally select the appropriate data based on the lower two bits of the address and concatenate it to expand it into the read result.</p>
+<p>For write operations, since it is necessary to write specific 8-bit or 16-bit data within 32 bits without damaging other bits, careful consideration is required in the implementation. We provide the following three solutions for your reference.</p>
+<ol class="arabic simple">
+<li><p>Using a dual-port RAM with a single-byte write enable signal supported by the IP core.</p></li>
+</ol>
+<p>This is the method we recommend. As shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-rammask</span></code>, when configuring dual-port RAM in Quartus in Step 3, we can choose to generate a single-byte write enable signal. For example, after generating a 32-bit RAM, the system will generate a single-byte write enable signal byteena_a[3:0], which is high-active. If you need to write to all four bytes of the 32-bit RAM simultaneously, set this signal to 4’b1111. If you only need to write to the lower 8 bits, set this signal to 4’b0001. Therefore, when performing byte or half-word writes, you only need to set the corresponding single-byte write enable signal and compose the write data in the correct format for a 32-bit write operation.</p>
+<figure class="align-default" id="fig-rammask">
+<img alt="../_images/rammask.png" src="../_images/rammask.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 72 </span><span class="caption-text">Single-byte write enable configuration in dual-port RAM</span><a class="headerlink" href="#fig-rammask" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<ol class="arabic simple" start="2">
+<li><p>Read the original data before writing, modify it, and then write 32 bits at once.</p></li>
+</ol>
+<p>The RAM generated by the IP core does not support multiple initializations of data during simulation. We can also use our own rewritten RAM to replace the RAM with single-byte write enable in the above IP core for simulation.
+We observe that in a single-cycle CPU, the CPU can only perform one of the read or write operations on the memory in a cycle. Therefore, if we want to write 8-bit data without altering the adjacent bits, we can read the unit to be written on the rising edge of the clock instead of the unit corresponding to the read address. After modifying the read data, we can write it back on the falling edge.
+Note that the write enable signal and write address must be ready on the rising edge of the clock. We provide the following implementation example, whose interface is consistent with the dual-port RAM generated by the IP core.</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">testdmem</span><span class="p">(</span>
+<span class="w">  </span><span class="n">byteena_a</span><span class="p">,</span>
+<span class="w">  </span><span class="n">data</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rdaddress</span><span class="p">,</span>
+<span class="w">  </span><span class="n">rdclock</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wraddress</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wrclock</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wren</span><span class="p">,</span>
+<span class="w">  </span><span class="n">q</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">input</span><span class="w">   </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">   </span><span class="n">byteena_a</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">       </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="n">data</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">       </span><span class="p">[</span><span class="mh">14</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="n">rdaddress</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">       </span><span class="n">rdclock</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">       </span><span class="p">[</span><span class="mh">14</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="n">wraddress</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">       </span><span class="n">wrclock</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">       </span><span class="n">wren</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w">  </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="n">q</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">reg</span><span class="w">  </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">tempout</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">tempin</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ram</span><span class="w"> </span><span class="p">[</span><span class="mh">32767</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="w">  </span><span class="k">always</span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">rdclock</span><span class="p">)</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">wren</span><span class="p">)</span>
+<span class="w">      </span><span class="n">tempout</span><span class="o">&lt;=</span><span class="n">ram</span><span class="p">[</span><span class="n">wraddress</span><span class="p">];</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">      </span><span class="n">q</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="n">rdaddress</span><span class="p">];</span>
+<span class="w">  </span><span class="k">end</span>
+
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">tempin</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">byteena_a</span><span class="p">[</span><span class="mh">0</span><span class="p">])</span><span class="o">?</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="n">tempout</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">tempin</span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">8</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">byteena_a</span><span class="p">[</span><span class="mh">1</span><span class="p">])</span><span class="o">?</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">8</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">tempout</span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">8</span><span class="p">];</span>
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">tempin</span><span class="p">[</span><span class="mh">23</span><span class="o">:</span><span class="mh">16</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">byteena_a</span><span class="p">[</span><span class="mh">2</span><span class="p">])</span><span class="o">?</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mh">23</span><span class="o">:</span><span class="mh">16</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="n">tempout</span><span class="p">[</span><span class="mh">23</span><span class="o">:</span><span class="mh">16</span><span class="p">];</span>
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">tempin</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">24</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">byteena_a</span><span class="p">[</span><span class="mh">3</span><span class="p">])</span><span class="o">?</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">24</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="n">tempout</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">24</span><span class="p">];</span>
+
+<span class="w">  </span><span class="k">always</span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">wrclock</span><span class="p">)</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">wren</span><span class="p">)</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">      </span><span class="n">ram</span><span class="p">[</span><span class="n">wraddress</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">tempin</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+<div class="admonition mydanger">
+<p class="admonition-title">Non-standard RAM modules</p>
+<p>Quartus is unlikely to map such self-written RAM modules to M10K memory modules, which directly leads to insufficient system resources or long compilation times. In actual board code, it is recommended to use IP core-generated RAM for storage capacities greater than 64k.</p>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Use four 8-bit RAM chips and combine them to form a 32-bit memory.</p></li>
+</ol>
+<p>This method uses four 8-bit RAM chips to form a 32-bit RAM, with each 8-bit RAM chip responsible for a specific portion of the 32 bits. For example, RAM0 is responsible for providing data with the lower two bits of the address set to 00, RAM1 is responsible for providing data with the lower two bits of the address set to 01, and so on.
+If you need to read or write 32-bit data at once, you can connect the corresponding data and the first 30 bits of the address to the four RAM chips, allowing all four RAM chips to be operated simultaneously, resulting in a single read/write operation of <span class="math notranslate nohighlight">\(4\times8=32\)</span> bits of data.
+If only 8-bit data needs to be written, the RAM write enable port can be controlled based on the lower two bits of the address to write to only one RAM. The main issue with this method is that during memory initialization, each of the four RAMs must be initialized separately, which can be somewhat troublesome.</p>
+</section>
+<section id="lab-check-in-contents">
+<h2>Lab check-in contents<a class="headerlink" href="#lab-check-in-contents" title="Link to this heading"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">Online test</p>
+<p>Please complete the implementation of the CPU’s register file, ALU, and data memory separately, and pass two online tests.</p>
+</div>
+<div class="admonition myinfo">
+<p class="admonition-title">In-person check-in can be requested.</p>
+<p>The online testing system for the course has high requirements for timing and implementation. If you are unable to pass the online test, you can write your own test bench and have it verified in-person by a teaching assistant to complete the check-in process.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="09.html" class="btn btn-neutral float-left" title="Lab 9: Character Input Interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="11.html" class="btn btn-neutral float-right" title="Lab 11: RV32I Single Cycle CPU" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Wei Wang, Haijun Wu, Lu Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

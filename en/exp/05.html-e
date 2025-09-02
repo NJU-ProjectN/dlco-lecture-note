@@ -1,0 +1,588 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en-US" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 5: Register File and Memory &mdash; NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=b5540729" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8fdbbf67"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lab 6: Shift Registers and Barrel Shifters" href="06.html" />
+    <link rel="prev" title="Lab 4: Counters and Clocks" href="04.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">Lab 1: Multiplexers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">Lab 2: Decoders and Encoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">Lab 3: Adders and ALUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">Lab 4: Counters and Clocks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lab 5: Register File and Memory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#register-and-register-file">Register and register file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implementation-of-memory">Implementation of Memory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#initialization-of-memory">Initialization of memory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#using-ip-cores-to-generate-memory">Using IP cores to generate memory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#generating-ram-through-ip">Generating RAM through IP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-initialization">Memory initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dynamic-memory-update">Dynamic memory update</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#lab-check-in-contents">Lab check-in contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">Lab 6: Shift Registers and Barrel Shifters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">Lab 7: Finite State Machines and Keyboard Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">Lab 8:  VGA interface controller’s implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">Lab 9: Character Input Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">Lab 10: CPU Datapath</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">Lab 11: RV32I Single Cycle CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">Lab 12: Computer Systems</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Lab 5: Register File and Memory</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lab-5-register-file-and-memory">
+<h1>Lab 5: Register File and Memory<a class="headerlink" href="#lab-5-register-file-and-memory" title="Link to this heading"></a></h1>
+<p><em>This feeling can be cherished as a memory, but at the time it was vague.</em></p>
+<blockquote>
+<div><p>— “Jinse,” Li Shangyin</p>
+</div></blockquote>
+<p>The register file and memory are memory devices in digital systems used to store programs and data. From a programmer’s perspective, the state of the CPU is uniquely determined by the information in its registers and memory. The registers include the program counter (PC) and general-purpose registers, while the memory refers to the main memory. We can view a computer as a large finite-state automaton. Once the information in these storage components is determined, the computer’s state is also determined. In the absence of external input, the computer’s subsequent operational state is also uniquely determined.</p>
+<p>The purpose of this lab is to understand the characteristics of FPGA flip-flops and on-chip memory, analyze the timing and structure of memory, and learn how to design register files and main memory.</p>
+<section id="register-and-register-file">
+<h2>Register and register file<a class="headerlink" href="#register-and-register-file" title="Link to this heading"></a></h2>
+<p>FPGAs have a large number of flip-flop resources for data storage. D flip-flops can be used to store bit signals. Adding a set function to a D flip-flop turns it into a one-bit register, as shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-reg01</span></code>. As shown in the figure, if the load signal is 1, the input signal in is sent to the OR gate, and the other input of the OR gate is 0. At this point, D = in, so in the next clock cycle, q = in. When the load value is 0, the q value is fed back to the OR gate, and the other input of the OR gate is 0. At this point, D = q, so in the next clock cycle, the q value remains unchanged from the previous value.</p>
+<figure class="align-default" id="fig-reg01">
+<img alt="../_images/reg01.png" src="../_images/reg01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 29 </span><span class="caption-text">1-bit register</span><a class="headerlink" href="#fig-reg01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Designing registers using the Verilog language is also straightforward, as shown in <code class="xref std std-numref docutils literal notranslate"><span class="pre">list-reg01</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="list-reg01">
+<div class="code-block-caption"><span class="caption-number">Listing 17 </span><span class="caption-text">1-bit register code</span><a class="headerlink" href="#list-reg01" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">register1</span><span class="p">(</span><span class="n">load</span><span class="p">,</span><span class="n">clk</span><span class="p">,</span><span class="n">clr</span><span class="p">,</span><span class="n">inp</span><span class="p">,</span><span class="n">q</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="n">load</span><span class="p">,</span><span class="n">clr</span><span class="p">,</span><span class="n">clk</span><span class="p">,</span><span class="n">inp</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="n">q</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">clr</span><span class="o">==</span><span class="mh">1</span><span class="p">)</span>
+<span class="w">        </span><span class="n">q</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">load</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span>
+<span class="w">        </span><span class="n">q</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">inp</span><span class="p">;</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>The simulation diagram of the program for <code class="xref std std-numref docutils literal notranslate"><span class="pre">list-reg01</span></code> is shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-reg02</span></code>.</p>
+<blockquote>
+<div><figure class="align-default" id="fig-reg02">
+<img alt="../_images/reg02.png" src="../_images/reg02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 30 </span><span class="caption-text">1-bit register simulation results</span><a class="headerlink" href="#fig-reg02" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</div></blockquote>
+<p>This example implements a 1-bit register with a clear bit and an input bit. Some registers also have a set bit (set to 1). Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-reg03</span></code> shows the logic diagram of a register with a clear bit, an input bit, and a set bit. Readers can design this register themselves.</p>
+<figure class="align-default" id="fig-reg03">
+<img alt="../_images/reg03.png" src="../_images/reg03.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 31 </span><span class="caption-text">1-bit register block diagram</span><a class="headerlink" href="#fig-reg03" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Combining two or more 1-bit registers that share a clock signal forms a multi-bit register. Registers are often used in computers to store data, such as instruction registers and data registers. Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">list-reg02</span></code> is an example of register design using Verilog language.</p>
+<div class="literal-block-wrapper docutils container" id="list-reg02">
+<div class="code-block-caption"><span class="caption-number">Listing 18 </span><span class="caption-text">4-bit register code</span><a class="headerlink" href="#list-reg02" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">register4</span><span class="p">(</span><span class="n">load</span><span class="p">,</span><span class="n">clk</span><span class="p">,</span><span class="n">clr</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">q</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="n">load</span><span class="p">,</span><span class="n">clr</span><span class="p">,</span><span class="n">clk</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">d</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">q</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">clr</span><span class="o">==</span><span class="mh">1</span><span class="p">)</span>
+<span class="w">        </span><span class="n">q</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">load</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span>
+<span class="w">        </span><span class="n">q</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">d</span><span class="p">;</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>The simulation diagram of the program for <code class="xref std std-numref docutils literal notranslate"><span class="pre">list-reg02</span></code> is shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-reg04</span></code>.</p>
+<figure class="align-default" id="fig-reg04">
+<img alt="../_images/reg04.png" src="../_images/reg04.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 32 </span><span class="caption-text">4-bit register simulation results</span><a class="headerlink" href="#fig-reg04" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Memory is a set of storage units used to store binary data in a computer, as shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-mem01</span></code>. Memory ports include input ports, output ports, and control ports. Input ports include read/write address ports, data input ports, etc. Output ports generally refer to data output ports. Control ports include clock ports and read/write control ports. The memory works as follows:</p>
+<figure class="align-default" id="fig-mem01">
+<img alt="../_images/mem01.png" src="../_images/mem01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 33 </span><span class="caption-text">memory structure</span><a class="headerlink" href="#fig-mem01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p><strong>Writing data</strong>: On the rising or falling edge of the clock (clk), if the write enable (Wr_en, which may or may not be present) is active, the data on the data input bus (Data_in) is read and stored in the memory cell pointed to by the input address line (In_addr).</p>
+<p><strong>Read data</strong>: The output of the memory can be controlled by the clock and enable pins, or it can be controlled independently of the clock and enable pins. If the output is controlled by the clock, then on the valid edge of the clock, the data in the cell indicated by the output address is output to the output bus (Data_out); if it is not controlled by the clock, then as long as the output address is valid, the data in the cell pointed to by this address is immediately sent to the output bus.</p>
+<div class="admonition mydanger">
+<p class="admonition-title">Pay attention to the read/write timing of the memory.</p>
+<p>For memory, read and write timing is very important, and it is also an area where errors are prone to occur in practice. When reading data, at what point in time is the data valid, and how long after writing data can it be read? These issues must be repeatedly checked and verified during the design process.</p>
+</div>
+<p>There are many operating modes for FPGA memory, such as true dual-port RAM, simple dual-port RAM, single-port RAM, ROM, or FIFO cache. Please refer to the table below for common modes.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-number">Table 5 </span><span class="caption-text">Memory working modes</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>memory mode</strong></p></th>
+<th class="head"><p><strong>Explanation</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>single-port memory</p></td>
+<td><p>At a certain moment, read-only or write-only</p></td>
+</tr>
+<tr class="row-odd"><td><p>Simple dual-port memory mode</p></td>
+<td><p>Simple dual-port mode supports simultaneous read and write (one read, one write)</p></td>
+</tr>
+<tr class="row-even"><td><p>Simple dual-port memory mode with mixed widths</p></td>
+<td><p>Read and write using different data widths in simple dual-port mode</p></td>
+</tr>
+<tr class="row-odd"><td><p>True dual-port memory mode</p></td>
+<td><p>True dual-port mode supports any combination of dual-port operations: two read ports, two write ports, and one read port and one write port at different clock frequencies.</p></td>
+</tr>
+<tr class="row-even"><td><p>True dual-port memory mode with mixed widths</p></td>
+<td><p>True dual-port mode using different data widths for reading and writing</p></td>
+</tr>
+<tr class="row-odd"><td><p>ROM</p></td>
+<td><p>Working in ROM mode, the contents of the ROM have been initialized.</p></td>
+</tr>
+<tr class="row-even"><td><p>FIFO buffer</p></td>
+<td><p>Can implement single-clock or dual-clock FIFO</p></td>
+</tr>
+</tbody>
+</table>
+<p>In Verilog HDL, memory can be defined using a two-dimensional array. For example, suppose you need a 32-byte 8-bit memory block, i.e., this memory has a total of 32 memory units, each of which can store an 8-bit binary number. Such memory can be defined as a <span class="math notranslate nohighlight">\(32 \times 8\)</span> array, which can be declared as a variable in Verilog as follows:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">memory_array</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>The storage units are memory_array [0] to memory_array [31], and each storage unit have size of 8 bits.</p>
+<p>When reading, you can directly read the lower 4 bits of the 13th unit using memory_array [13][3:0].</p>
+<div class="admonition mycomment">
+<p class="admonition-title">Differences and similarities between registers and memory</p>
+<p>Although registers and memory are both used to store status information, there are significant differences between them in terms of their usage and implementation:</p>
+<ul class="simple">
+<li><p>Registers generally require fast access speeds and high parallel access, so their capacity is typically small. In a CPU, the program counter (PC) and general-purpose registers are frequently accessed, so the access latency must be within one clock cycle. For single-cycle CPUs, each clock cycle often requires reading two general-purpose registers and completing the write back of one register at the same time. When the requirements are high, it is possible that the results output by the register file need to be output asynchronously, that is, not read on the clock edge, and the output changes in real time with the input address. Under such high requirements, the size of the register file cannot be too large, otherwise it will consume a lot of resources.</p></li>
+<li><p>Main memory generally has a large capacity, but the read and write times are long, and the read and write processes have strict timing requirements.</p></li>
+<li><p>In Verilog, although the register file and memory are both described as two-dimensional arrays, the specific implementation method is selected according to the code access requirements during the compilation and synthesis process. For example, when the code does not strictly require read/write operations on clock signal edges, the system assumes that the read/write requirements for the storage unit are high and directly implements it using FPGA logic units. This implementation consumes a significant amount of resources and typically only supports storage units in the range of a few kilobytes. If a large number of such storage functions are required, the system may take a long time to compile and synthesize, or may even be unable to implement them. If the access of a memory cell strictly follows the timing requirements and only reads and writes each individual cell on the clock edge, the system can use a large-capacity M10K to implement storage, which can generally support a capacity of several hundred kilobytes. Therefore, special attention should be paid to the reading and writing of memory in experiments, avoid viewing memory from the perspective of a two-dimensional array in a high-level language, otherwise it will cause many unexpected consequences.</p></li>
+</ul>
+</div>
+</section>
+<section id="implementation-of-memory">
+<h2>Implementation of Memory<a class="headerlink" href="#implementation-of-memory" title="Link to this heading"></a></h2>
+<p>The Cyclone V series FPGA contains two types of embedded memory blocks:</p>
+<p>10Kb M10K memory block—This is a dedicated memory resource block. The M10K memory block is ideal for large memory arrays and provides a large number of independent ports.</p>
+<p>64-bit Memory Logic Arrays (MLABs) — An embedded memory array configured from dual-purpose logic array blocks. MLABs are ideal for wide, shallow memory arrays. MLABs are optimized for use in digital signal processing (DSP) applications as shift registers, wide shallow FIFO buffers, and filter delay lines. Each MLAB consists of 10 adaptive logic blocks (ALMs). In Cyclone V series devices, you can configure these ALMs into 10 <span class="math notranslate nohighlight">\(32 \times 2\)</span> modules, so that each MLAB can implement a <span class="math notranslate nohighlight">\(32 \times 20\)</span> simple dual-port SRAM module.</p>
+<p>Cyclone V series FPGA embedded memory resources are shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-mem02</span></code>. We can compare them with the memory resources of Cyclone V SX C6 on the DE10-standard development platform.</p>
+<figure class="align-default" id="fig-mem02">
+<img alt="../_images/mem02.png" src="../_images/mem02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 34 </span><span class="caption-text">Memory resources of the Cyclone V series</span><a class="headerlink" href="#fig-mem02" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Quartus automatically selects the number and configuration of memory modules used in hardware implementation based on the speed and size of the user’s memory design. For example, to improve design performance, Quartus may expand a memory design that can be implemented with a single RAM to multiple RAMs.</p>
+<div class="admonition myquestion">
+<p class="admonition-title">Memory behavior and FPGA’s RAM modules</p>
+<p>When synthesizing the following memory, will the synthesizer use the FPGA’s RAM module to implement this module?</p>
+<div class="literal-block-wrapper docutils container" id="list-mem01">
+<div class="code-block-caption"><span class="caption-number">Listing 19 </span><span class="caption-text">Memory implementation code</span><a class="headerlink" href="#list-mem01" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">ram</span><span class="w"> </span><span class="p">#(</span>
+<span class="w">  </span><span class="k">parameter</span><span class="w"> </span><span class="n">RAM_WIDTH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32</span><span class="p">,</span>
+<span class="w">  </span><span class="k">parameter</span><span class="w"> </span><span class="n">RAM_ADDR_WIDTH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">10</span>
+<span class="p">)(</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="n">we</span><span class="p">,</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">RAM_WIDTH</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">din</span><span class="p">,</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">RAM_ADDR_WIDTH</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">inaddr</span><span class="p">,</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">RAM_ADDR_WIDTH</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">outaddr</span><span class="p">,</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="n">RAM_WIDTH</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">dout</span>
+<span class="p">);</span>
+
+<span class="w">  </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="n">RAM_WIDTH</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ram</span><span class="w"> </span><span class="p">[(</span><span class="mh">2</span><span class="o">**</span><span class="n">RAM_ADDR_WIDTH</span><span class="p">)</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">we</span><span class="p">)</span>
+<span class="w">        </span><span class="n">ram</span><span class="p">[</span><span class="n">inaddr</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">din</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">dout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="n">outaddr</span><span class="p">];</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>If you change the memory implementation part of table <code class="xref std std-numref docutils literal notranslate"><span class="pre">list-mem01</span></code> to</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">we</span><span class="p">)</span>
+<span class="w">    </span><span class="n">ram</span><span class="p">[</span><span class="n">inaddr</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">din</span><span class="p">;</span>
+<span class="w">  </span><span class="k">else</span>
+<span class="w">    </span><span class="n">dout</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="n">outaddr</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>Will the behavior of the memory change?</p>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">Analyze memory instances with three output ports</p>
+<p><code class="xref std std-numref docutils literal notranslate"><span class="pre">list-mem02</span></code> is a memory instance with three output ports. Analyze the memory structure and working process, view the RTL diagram of this memory, check the input/output and storage structure of the memory, and analyze the differences in the structure of the three output ports. Design a test code for this instance, examine the timing differences between the three port outputs, and explain the timing of its operation based on the RTL diagram.</p>
+<div class="literal-block-wrapper docutils container" id="list-mem02">
+<div class="code-block-caption"><span class="caption-number">Listing 20 </span><span class="caption-text">Memory instance code</span><a class="headerlink" href="#list-mem02" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">v_rams_8</span><span class="w"> </span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">we</span><span class="p">,</span><span class="w"> </span><span class="n">inaddr</span><span class="p">,</span><span class="w"> </span><span class="n">outaddr</span><span class="p">,</span><span class="w"> </span><span class="n">din</span><span class="p">,</span><span class="w"> </span><span class="n">dout0</span><span class="p">,</span><span class="n">dout1</span><span class="p">,</span><span class="n">dout2</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="n">clk</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="n">we</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">inaddr</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">outaddr</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">din</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">dout0</span><span class="p">,</span><span class="n">dout1</span><span class="p">,</span><span class="n">dout2</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ram</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="w">  </span><span class="k">initial</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">  </span><span class="n">ram</span><span class="p">[</span><span class="mh">7</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8&#39;hf0</span><span class="p">;</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="mh">6</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8&#39;h23</span><span class="p">;</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="mh">5</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8&#39;h20</span><span class="p">;</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="mh">4</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8&#39;h50</span><span class="p">;</span>
+<span class="w">  </span><span class="n">ram</span><span class="p">[</span><span class="mh">3</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8&#39;h03</span><span class="p">;</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8&#39;h21</span><span class="p">;</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8&#39;h82</span><span class="p">;</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8&#39;h0D</span><span class="p">;</span>
+<span class="w">  </span><span class="k">end</span>
+
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">we</span><span class="p">)</span>
+<span class="w">          </span><span class="n">ram</span><span class="p">[</span><span class="n">inaddr</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">din</span><span class="p">;</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">          </span><span class="n">dout0</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="n">outaddr</span><span class="p">];</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">negedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">we</span><span class="p">)</span>
+<span class="w">          </span><span class="n">dout1</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="n">outaddr</span><span class="p">];</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="w">  </span><span class="k">assign</span><span class="w">  </span><span class="n">dout2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="n">outaddr</span><span class="p">];</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>The initial statement block completes the initialization of RAM at start-up.</p>
+<p>Select the appropriate input/output port width, apply pin constraints to this instance, use a switch or button as the clock port, and verify the working timing of different input/output modes on the development board again.</p>
+</div>
+<section id="initialization-of-memory">
+<h3>Initialization of memory<a class="headerlink" href="#initialization-of-memory" title="Link to this heading"></a></h3>
+<p>When the amount of RAM data that needs to be initialized is large, you can use files to load the RAM data directly at system startup.
+Verilog provides the following statements to import data from files into RAM:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">initial</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="nb">$readmemh</span><span class="p">(</span><span class="s">&quot;D:/digital_logic/mem1.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ram</span><span class="p">,</span><span class="w"> </span><span class="mh">0</span><span class="p">,</span><span class="w"> </span><span class="mh">7</span><span class="p">);</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>The above content can replace the RAM initialization section in the previous example, importing the data in mem1.txt into RAM variables 0 to 7. Please note that mem1.txt can be located in any directory that does not contain Non-ASCII characters, but the absolute path to this file must be specified in the initialization statement, otherwise the initialization data will not be visible during simulation.</p>
+<p>The content and format of mem1.txt are as follows:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="p">@</span><span class="mh">0</span><span class="w"> </span><span class="mh">0</span><span class="n">d</span>
+<span class="p">@</span><span class="mh">1</span><span class="w"> </span><span class="mh">82</span>
+<span class="p">@</span><span class="mh">2</span><span class="w"> </span><span class="mh">21</span>
+<span class="p">@</span><span class="mh">3</span><span class="w"> </span><span class="mh">03</span>
+<span class="p">@</span><span class="mh">4</span><span class="w"> </span><span class="mh">20</span>
+<span class="p">@</span><span class="mh">5</span><span class="w"> </span><span class="n">ff</span>
+<span class="p">@</span><span class="mh">6</span><span class="w"> </span><span class="mh">50</span>
+<span class="p">@</span><span class="mh">7</span><span class="w"> </span><span class="mh">04</span>
+</pre></div>
+</div>
+<p>The &#64; symbol is followed by the RAM address, followed by the hexadecimal RAM data. In Verilog, the $readmemh method reads hexadecimal data, and the $readmemb method reads binary data.</p>
+<p>When initializing memory, you can choose to initialize only some of the memory cells and leave others uninitialized. For example, suppose that the RAM has eight memory cells. The following initialization initializes only memory cells <span class="math notranslate nohighlight">\(0$\sim$5\)</span>, which is also acceptable.</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">initial</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="nb">$readmemh</span><span class="p">(</span><span class="s">&quot;D:/digital_logic/mem1.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ram</span><span class="p">,</span><span class="w"> </span><span class="mh">0</span><span class="p">,</span><span class="w"> </span><span class="mh">5</span><span class="p">);</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>Assuming that the memory RAM has eight storage units, the following initialization attempts to initialize units 0 to 8 of the memory, for a total of nine units, which is <strong>not allowed</strong>.</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">initial</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="nb">$readmemh</span><span class="p">(</span><span class="s">&quot;D:/digital_logic/mem1.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ram</span><span class="p">,</span><span class="w"> </span><span class="mh">0</span><span class="p">,</span><span class="w"> </span><span class="mh">8</span><span class="p">);</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>There are other ways to initialize memory, which we will continue to introduce in future experiments.</p>
+</section>
+</section>
+<section id="using-ip-cores-to-generate-memory">
+<h2>Using IP cores to generate memory<a class="headerlink" href="#using-ip-cores-to-generate-memory" title="Link to this heading"></a></h2>
+<p>Quartus provides many practical IP cores that can be used to easily implement complex designs. Now, let’s take the design of a memory as an example to introduce how to use Quartus IP cores.</p>
+<section id="generating-ram-through-ip">
+<h3>Generating RAM through IP<a class="headerlink" href="#generating-ram-through-ip" title="Link to this heading"></a></h3>
+<p>On the right side of the Quartus workspace is the IP directory, as shown in the figure below.</p>
+<figure class="align-default" id="fig-step01">
+<img alt="../_images/step01.png" src="../_images/step01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 35 </span><span class="caption-text">IP Catalog</span><a class="headerlink" href="#fig-step01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Expand <code class="docutils literal notranslate"><span class="pre">Library</span></code> to see all available IPs. Continue to expand <code class="docutils literal notranslate"><span class="pre">Basic</span> <span class="pre">Functions</span> <span class="pre">-&gt;</span> <span class="pre">On</span> <span class="pre">Chip</span> <span class="pre">Memory</span></code>, double-click <code class="docutils literal notranslate"><span class="pre">RAM:</span> <span class="pre">1-PORT</span></code>, which is single-port RAM.</p>
+<blockquote>
+<div><figure class="align-default" id="fig-step02">
+<img alt="../_images/step02new.png" src="../_images/step02new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 36 </span><span class="caption-text">Select RAM type</span><a class="headerlink" href="#fig-step02" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</div></blockquote>
+<p>A pop-up window will appear. Give this IP a name. Here, we will name it “ram1port.” It will be saved in the current project directory by default. Select Verilog as the hardware description language file corresponding to the IP core.</p>
+<figure class="align-default" id="fig-step03">
+<img alt="../_images/step03new.png" src="../_images/step03new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 37 </span><span class="caption-text">Select target file name</span><a class="headerlink" href="#fig-step03" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Select the memory size: Here, we select a <span class="math notranslate nohighlight">\(16 \times 8\)</span> bit memory, and the compiler automatically selects whether to implement the memory as M10K or MLAB. At the same time, we select a uniform clock to control reads and writes.</p>
+<figure class="align-default" id="fig-step05">
+<img alt="../_images/step05new.png" src="../_images/step05new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 38 </span><span class="caption-text">Select RAM size</span><a class="headerlink" href="#fig-step05" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Configure buffer and enable signals, etc. Note that we do not cache the output here. You can try adding output cache yourself and experiment with how many clock cycles the RAM needs to output when caching.</p>
+<figure class="align-default" id="fig-step06">
+<img alt="../_images/step06new.png" src="../_images/step06new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 39 </span><span class="caption-text">Signal cache configuration</span><a class="headerlink" href="#fig-step06" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>For single-clock RAM, choose how to resolve “write-while-read” data conflicts. As mentioned in the opening poem “Jin Se”, data written in the current cycle may not necessarily be read in the current cycle.</p>
+<figure class="align-default" id="fig-step08">
+<img alt="../_images/step08new.png" src="../_images/step08new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 40 </span><span class="caption-text">Resolving read during write conflicts</span><a class="headerlink" href="#fig-step08" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="memory-initialization">
+<h3>Memory initialization<a class="headerlink" href="#memory-initialization" title="Link to this heading"></a></h3>
+<p>When creating memory, you can choose not to initialize it, or you can use a hexadecimal (.hex) file or a memory initialization file (.mif file) to initialize it. When the configuration reaches Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-step10</span></code>, you can choose to use the file to initialize the memory.
+In this step, you can also configure dynamic memory updates by selecting “Allow In-System Memory Content Editor” <span class="math notranslate nohighlight">\(\ldots\)</span>, and give your memory module an appropriate name, such as RAM1.</p>
+<figure class="align-default" id="fig-step10">
+<img alt="../_images/step10new.png" src="../_images/step10new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 41 </span><span class="caption-text">Initialization configuration and dynamic memory update configuration</span><a class="headerlink" href="#fig-step10" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Below is an introduction to the generation of .mif files.</p>
+<p>Return to the Quartus workspace, click <code class="docutils literal notranslate"><span class="pre">File</span> <span class="pre">-&gt;</span> <span class="pre">New</span></code>, select <code class="docutils literal notranslate"><span class="pre">Memory</span> <span class="pre">Initialization</span> <span class="pre">File</span></code> under the <code class="docutils literal notranslate"><span class="pre">Memory</span> <span class="pre">Files</span></code> directory, and click <code class="docutils literal notranslate"><span class="pre">OK</span></code>. Select settings based on memory size:</p>
+<figure class="align-default" id="fig-step11">
+<img alt="../_images/step11new.png" src="../_images/step11new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 42 </span><span class="caption-text">Initialization file size selection</span><a class="headerlink" href="#fig-step11" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Click <code class="docutils literal notranslate"><span class="pre">OK</span></code>.</p>
+<p>The compiler automatically pops up the initial value setting interface for .mif files, allowing you to set the initial values:</p>
+<figure class="align-default" id="fig-step12">
+<img alt="../_images/step12new.png" src="../_images/step12new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 43 </span><span class="caption-text">Edit initialization file</span><a class="headerlink" href="#fig-step12" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Save.
+Return to the IP Core Generation window and click <code class="docutils literal notranslate"><span class="pre">Browse</span> <span class="pre">...</span></code>.</p>
+<figure class="align-default" id="fig-step13">
+<img alt="../_images/step13new.png" src="../_images/step13new.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 44 </span><span class="caption-text">Initialization file selection</span><a class="headerlink" href="#fig-step13" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Select the .mif file you just saved, click <code class="docutils literal notranslate"><span class="pre">Open</span></code>, and select the memory initialization file. Click <code class="docutils literal notranslate"><span class="pre">Next</span></code>, <code class="docutils literal notranslate"><span class="pre">Next</span></code>, and <code class="docutils literal notranslate"><span class="pre">Finished</span></code> to complete the configuration of the single-port RAM.</p>
+<p>In the project navigation bar, under the <code class="docutils literal notranslate"><span class="pre">Files</span></code> directory, expand ram1port.qip to see the ram1port.v file generated for this RAM. Double-click to open it and see the interface parameters of ram1port.v. Instantiate this RAM in the top-level entity of the memory design to use it in the design:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="n">ram1port</span><span class="w"> </span><span class="n">my_ram</span><span class="p">(</span>
+<span class="w">    </span><span class="p">.</span><span class="n">address</span><span class="p">(</span><span class="n">addr</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">clock</span><span class="p">(</span><span class="n">clk</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">din</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">wren</span><span class="p">(</span><span class="n">we</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">q</span><span class="p">(</span><span class="n">dout0</span><span class="p">));</span>
+</pre></div>
+</div>
+<div class="admonition myhint">
+<p class="admonition-title">Initializing non-IP core memory using mif files</p>
+<p>You can also use mif files to initialize memory in programming. The following statement uses data.mif to initialize myrom.
+At this point, the mif file and the .v file must be in the same directory.</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">ram_init_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;data.mif&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">myrom</span><span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="dynamic-memory-update">
+<h3>Dynamic memory update<a class="headerlink" href="#dynamic-memory-update" title="Link to this heading"></a></h3>
+<p>Quartus provides an In-System Memory Content Editor to view and update the contents of RAM in real time. This is very useful for debugging. Especially in CPU experiments, if the CPU design has not changed but you need to modify the assembly code running in the system, you can directly use the In-System Memory Content Editor to make changes without having to recompile the entire project.</p>
+<p>Before using the In-System Memory Content Editor, please compile the entire project completely and ensure that the dynamic memory update feature was selected when generating the IP core.
+After programming and running the development board, open Quartus’s <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">-&gt;</span> <span class="pre">In-System</span> <span class="pre">Memory</span> <span class="pre">Content</span> <span class="pre">Editor</span></code>. Enter the interface shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-memedit01</span></code>. At this point, you need to first select the hardware and connect the development board. The JTAG will then be scanned automatically; please select the second device. At this point, the RAM1 identifier that was just configured should appear on the left, but the data has not yet been updated.</p>
+<figure class="align-default" id="fig-memedit01">
+<img alt="../_images/memedit01.png" src="../_images/memedit01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 45 </span><span class="caption-text">In-System Memory Content Editor Configuration</span><a class="headerlink" href="#fig-memedit01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Right-click on RAM01, select <code class="docutils literal notranslate"><span class="pre">Read</span> <span class="pre">Data...</span></code> from the menu, and you will see the latest data in RAM.</p>
+<figure class="align-default" id="fig-memedit02">
+<img alt="../_images/memedit02.png" src="../_images/memedit02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 46 </span><span class="caption-text">Read real-time memory</span><a class="headerlink" href="#fig-memedit02" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>If you need to change the data in RAM, you can either modify the data manually or right-click and select <code class="docutils literal notranslate"><span class="pre">Import</span> <span class="pre">Data</span> <span class="pre">from</span> <span class="pre">file</span></code> to update it with a new mif file. After updating, please remember to right-click and select Write data to In-System Memory to apply the changes.</p>
+</section>
+</section>
+<section id="lab-check-in-contents">
+<h2>Lab check-in contents<a class="headerlink" href="#lab-check-in-contents" title="Link to this heading"></a></h2>
+<p>Please complete the following register file and RAM in a single project. The sizes of the register file and RAM are both <span class="math notranslate nohighlight">\(16\times 8\)</span>, meaning they each have 16 storage units, each of which is 8 bits wide and capable of both reading and writing.</p>
+<div class="admonition mytodo">
+<p class="admonition-title">Implement  register file</p>
+<p>No clock control is required during read operations. That is, once the read address is valid, data is output directly. Write operations are controlled by the rising edge of the clock.</p>
+<p>At this point, you can output as follows:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ram</span><span class="p">[</span><span class="n">addr</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>Initialize using the following method:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">initial</span>
+<span class="k">begin</span>
+<span class="w">  </span><span class="nb">$readmemh</span><span class="p">(</span><span class="s">&quot;D:/digital_logic/mem1.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ram</span><span class="p">,</span><span class="w"> </span><span class="mh">0</span><span class="p">,</span><span class="w"> </span><span class="mh">15</span><span class="p">);</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>Initialize the value to</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="p">@</span><span class="mh">0</span><span class="w"> </span><span class="mh">00</span>
+<span class="p">@</span><span class="mh">1</span><span class="w"> </span><span class="mh">01</span>
+<span class="p">@</span><span class="mh">2</span><span class="w"> </span><span class="mh">02</span>
+<span class="p">@</span><span class="mh">3</span><span class="w"> </span><span class="mh">03</span>
+<span class="p">@</span><span class="mh">4</span><span class="w"> </span><span class="mh">04</span>
+<span class="p">@</span><span class="mh">5</span><span class="w"> </span><span class="mh">05</span>
+<span class="p">@</span><span class="mh">6</span><span class="w"> </span><span class="mh">06</span>
+<span class="p">@</span><span class="mh">7</span><span class="w"> </span><span class="mh">07</span>
+<span class="p">@</span><span class="mh">8</span><span class="w"> </span><span class="mh">08</span>
+<span class="p">@</span><span class="mh">9</span><span class="w"> </span><span class="mh">09</span>
+<span class="p">@</span><span class="n">a</span><span class="w"> </span><span class="mh">0</span><span class="n">a</span>
+<span class="p">@</span><span class="n">b</span><span class="w"> </span><span class="mh">0</span><span class="n">b</span>
+<span class="p">@</span><span class="n">c</span><span class="w"> </span><span class="mh">0</span><span class="n">c</span>
+<span class="p">@</span><span class="n">d</span><span class="w"> </span><span class="mh">0</span><span class="n">d</span>
+<span class="p">@</span><span class="n">e</span><span class="w"> </span><span class="mh">0</span><span class="n">e</span>
+<span class="p">@</span><span class="n">f</span><span class="w"> </span><span class="mf">0f</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">Implement a RAM</p>
+<p>Use the IP core to design a single-port memory, use the .mif file for initialization, and the initialization values of the sixteen units are: 0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, and 0xff.
+If the IP core does not support a single-port memory with a minimum of 16 units, you can use a 32-unit or 64-unit single-port memory instead, with the address high position set to zero to use only 16 RAM units.</p>
+<ul>
+<li><p>These two physically different memories share the same clock and read/write addresses. Select the clock signal and write enable signal appropriately so that you can read and write to these two memories separately. Display the results read from the two memories separately using two seven-segment displays. Use the input/output resources of the FPGA development board reasonably to complete the design of this register file and RAM. Due to the insufficient number of inputs on the development board, only 2 bits of data can be written at a time.</p></li>
+<li><p>Use the In-System Memory Content Editor to modify the data in the RAM and verify that your modifications are actually updated on the development board.</p></li>
+<li><p>Use the buttons on the development board as the clock signal for the memory. Observe how many clock cycles are required to complete the read or write operation in each of the two different implementation methods.</p></li>
+<li><p>Open <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">-&gt;</span> <span class="pre">Netlist</span> <span class="pre">Viewers</span> <span class="pre">-&gt;</span> <span class="pre">Techonlogy</span> <span class="pre">Map</span> <span class="pre">Viewer</span></code>, click on the implementation tree structure to find the two memories you generated, and observe how these two memories are implemented after synthesis and why.</p></li>
+<li><p>Pay attention to the resource consumption after synthesis. Which memory may have consumed the resources in the two red boxes in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-ramresource</span></code>? If we use the register method, how much storage capacity can our development board support? What about Block Memory?</p>
+<figure class="align-default" id="fig-ramresource">
+<img alt="../_images/ramresource.png" src="../_images/ramresource.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 47 </span><span class="caption-text">System resource utilization</span><a class="headerlink" href="#fig-ramresource" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+</ul>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">Online test</p>
+<p>Register file implementation</p>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">Online test</p>
+<p>Leading zeros check</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="04.html" class="btn btn-neutral float-left" title="Lab 4: Counters and Clocks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="06.html" class="btn btn-neutral float-right" title="Lab 6: Shift Registers and Barrel Shifters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Wei Wang, Haijun Wu, Lu Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

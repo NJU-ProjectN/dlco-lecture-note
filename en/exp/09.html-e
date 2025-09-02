@@ -1,0 +1,225 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en-US" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 9: Character Input Interface &mdash; NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=b5540729" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8fdbbf67"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lab 10: CPU Datapath" href="10.html" />
+    <link rel="prev" title="Lab 8: VGA interface controller’s implementation" href="08.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">Lab 1: Multiplexers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">Lab 2: Decoders and Encoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">Lab 3: Adders and ALUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">Lab 4: Counters and Clocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">Lab 5: Register File and Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">Lab 6: Shift Registers and Barrel Shifters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">Lab 7: Finite State Machines and Keyboard Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">Lab 8:  VGA interface controller’s implementation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lab 9: Character Input Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#character-display">Character Display</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#system-design">System Design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#scan-display">Scan display</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-read-write">Memory read/write</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#lab-check-in-contents">Lab check-in contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">Lab 10: CPU Datapath</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">Lab 11: RV32I Single Cycle CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">Lab 12: Computer Systems</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Lab 9: Character Input Interface</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lab-9-character-input-interface">
+<h1>Lab 9: Character Input Interface<a class="headerlink" href="#lab-9-character-input-interface" title="Link to this heading"></a></h1>
+<p><a href="#id1"><span class="problematic" id="id2">*</span></a>The input for first-generation computers was nothing more than a glorified typewriter keyboard, while output relied on high-speed printing or visual displays. HAL could do these things when necessary, but he interacted with his fellow humans mostly through speech. *</p>
+<blockquote>
+<div><p>— 2001: A Space Odyssey, Arthur C. Clarke</p>
+</div></blockquote>
+<p>This experiment will utilize the keyboard and display functions implemented earlier to build a simple character input interface. Through the implementation of this system, we will gain a deeper understanding of the interaction between multiple modules and the design of interfaces.</p>
+<section id="character-display">
+<h2>Character Display<a class="headerlink" href="#character-display" title="Link to this heading"></a></h2>
+<p>From previous VGA image display experiments, we have learned that graphical interfaces require a large amount of resources. Implementing high-precision, high-resolution graphical interfaces on FPGAs can be somewhat resource-intensive. However, the resources available on FPGAs are much richer than those available on first-generation PCs decades ago. It is not difficult to use FPGAs to implement a simple character input and display interface.</p>
+<p>The character display interface only displays ASCII characters on the screen, which requires relatively few resources. First, ASCII characters are represented by 7 bits, with a total of 128 characters. In most cases, we use 8 bits to represent a single character, so most systems reserve 256 characters. We can pre-store the character font bitmaps for these 256 characters in the system, as shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-ascii</span></code>.</p>
+<figure class="align-default" id="fig-ascii">
+<img alt="../_images/Codepage-737.png" src="../_images/Codepage-737.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 67 </span><span class="caption-text">ASCII characters font</span><a class="headerlink" href="#fig-ascii" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Each character here is 16 pixels high and 9 pixels wide. Therefore, a single character can be represented by 16 9-bit numbers, each representing a row of the character, with the corresponding pixel displayed in white when it is <code class="docutils literal notranslate"><span class="pre">1</span></code> and black when it is <code class="docutils literal notranslate"><span class="pre">0</span></code>. Therefore, we only need <span class="math notranslate nohighlight">\(256\times 16 \times 9 \approx 37\)</span> kbit of space to store the entire bitmap. Students can use high-level languages to generate bitmap files themselves. We also provide a bitmap text file &lt;../resources/vga_font.txt&gt;_ that can be read with the $readmemh statement, in which every 3 hexadecimal numbers (12 bits in total) represent a single character line, and the leftmost pixel of the 9 pixels in that line is the lowest bit of the 12 bits ( <strong>please note the order of high and low bits</strong> ), and so on. The highest 3 bits are always 0. Each character has 16 lines, totaling 256 characters.</p>
+<p>For example, the ASCII character <code class="docutils literal notranslate"><span class="pre">A</span></code> is encoded as 41h (decimal 65). Therefore, the address corresponding to its character pattern is <span class="math notranslate nohighlight">\(16\times65=1040\)</span> (text files start from line 1, so it is on line 1041). Taking the fourth line of the character A as an example, the file stores 038h, which corresponds to 0000 0011 1000 in binary. The least significant bit is 0, so the first pixel on the left is 0, and the fourth to sixth pixels from the left are 1. As shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-chara</span></code>, the colors are reversed for convenience of display.</p>
+<figure class="align-default" id="fig-chara">
+<img alt="../_images/chara.png" src="../_images/chara.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 68 </span><span class="caption-text">The relationship between the character font “A” and the memory</span><a class="headerlink" href="#fig-chara" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>With the character pixels matrix, the system no longer needs to record the color information of each pixel on the screen, but only needs to record the ASCII characters displayed on the screen. When displaying, determine which character should be displayed based on the current screen position, then find the corresponding character pixels matrix to complete the display. For a <span class="math notranslate nohighlight">\(640×480\)</span> screen, it can display 30 rows (<span class="math notranslate nohighlight">\(30×16=480\)</span>) and 70 columns (<span class="math notranslate nohighlight">\(70×9=630\)</span>) of ASCII characters. The system’s display memory only needs to be <span class="math notranslate nohighlight">\(30\times70\)</span> in size, with each cell storing 8 bits of ASCII characters. In this way, our character display memory only needs 2.1 kBytes, plus 6.144 kBytes for the dot matrix, for a total of less than 10 kBytes of storage, which is sufficient for the FPGA chip.</p>
+</section>
+<section id="system-design">
+<h2>System Design<a class="headerlink" href="#system-design" title="Link to this heading"></a></h2>
+<section id="scan-display">
+<h3>Scan display<a class="headerlink" href="#scan-display" title="Link to this heading"></a></h3>
+<p>We have already implemented the VGA control module, which can output the current scanned row and column position information. With a few modifications, we can make it output the coordinates of the current scanned position corresponding to the <span class="math notranslate nohighlight">\(30\times 70\)</span> character array ( <span class="math notranslate nohighlight">\(0\leq x \leq 69\)</span> ,  <span class="math notranslate nohighlight">\(0\leq y\leq 29\)</span> ). Using these coordinates, we can query the character memory to obtain the ASCII code of the corresponding character. Using the ASCII code, we can query the corresponding pixel matrix ROM, and then, based on the row and column information of the scan line, we can know which pixel within the character is currently being scanned. At this point, we can choose to output white or black based on whether the bit corresponding to that pixel is 1 or 0.</p>
+<figure class="align-default" id="fig-ascii01">
+<img alt="../_images/ascii02.png" src="../_images/ascii02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 69 </span><span class="caption-text">Character display flowchart</span><a class="headerlink" href="#fig-ascii01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>We summarize the process as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Based on the current scan position, obtain the x and y coordinates of the corresponding character, as well as the row and column information scanned into the single character dot matrix.</p></li>
+<li><p>Based on the x and y coordinates of the character, query the character display memory to obtain the corresponding ASCII code.</p></li>
+<li><p>Query the dot matrix ROM based on the ASCII code and row information within the character to obtain the 9-bit data of the corresponding row.</p></li>
+<li><p>Retrieve the corresponding bit based on the column information within the character and set the color based on that bit. Here, you can display white characters on a black background or other colored characters. You only need to set the background color and character color according to your needs.</p></li>
+</ul>
+</div></blockquote>
+<p>Since the scanning frequency of VGA is 25 MHz, the time taken to scan each pixel is very short. Therefore, careful timing design is required to complete this series of operations within the time taken to scan one pixel. First, it is difficult for FPGA to complete multiplication and division in such a short time. Therefore, when designing, it is necessary to reasonably select the size and addressing method of the memory, and simplify the address calculation to simple counting and logical operations. Second, we need to query multiple memories for each pixel, and the query method for each memory needs to be reasonably designed: should we use RAM or ROM? Should we use rising edge readout or falling edge readout? All of these may affect the final performance of the system. Displays with performance issues may show colored edges or blurring, which indicate potential problems with the system implementation.</p>
+<div class="admonition mydanger">
+<p class="admonition-title">Do not use registers to implement large-capacity storage</p>
+<p>If you use registers to implement the required memory instead of the on-chip M10K or MLAB, it may consume a large amount of resources, causing FPGA resource shortages and significantly increasing compilation time.</p>
+</div>
+</section>
+<section id="memory-read-write">
+<h3>Memory read/write<a class="headerlink" href="#memory-read-write" title="Link to this heading"></a></h3>
+<p>For keyboard input, we can reuse the keyboard controller we implemented earlier. When there is input from the keyboard, we rewrite the character display memory, writing the ASCII code corresponding to the key to the appropriate location in the display memory, so that the input is directly reflected on the screen.</p>
+<div class="admonition mydanger">
+<p class="admonition-title">Pay attention to memory read/write operations</p>
+<p>The character video memory that stores ASCII codes is frequently read at high speed by the VGA scan module, while the keyboard module needs to write to the video memory. It is important to ensure coordination between the two modules.</p>
+</div>
+</section>
+</section>
+<section id="lab-check-in-contents">
+<h2>Lab check-in contents<a class="headerlink" href="#lab-check-in-contents" title="Link to this heading"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">On-Board Lab: Implement a character interactive interface</p>
+<p>Implement an interactive interface that allows keyboard input and displays output on a VGA monitor. The interface implementation requirements can be referenced from the DOS character interface, Windows command line, or Linux character terminal.</p>
+<ul class="simple">
+<li><p>Support input of all lowercase English letters and numbers, as well as symbols that can be entered without using the Shift key.</p></li>
+<li><p>When a key is held down continuously, the character is repeated.</p></li>
+<li><p>After reaching the end of the line, the input automatically wraps to the next line; pressing Enter also causes a line break.</p></li>
+</ul>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">Optional extension requirements (only five or more need to be completed to achieve full marks)</p>
+<ul class="simple">
+<li><p>The cursor can be displayed. It is recommended to use a flashing vertical or horizontal line as the cursor.</p></li>
+<li><p>Supports the BackSpace key to delete characters before the cursor.</p></li>
+<li><p>After deleting to the beginning of the current line with BackSpace, pressing BackSpace again deletes the Enter key, leaving the cursor after the last non-empty character on the previous line.</p></li>
+<li><p>Supports automatic scrolling: after reaching the last line, pressing Enter creates a new blank line, and all previously entered lines automatically shift up one line.</p></li>
+<li><p>Supports Shift key and uppercase/lowercase character input.</p></li>
+<li><p>Supports moving the cursor using the arrow keys.</p></li>
+<li><p>Displays the command prompt at the beginning of the line.</p></li>
+</ul>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">Even cooler effects</p>
+<p>Interested students may also consider how to implement colored characters, draw ASCII art, or achieve a character rain effect similar to the beginning of the Matrix.</p>
+</div>
+<div class="admonition myhint">
+<p class="admonition-title">Minimum requirement</p>
+<p>This experiment is quite challenging. The minimum requirement is to be able to display pre-set characters on the monitor, but <strong>only meeting the minimum requirement will not earn you full marks</strong>.</p>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">Online test</p>
+<p>Simple Turing machine implementation</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="08.html" class="btn btn-neutral float-left" title="Lab 8: VGA interface controller’s implementation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="10.html" class="btn btn-neutral float-right" title="Lab 10: CPU Datapath" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Wei Wang, Haijun Wu, Lu Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

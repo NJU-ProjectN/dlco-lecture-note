@@ -1,0 +1,536 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en-US" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 12: Computer Systems &mdash; NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=b5540729" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8fdbbf67"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Lab 11: RV32I Single Cycle CPU" href="11.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">Lab 1: Multiplexers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">Lab 2: Decoders and Encoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">Lab 3: Adders and ALUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">Lab 4: Counters and Clocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">Lab 5: Register File and Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">Lab 6: Shift Registers and Barrel Shifters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">Lab 7: Finite State Machines and Keyboard Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">Lab 8:  VGA interface controller’s implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">Lab 9: Character Input Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">Lab 10: CPU Datapath</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">Lab 11: RV32I Single Cycle CPU</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lab 12: Computer Systems</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#lab-objectives">Lab Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hardware-component">Hardware Component</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#peripheral-memory-mapping">Peripheral Memory Mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#peripheral-memory-read-write-design">Peripheral Memory Read/Write Design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#common-peripheral-device-implementations">Common Peripheral Device Implementations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#specific-implementation-of-memory-mapping">Specific implementation of memory mapping</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#software-component">Software Component</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction-to-the-compilation-process">Introduction to the Compilation Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hello-world-example">Hello World Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#execution-of-unimplemented-instructions">Execution of Unimplemented Instructions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#lab-check-in-contents">Lab check-in contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#on-board-check-in">On-Board Check-in</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Lab 12: Computer Systems</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lab-12-computer-systems">
+<h1>Lab 12: Computer Systems<a class="headerlink" href="#lab-12-computer-systems" title="Link to this heading"></a></h1>
+<p>“Next came a very large set of matched volumes containing reference materials: One contained designs for thousands of sleeve bearings, another for computers made of rods, still another for energy storage devices, and all of them were ractive so that she could use them to design such things to her own specifications. Then there were more books on the general principles of putting such things together into systems.”</p>
+<blockquote>
+<div><p>— “The Diamond Age: A Young Lady’s Illustrated Primer”, Neal Stephenson</p>
+</div></blockquote>
+<section id="lab-objectives">
+<h2>Lab Objectives<a class="headerlink" href="#lab-objectives" title="Link to this heading"></a></h2>
+<p>The goal of this lab is to implement a simple computer system on the FPGA of the DE10-Standard development board that can run simple instructions and process a certain amount of input and output. After all the functions have been developed, we hope to complete the basic terminal function, that is, keyboard input commands and output the results on the display. The following content is only a design reference. Students in this lab are free to use their imagination to complete various computer functions they have conceived. When implementing the project, students can choose to do part of it or make cuts and modifications according to their own interests.</p>
+</section>
+<section id="hardware-component">
+<h2>Hardware Component<a class="headerlink" href="#hardware-component" title="Link to this heading"></a></h2>
+<p>In the previous lab, we completed the core CPU part of the computer hardware. In this lab, we will integrate the previously completed peripheral components so that the CPU can truly interact with the peripherals. This will form a truly functional computer system.
+We recommend using memory mapping for communication between the CPU and peripherals. That is, specific memory addresses are predefined to correspond to the input or output of specific peripherals, and the CPU uses ordinary load/store instructions to read and write to these memory addresses to control the peripherals.
+Under this approach, the CPU hardware does not need to distinguish between memory addresses corresponding to peripherals and those corresponding to data RAM. The hardware only needs to place the correct data addresses and read/write signals on the bus and retrieve the data from the bus correctly.
+The specific meaning of the data can be handled by software. Peripherals only need to focus on a small portion of their own address space.</p>
+<section id="peripheral-memory-mapping">
+<h3>Peripheral Memory Mapping<a class="headerlink" href="#peripheral-memory-mapping" title="Link to this heading"></a></h3>
+<p>The CPU has a 32-bit data address, and its addressable space can reach 4G bytes. The data storage implemented in our previous lab only occupied 128K bytes of space, so we can re-plan the CPU’s data address space to meet the requirements of both data storage and peripheral communication.</p>
+<p>First, the space with the upper 12 bits of the address set to all zeros, i.e., 0x00000000 to 0x000fffff, can be allocated to our instruction memory.</p>
+<p>Second, the address space with the upper 12 bits of the address set to 0x001 can be allocated to the data memory, which is used for constants, global variables, heap, and stack space required for normal program operation. Of course, in our system, the instruction memory and data memory are separate, but in practice, we can address them uniformly.</p>
+<p>Finally, specific spaces can be allocated to each peripheral, distinguished by the high 12 bits of the address. For example, addresses starting with 0x002 can be allocated to the display, addresses starting with 0x003 can be allocated to the keyboard, and so on.</p>
+<p>When the CPU reads or writes to memory, it places the 32-bit address it needs to access on the data address bus. At this point, we can determine which specific memory segment to use based on the upper 12 bits of the CPU’s accessed address. When writing, only the write enable bit for the corresponding memory is set to active. When reading, data can be read simultaneously from multiple different memory segments, and the appropriate data is selected based on the upper 12 bits of the address and placed on the CPU’s data bus. The basic idea is similar to dividing four pieces of RAM to provide 32-bit data in Lab 10.</p>
+<p>Different address ranges can be implemented in different ways. For example, the data storage segment can be implemented using the large-capacity M10K storage in Lab 10. For peripherals, the storage capacity is generally small, so it can be implemented using a relatively free handwritten RAM method, as long as you pay attention to the read and write clock control.</p>
+</section>
+<section id="peripheral-memory-read-write-design">
+<h3>Peripheral Memory Read/Write Design<a class="headerlink" href="#peripheral-memory-read-write-design" title="Link to this heading"></a></h3>
+<p>Memory mapped to peripheral devices generally requires two or more read/write ports (i.e., two sets of address lines), one set for use by the CPU and one set for use by the peripheral device.
+This may result in read/write conflicts.
+Therefore, we need to analyze the read/write requirements of different peripheral devices for storage space.
+Typical peripheral storage may include the following types:</p>
+<ul class="simple">
+<li><p><strong>CPU read-only type</strong>: This type of peripheral mainly includes timers, switches on the board, etc. The space corresponding to this type of peripheral is relatively small, generally only 32 or 64 bits. We only need to assign the wire type variable corresponding to the peripheral to a specific register on the rising edge of the clock, and place the contents of the register on the CPU data bus when the CPU reads the matching address.</p></li>
+<li><p><strong>CPU write-only type</strong>: These types of peripherals are mainly output devices, such as monitors, LEDs, or seven-segment displays. In this case, the CPU always writes data on the rising edge, and the peripheral can read the corresponding data on each falling edge according to its own logic and place it in its own register to drive the peripheral. If necessary, when the storage capacity is small, a register file-like implementation can be used for asynchronous reading.</p></li>
+<li><p><strong>CPU simultaneous read/write type</strong>: In this case, the CPU and peripheral cannot write to the same address in the same cycle. This situation is very rare, and generally, specific spaces can be divided into CPU read-only or write-only areas through design. For specific designs, please refer to the keyboard space design below.</p></li>
+</ul>
+</section>
+<section id="common-peripheral-device-implementations">
+<h3>Common Peripheral Device Implementations<a class="headerlink" href="#common-peripheral-device-implementations" title="Link to this heading"></a></h3>
+<p>Below is a brief introduction to the implementation methods of common peripherals on the board.</p>
+<p><strong>LED</strong>: The CPU is only responsible for writing, which can be achieved with a single 32-bit register. Simply assign the corresponding bits of this register directly to the LED. The CPU software keeps a copy of the current LED status in its own storage space. When the LED brightness needs to be changed, it can operate on its own copy and then directly switch the copy to the corresponding LED address.</p>
+<p><strong>Seven-segment display</strong>: The CPU is only responsible for writing the BCD code to the seven-segment display. Similar to LEDs, it can also be implemented directly using a 32-bit register.</p>
+<p><strong>Timer</strong>: CPU read-only type. If a timer with millisecond or microsecond resolution is required, it can be achieved by dividing the system clock to generate a timing signal with 1 millisecond or 1 microsecond resolution. The timer accumulates counts and writes the data to the corresponding timer memory space at each rising edge of the clock. The timer width can be 32 bits or 64 bits. When the CPU needs to access the timer, it can directly read the corresponding timer data using the load instruction, thereby obtaining the number of milliseconds or microseconds elapsed from bootup to the current time. This functionality can be used to implement clocks or calculate program runtime. Interested students may also consider using methods such as min-heaps or time wheels to implement various timing functions in an operating system.</p>
+<p><strong>Switch</strong>: CPU read-only type. Simply connect the switch to a specific register to read the corresponding switch status through the Load instruction.</p>
+<p><strong>Display</strong>: CPU write-only. A certain amount of character memory can be allocated to the display, with each 8 bits corresponding to an ASCII code. For example, to support 64 rows <span class="math notranslate nohighlight">\(\times\)</span> 64 columns, only 4096 bytes of character cache are needed. This type of storage needs to support the CPU’s different bit width sb, sh, and sw instructions. In addition, some memory space corresponding to the control registers can be allocated separately. For example, a start line number register can be allocated to facilitate scrolling operations, or a color control register can be allocated to control the character and background colors. The CPU writes the video memory and display control registers on the rising edge of its own clock. The display part is similar to the function in our Lab 9, and only needs to read the ASCII code from the video memory and output it correctly. To implement scrolling and other functions, the display hardware can read ASCII codes starting from a given starting line number, then display the content of the next 30 lines (the line number can be a modulo 64 loop). This allows scrolling to be easily achieved by changing the starting line number. Note that it is recommended that the display device faithfully display only the ASCII characters in the video memory, while logic such as scrolling and clearing is implemented by CPU software. The display device can read the video memory using its own 25 MHz clock. If the CPU cannot reach this frequency, it does not significantly impact implementation. That is, even if the CPU writes slowly, the display device can still read the video memory at its own pace.</p>
+<figure class="align-default" id="fig-scroll">
+<img alt="../_images/scroll.png" src="../_images/scroll.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 83 </span><span class="caption-text">Examples of video memory organization</span><a class="headerlink" href="#fig-scroll" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p><strong>Keyboard</strong>: It is recommended to implement the keyboard using a circular buffer. We first allocate memory space capable of storing 16 or 32 scan codes (4 bytes). At the same time, we set the head pointer <code class="docutils literal notranslate"><span class="pre">head</span></code> and the tail pointer <code class="docutils literal notranslate"><span class="pre">tail</span></code>. At this point, the keyboard hardware acts as the data generator responsible for writing to the buffer. The CPU serves as the data consumer, responsible for reading data from the buffer.
+In this data structure, the head pointer is only written by the CPU, while the tail pointer and buffer are only written by the keyboard. Therefore, the CPU-only write and peripheral-only write regions can be separated, avoiding read-write conflicts.
+When the keyboard receives a new key press, it reads the head and tail pointers. If tail = head - 1, it indicates the buffer is full and cannot be written to. Otherwise, the keyboard writes the corresponding scan code to the tail position and increments tail by 1.
+For the CPU, whenever it needs to check for keyboard input, it can first read the head and tail pointers. If head == tail, it indicates the buffer is empty with no keyboard input, and the CPU can return directly to continue other tasks.
+If head and tail are not equal, the CPU copies the scan code pointed to by the head pointer into its own memory and increments head by 1, indicating that the scan code has been read. This way, we can use the buffer to record a portion of the keystrokes, ensuring that the CPU does not lose keystrokes even when busy, while also enabling non-blocking keystroke reading.
+After reading the scan codes, the CPU can use software to process the start and stop codes and convert the scan codes to ASCII. The specific software implementation can be designed as needed.
+If the system only requires reading ASCII codes, ASCII codes can be directly placed in the buffer, meaning the conversion from scan codes to ASCII codes is handled by the hardware. This approach is less flexible than the software-based conversion method.</p>
+<figure class="align-default" id="fig-keyboard">
+<img alt="../_images/keyboard.png" src="../_images/keyboard.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 84 </span><span class="caption-text">Example of keyboard buffer organization</span><a class="headerlink" href="#fig-keyboard" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="specific-implementation-of-memory-mapping">
+<h3>Specific implementation of memory mapping<a class="headerlink" href="#specific-implementation-of-memory-mapping" title="Link to this heading"></a></h3>
+<p>In this experimental design, all data RAMs are implemented using a dual-port configuration, meaning the RAM provides separate read address lines, read data output ports, and read clock signals, as well as write address lines, write data input ports, and write clock signals. In this configuration, read and write operations are completely separated and can be designed independently.
+We can use separate RAM or registers to implement data storage space for different peripherals. For different peripheral read and write requirements, simply connect the peripheral data lines, address lines, and CPU data lines and address lines to the read/write interfaces of the corresponding peripheral data modules.
+Taking data storage as an example, data storage only needs to be connected to the CPU, so we connect the read/write address, clock, and memop signals directly to the CPU.</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="n">dmem</span><span class="w"> </span><span class="n">datamem</span><span class="p">(.</span><span class="n">rdaddr</span><span class="p">(</span><span class="n">drdaddr</span><span class="p">),</span><span class="w">   </span><span class="c1">// CPU read address</span>
+<span class="w">      </span><span class="p">.</span><span class="n">dataout</span><span class="p">(</span><span class="n">ddataout</span><span class="p">),</span><span class="w"> </span><span class="c1">// Data storage read data output</span>
+<span class="w">      </span><span class="p">.</span><span class="n">wraddr</span><span class="p">(</span><span class="n">dwraddr</span><span class="p">),</span><span class="w">   </span><span class="c1">// CPU write address</span>
+<span class="w">      </span><span class="p">.</span><span class="n">datain</span><span class="p">(</span><span class="n">ddatain</span><span class="p">),</span><span class="w">   </span><span class="c1">// CPU write data input</span>
+<span class="w">      </span><span class="p">.</span><span class="n">rdclk</span><span class="p">(</span><span class="n">drdclk</span><span class="p">),</span><span class="w">     </span><span class="c1">// CPU read clock</span>
+<span class="w">      </span><span class="p">.</span><span class="n">wrclk</span><span class="p">(</span><span class="n">dwrclk</span><span class="p">),</span><span class="w">     </span><span class="c1">// CPU write clock</span>
+<span class="w">      </span><span class="p">.</span><span class="n">memop</span><span class="p">(</span><span class="n">dop</span><span class="p">),</span><span class="w">        </span><span class="c1">// CPU data operation type</span>
+<span class="w">      </span><span class="p">.</span><span class="n">we</span><span class="p">(</span><span class="n">datawe</span><span class="p">));</span><span class="w">       </span><span class="c1">// Data storage write enable.</span>
+</pre></div>
+</div>
+<p>In order to allocate address space, we need to perform data storage operations only when the CPU reads or writes addresses starting with 0x001. Therefore, there are two signals in the data storage that are not directly connected to the CPU.
+For write operations, we only need to control the write enable to determine whether to perform a write operation on the current storage, so we can first compare the address and then determine whether to enable the write:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">datawe</span><span class="o">=</span><span class="p">(</span><span class="n">dwraddr</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">20</span><span class="p">]</span><span class="o">==</span><span class="mh">12&#39;h001</span><span class="p">)</span><span class="o">?</span><span class="w"> </span><span class="nl">dwe:</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This statement checks whether the upper 12 bits of the write address are 0x001. If so, the enable bit is written according to the write enable dwe output by the CPU; otherwise, it is never written.
+For read operations, we can select the data to be read from each memory block based on the upper bits of the CPU read address:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">ddata</span><span class="o">=</span><span class="p">(</span><span class="n">drdaddr</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">20</span><span class="p">]</span><span class="o">==</span><span class="mh">12&#39;h001</span><span class="p">)</span><span class="o">?</span><span class="w"> </span><span class="nl">ddataout:</span>
+<span class="w">            </span><span class="p">((</span><span class="n">drdaddr</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">20</span><span class="p">]</span><span class="o">==</span><span class="mh">12&#39;h003</span><span class="p">)</span><span class="o">?</span><span class="w"> </span><span class="n">keymemout</span><span class="w"> </span><span class="o">:</span><span class="mh">32</span><span class="mb">&#39;b0</span><span class="w"> </span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Here, when the high-bits of the address is 0x001, data storage output is selected, and when it is 0x003, keyboard output is selected. The display is not set because the CPU does not need to read it.</p>
+</section>
+</section>
+<section id="software-component">
+<h2>Software Component<a class="headerlink" href="#software-component" title="Link to this heading"></a></h2>
+<p>After mapping the CPU and peripherals to memory, we can begin writing the software system. We recommend using the RISC-V C language toolchain to compile the software, which allows you to write the entire code in C.</p>
+<section id="introduction-to-the-compilation-process">
+<h3>Introduction to the Compilation Process<a class="headerlink" href="#introduction-to-the-compilation-process" title="Link to this heading"></a></h3>
+<p>We need to use the riscv32-unknown-elf toolchain installed in the previous lab to compile the system software. Please write a suitable Makefile for compilation. We provide a simple makefile example as follows:</p>
+<div class="highlight-Makefile notranslate"><div class="highlight"><pre><span></span><span class="nf">default</span><span class="o">:</span><span class="w"> </span><span class="n">all</span>
+
+<span class="nv">XLEN</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span><span class="m">32</span>
+<span class="nv">RISCV_PREFIX</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span>riscv<span class="k">$(</span>XLEN<span class="k">)</span>-unknown-elf-
+<span class="nv">RISCV_GCC</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span><span class="k">$(</span>RISCV_PREFIX<span class="k">)</span>gcc
+<span class="nv">GCC_WARNS</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span>-Wall<span class="w"> </span>-Wextra<span class="w"> </span>-Wconversion<span class="w"> </span>-pedantic<span class="w"> </span>-Wcast-qual<span class="w"> </span>-Wcast-align
+<span class="w">  </span>-Wwrite-strings
+<span class="nv">RISCV_GCC_OPTS</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span>-static<span class="w"> </span>-mcmodel<span class="o">=</span>medany<span class="w"> </span>-fvisibility<span class="o">=</span>hidden<span class="w"> </span>-Tsections.ld
+<span class="w">  </span>-nostdlib<span class="w"> </span>-nolibc<span class="w"> </span>-nostartfiles<span class="w"> </span><span class="si">${</span><span class="nv">GCC_WARNS</span><span class="si">}</span>
+<span class="nv">RISCV_OBJDUMP</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span><span class="k">$(</span>RISCV_PREFIX<span class="k">)</span>objdump<span class="w"> </span>--disassemble-all<span class="w"> </span>--disassemble-zeroes
+<span class="w">  </span>--section<span class="o">=</span>.text<span class="w"> </span>--section<span class="o">=</span>.text.startup<span class="w"> </span>--section<span class="o">=</span>.text.init
+<span class="w">  </span>--section<span class="o">=</span>.data
+<span class="nv">RISCV_OBJCOPY</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span><span class="k">$(</span>RISCV_PREFIX<span class="k">)</span>objcopy<span class="w"> </span>-O<span class="w"> </span>verilog
+<span class="nv">RISCV_HEXGEN</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span><span class="err">&#39;</span>BEGIN<span class="o">{</span><span class="nv">output</span><span class="o">=</span><span class="m">0</span><span class="p">;</span><span class="o">}{</span><span class="w"> </span>gsub<span class="o">(</span><span class="s2">&quot;\r&quot;</span>,<span class="s2">&quot;&quot;</span>,<span class="nv">$$</span><span class="o">(</span>NF<span class="o">))</span><span class="p">;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="nv">$$</span><span class="m">1</span><span class="w"> </span>~/@/<span class="o">)</span>
+<span class="w">  </span><span class="o">{</span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="nv">$$</span><span class="m">1</span><span class="w"> </span>~/@00000000/<span class="o">)</span><span class="w"> </span><span class="o">{</span><span class="nv">output</span><span class="o">=</span>code<span class="p">;</span><span class="o">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="o">{</span><span class="nv">output</span><span class="o">=</span><span class="m">1</span>-<span class="w"> </span>code<span class="p">;</span><span class="o">}</span><span class="p">;</span>
+<span class="w">  </span>gsub<span class="o">(</span><span class="s2">&quot;@&quot;</span>,<span class="s2">&quot;0x&quot;</span>,<span class="nv">$$</span><span class="m">1</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="nv">addr</span><span class="o">=</span>strtonum<span class="o">(</span><span class="nv">$$</span><span class="m">1</span><span class="o">)</span><span class="p">;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="nv">output</span><span class="o">==</span><span class="m">1</span><span class="o">)</span>
+<span class="w">  </span><span class="o">{</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;@%08x\n&quot;</span>,<span class="o">(</span>addr%262144<span class="o">)</span>/4<span class="p">;</span><span class="o">}}</span>
+<span class="cp">  else {if (output==1) { for(i=1;i&lt;NF;i+=4)</span>
+<span class="w">  </span>print<span class="w"> </span><span class="nv">$$</span><span class="o">(</span>i+3<span class="o">)</span><span class="nv">$$</span><span class="o">(</span>i+2<span class="o">)</span><span class="nv">$$</span><span class="o">(</span>i+1<span class="o">)</span><span class="nv">$$</span>i<span class="p">;</span><span class="o">}}}</span><span class="err">&#39;</span>
+<span class="nv">RISCV_MIFGEN</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span><span class="err">&#39;</span>BEGIN<span class="o">{</span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;WIDTH=32;\nDEPTH=%d;\n\nADDRESS_RADIX=HEX;</span>
+<span class="w">  </span><span class="se">\n</span>DATA_RADIX<span class="o">=</span>HEX<span class="p">;</span><span class="se">\n\n</span>CONTENT<span class="w"> </span>BEGIN<span class="se">\n</span><span class="s2">&quot;,depth ; addr=0;} {</span>
+<span class="s2">  gsub(&quot;</span><span class="se">\r</span><span class="s2">&quot;,&quot;&quot;,</span><span class="nv">$$</span><span class="s2">(NF)); if (</span><span class="nv">$$</span><span class="s2">1 ~/@/) { sub(&quot;</span>@<span class="s2">&quot;,&quot;</span>0x<span class="s2">&quot;,</span><span class="nv">$$</span><span class="s2">1);</span>
+<span class="s2">  addr=strtonum(</span><span class="nv">$$</span><span class="s2">1);} else {printf &quot;</span>%04X<span class="w"> </span>:<span class="w"> </span>%s<span class="p">;</span><span class="se">\n</span><span class="s2">&quot;, addr, </span><span class="nv">$$</span><span class="s2">1;</span>
+<span class="s2">  addr=addr+1;}} END{print &quot;</span>END<span class="se">\n</span><span class="s2">&quot;;}&#39;</span>
+
+<span class="nv">SRCS</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>wildcard<span class="w">  </span>*.c<span class="k">)</span>
+<span class="nv">OBJS</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">$(</span>SRCS:.c<span class="o">=</span>.o<span class="k">)</span>
+<span class="nv">EXEC</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span>main
+
+<span class="nf">.c.o</span><span class="o">:</span>
+<span class="w">  </span><span class="k">$(</span>RISCV_GCC<span class="k">)</span><span class="w"> </span>-c<span class="w"> </span><span class="k">$(</span>RISCV_GCC_OPTS<span class="k">)</span><span class="w">  </span>$&lt;<span class="w"> </span>-o<span class="w"> </span><span class="nv">$@</span>
+
+<span class="nf">${EXEC}.elf </span><span class="o">:</span><span class="w"> </span><span class="k">$(</span><span class="nv">OBJS</span><span class="k">)</span>
+<span class="w">  </span><span class="si">${</span><span class="nv">RISCV_GCC</span><span class="si">}</span><span class="w">  </span><span class="si">${</span><span class="nv">RISCV_GCC_OPTS</span><span class="si">}</span><span class="w"> </span>-e<span class="w"> </span>entry<span class="w"> </span><span class="k">$(</span>OBJS<span class="k">)</span><span class="w"> </span>-o<span class="w"> </span><span class="nv">$@</span>
+<span class="w">  </span><span class="si">${</span><span class="nv">RISCV_OBJDUMP</span><span class="si">}</span><span class="w"> </span><span class="si">${</span><span class="nv">EXEC</span><span class="si">}</span>.elf<span class="w"> </span>&gt;<span class="w"> </span><span class="si">${</span><span class="nv">EXEC</span><span class="si">}</span>.dump
+
+<span class="nf">${EXEC}.tmp</span><span class="o">:</span><span class="w"> </span>${<span class="n">EXEC</span>}.<span class="n">elf</span>
+<span class="w">  </span><span class="k">$(</span>RISCV_OBJCOPY<span class="k">)</span><span class="w"> </span>$&lt;<span class="w">  </span><span class="nv">$@</span>
+
+<span class="nf">${EXEC}.hex</span><span class="o">:</span><span class="w"> </span>${<span class="n">EXEC</span>}.<span class="n">tmp</span>
+<span class="w">  </span>awk<span class="w"> </span>-v<span class="w"> </span><span class="nv">code</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="k">$(</span>RISCV_HEXGEN<span class="k">)</span><span class="w"> </span>$&lt;<span class="w"> </span>&gt;<span class="w"> </span><span class="nv">$@</span>
+<span class="w">  </span>awk<span class="w"> </span>-v<span class="w"> </span><span class="nv">code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="k">$(</span>RISCV_HEXGEN<span class="k">)</span><span class="w"> </span>$&lt;<span class="w"> </span>&gt;<span class="w"> </span><span class="si">${</span><span class="nv">EXEC</span><span class="si">}</span>_d.hex
+
+<span class="nf">${EXEC}.mif</span><span class="o">:</span><span class="w"> </span>${<span class="n">EXEC</span>}.<span class="n">hex</span>
+<span class="w">  </span>awk<span class="w"> </span>-v<span class="w"> </span><span class="nv">depth</span><span class="o">=</span><span class="m">65536</span><span class="w"> </span><span class="si">${</span><span class="nv">RISCV_MIFGEN</span><span class="si">}</span><span class="w"> </span>$&lt;<span class="w"> </span>&gt;<span class="w"> </span><span class="nv">$@</span>
+<span class="w">  </span>awk<span class="w"> </span>-v<span class="w"> </span><span class="nv">depth</span><span class="o">=</span><span class="m">32768</span><span class="w"> </span><span class="si">${</span><span class="nv">RISCV_MIFGEN</span><span class="si">}</span><span class="w"> </span><span class="si">${</span><span class="nv">EXEC</span><span class="si">}</span>_d.hex<span class="w"> </span>&gt;<span class="w"> </span><span class="si">${</span><span class="nv">EXEC</span><span class="si">}</span>_d.mif
+
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">all</span> <span class="n">clean</span>
+
+<span class="nf">all</span><span class="o">:</span><span class="w"> </span>${<span class="n">EXEC</span>}.<span class="n">mif</span>
+
+<span class="nf">clean</span><span class="o">:</span>
+<span class="w">  </span>rm<span class="w"> </span>-f<span class="w"> </span>*.o
+<span class="w">  </span>rm<span class="w"> </span>-f<span class="w"> </span>*.dump
+<span class="w">  </span>rm<span class="w"> </span>-f<span class="w"> </span>*.tmp
+<span class="w">  </span>rm<span class="w"> </span>-f<span class="w"> </span>*.elf
+<span class="w">  </span>rm<span class="w"> </span>-f<span class="w"> </span>*.hex
+<span class="w">  </span>rm<span class="w"> </span>-f<span class="w"> </span>*.mif
+</pre></div>
+</div>
+<p>The contents defined in Makefile mainly include:</p>
+<ul class="simple">
+<li><p>Lines 3-6: define the toolchain compilation commands and the warning level for GCC.</p></li>
+<li><p>Lines 8-9: define the linking parameters for GCC. Note that static linking is used here, and all standard library links are disabled. Additionally, sections.ld is used to specify the segment addresses for the binary file. For more details, refer to the explanation of the sections.ld file later in this document.</p></li>
+<li><p>Lines 10-13: similar to the previous lab, defining the parameters of OBJDUMP and OBJCOPY.</p></li>
+<li><p>Lines 14-19: use awk to convert the output hexadecimal text file and generate a 4-byte hex file that Verilog can read. At the same time, the code segment and data segment are separated.</p></li>
+<li><p>Lines 20-24: use awk to rewrite the hex file, generating Quartus-supported mif files to initialize the instruction memory and data memory.</p></li>
+<li><p>Lines 26-35: scan all .c files in the directory to prepare for generating all corresponding .o files, and finally link all .o files to generate the main.elf binary executable file.</p></li>
+<li><p>Lines 37-46: after generating main.elf, convert the binary file into the corresponding main.mif and main_d.mif files in multiple steps to initialize the instruction memory and data memory.</p></li>
+<li><p>Lines 48-58: define the basic operations of make; make clean clears all output files.</p></li>
+</ul>
+<p>Students can learn and understand the Makefile writing rules on their own and adapt them to the needs of their actual projects.</p>
+<p>During the Make process, we use the sections.ld file to specify the address mapping of the executable file. An example of this file is as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ENTRY</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+<span class="n">OUTPUT_FORMAT</span><span class="p">(</span><span class="s2">&quot;elf32-littleriscv&quot;</span><span class="p">)</span>
+
+<span class="n">SECTIONS</span> <span class="p">{</span>
+  <span class="o">.</span> <span class="o">=</span> <span class="mh">0x00000000</span><span class="p">;</span>
+  <span class="o">.</span><span class="n">text</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="o">*</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+    <span class="n">main</span><span class="o">.</span><span class="n">o</span> <span class="p">(</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">text</span><span class="o">*</span><span class="p">)</span>
+    <span class="o">*</span><span class="p">(</span><span class="n">text_end</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="n">etext</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+  <span class="n">_etext</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+  <span class="o">.</span> <span class="o">=</span> <span class="mh">0x00100000</span><span class="p">;</span>
+    <span class="o">.</span><span class="n">rodata</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">rodata</span><span class="o">*</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="o">.</span><span class="n">data</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="n">edata</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+  <span class="n">_data</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+  <span class="o">.</span><span class="n">bss</span> <span class="p">:</span> <span class="p">{</span>
+  <span class="n">_bss_start</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+    <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">bss</span><span class="o">*</span><span class="p">)</span>
+    <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">sbss</span><span class="o">*</span><span class="p">)</span>
+    <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">scommon</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="n">_stack_top</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+  <span class="o">.</span> <span class="o">=</span> <span class="n">_stack_top</span> <span class="o">+</span> <span class="mi">1024</span><span class="p">;</span>
+  <span class="n">_stack_pointer</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+  <span class="n">end</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+  <span class="n">_end</span> <span class="o">=</span> <span class="o">.</span><span class="p">;</span>
+  <span class="n">_heap_start</span> <span class="o">=</span> <span class="n">ALIGN</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This file mainly specifies the address allocation of binary executable files. First, line 1 specifies the program entry point as the entry function (this is not necessary in our system). Starting from line 5, we specify the layout of code and data. The most important part is the .text code segment.
+In our hardware, we specify that execution begins at address 0x00000000 after reset, so we need to specify that the code segment begins at 0x00000000. Furthermore, we need to place our entry function entry at the beginning of the code segment, as specified in line 7. The order of subsequent functions can be customized.</p>
+<p>Line 14 specifies that the data segment starts at address 0x00100000, which is consistent with our hardware specifications. In the Makefile, we also use awk to extract the contents of the data segment (by default, all non-code data is placed in the data storage) and place them in main_d.mif to initialize the data storage.</p>
+<p>We do not need to initialize the memory-mapped output address space, so it is not reflected in the binary executable.</p>
+</section>
+<section id="hello-world-example">
+<h3>Hello World Example<a class="headerlink" href="#hello-world-example" title="Link to this heading"></a></h3>
+<p>We provide a simple Hello World code for your reference. The content of main.c is as follows:</p>
+<p>The main file first includes the system’s custom header file. In line 3, a global variable is used to store the string “Hello World.” This data will be placed in the data segment after compilation.</p>
+<p><strong>Program Entry</strong>: In lines 7-13 of the code, we define an entry function. This function initializes the system stack and calls the main function. During the linking process, we place this function at the starting address 0x00000000 using sections.ld.
+The main purpose of using the entry function is to initialize the stack pointer. The operating system initializes sp before calling the main function. However, in our bare-metal program, sp always starts with all zeros. If it is not initialized, the first statement in the main function will adjust sp to 0xffffffff0, accessing a non-existent portion of our address space.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">00000030</span> <span class="o">&lt;</span><span class="n">main</span><span class="o">&gt;</span><span class="p">:</span>
+  <span class="mi">30</span><span class="p">:</span> <span class="n">ff010113</span>                <span class="n">addi</span>    <span class="n">sp</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="o">-</span><span class="mi">16</span>
+  <span class="mi">34</span><span class="p">:</span> <span class="mi">00112623</span>                <span class="n">sw</span>      <span class="n">ra</span><span class="p">,</span><span class="mi">12</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+  <span class="mi">38</span><span class="p">:</span> <span class="mi">00812423</span>                <span class="n">sw</span>      <span class="n">s0</span><span class="p">,</span><span class="mi">8</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+  <span class="mi">3</span><span class="n">c</span><span class="p">:</span> <span class="mi">01010413</span>                <span class="n">addi</span>    <span class="n">s0</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="mi">16</span>
+  <span class="mi">40</span><span class="p">:</span> <span class="mi">1</span><span class="n">f8000ef</span>                <span class="n">jal</span>     <span class="n">ra</span><span class="p">,</span><span class="mi">238</span> <span class="o">&lt;</span><span class="n">vga_init</span><span class="o">&gt;</span>
+  <span class="mi">44</span><span class="p">:</span> <span class="mi">00100517</span>                <span class="n">auipc</span>   <span class="n">a0</span><span class="p">,</span><span class="mh">0x100</span>
+  <span class="mi">48</span><span class="p">:</span> <span class="n">fbc50513</span>                <span class="n">addi</span>    <span class="n">a0</span><span class="p">,</span><span class="n">a0</span><span class="p">,</span><span class="o">-</span><span class="mi">68</span> <span class="c1"># 100000 &lt;hello&gt;</span>
+  <span class="mi">4</span><span class="n">c</span><span class="p">:</span> <span class="mi">324000</span><span class="n">ef</span>                <span class="n">jal</span>     <span class="n">ra</span><span class="p">,</span><span class="mi">370</span> <span class="o">&lt;</span><span class="n">putstr</span><span class="o">&gt;</span>
+  <span class="mi">50</span><span class="p">:</span> <span class="mi">0000006</span><span class="n">f</span>                <span class="n">j</span>       <span class="mi">50</span> <span class="o">&lt;</span><span class="n">main</span><span class="o">+</span><span class="mh">0x20</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The entry function forces the assembly to reset sp, placing it at the top of our data segment at 0x0011fffc, thus ensuring that the stack is accessible during code execution. Of course, when the main function returns to entry, the system state will be abnormal, so the main function is required not to return and to go through an infinite loop internally called Halt.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">00000000</span> <span class="o">&lt;</span><span class="n">entry</span><span class="o">&gt;</span><span class="p">:</span>
+  <span class="mi">0</span><span class="p">:</span>  <span class="n">ff010113</span>                <span class="n">addi</span>    <span class="n">sp</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="o">-</span><span class="mi">16</span>
+  <span class="mi">4</span><span class="p">:</span>  <span class="mi">00112623</span>                <span class="n">sw</span>              <span class="n">ra</span><span class="p">,</span><span class="mi">12</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+  <span class="mi">8</span><span class="p">:</span>  <span class="mi">00812423</span>                <span class="n">sw</span>              <span class="n">s0</span><span class="p">,</span><span class="mi">8</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+  <span class="n">c</span><span class="p">:</span>  <span class="mi">01010413</span>                <span class="n">addi</span>    <span class="n">s0</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="mi">16</span>
+  <span class="mi">10</span><span class="p">:</span> <span class="mi">00120137</span>                <span class="n">lui</span>             <span class="n">sp</span><span class="p">,</span><span class="mh">0x120</span>
+  <span class="mi">14</span><span class="p">:</span> <span class="n">ffc10113</span>                <span class="n">addi</span>    <span class="n">sp</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span> <span class="c1"># 11fffc &lt;_end+0x1f7fc&gt;</span>
+  <span class="mi">18</span><span class="p">:</span> <span class="mi">018000</span><span class="n">ef</span>                <span class="n">jal</span>             <span class="n">ra</span><span class="p">,</span><span class="mi">30</span> <span class="o">&lt;</span><span class="n">main</span><span class="o">&gt;</span>
+  <span class="mi">1</span><span class="n">c</span><span class="p">:</span> <span class="mi">00000013</span>                <span class="n">nop</span>
+  <span class="mi">20</span><span class="p">:</span> <span class="mi">00</span><span class="n">c12083</span>                <span class="n">lw</span>              <span class="n">ra</span><span class="p">,</span><span class="mi">12</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+  <span class="mi">24</span><span class="p">:</span> <span class="mi">00812403</span>                <span class="n">lw</span>              <span class="n">s0</span><span class="p">,</span><span class="mi">8</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+  <span class="mi">28</span><span class="p">:</span> <span class="mi">01010113</span>                <span class="n">addi</span>    <span class="n">sp</span><span class="p">,</span><span class="n">sp</span><span class="p">,</span><span class="mi">16</span>
+  <span class="mi">2</span><span class="n">c</span><span class="p">:</span> <span class="mi">00008067</span>                <span class="n">ret</span>
+</pre></div>
+</div>
+<p>The main function is relatively simple, primarily initializing the VGA buffer and calling a library function to output “Hello World.” Upon completion, it enters an infinite loop.</p>
+<p>The sys.h header file defines basic constants such as the starting address of the VGA buffer and the number of VGA rows and columns, as well as some library functions. Students can write their own input and output library functions or port some of the code from PA.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define VGA_START    0x00200000</span>
+<span class="cp">#define VGA_MAXLINE  30</span>
+<span class="cp">#define VGA_MAXCOL   70</span>
+
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">putstr</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">putch</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">vga_init</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In sys.c, we implement some output library functions, including putch, putstr, etc.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sys.h&quot;</span>
+
+<span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">vga_start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">VGA_START</span><span class="p">;</span>
+<span class="kt">int</span><span class="w">   </span><span class="n">vga_line</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span><span class="w">   </span><span class="n">vga_ch</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">vga_init</span><span class="p">(){</span>
+<span class="w">    </span><span class="n">vga_line</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">vga_ch</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">VGA_MAXLINE</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">VGA_MAXCOL</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span>
+<span class="w">            </span><span class="n">vga_start</span><span class="p">[</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="mi">7</span><span class="p">)</span><span class="o">+</span><span class="n">j</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">putch</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="n">ch</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="p">(</span><span class="n">ch</span><span class="o">==</span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="c1">//backspace</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">//TODO</span>
+<span class="w">      </span><span class="k">return</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">if</span><span class="p">(</span><span class="n">ch</span><span class="o">==</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="c1">//enter</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">//TODO</span>
+<span class="w">      </span><span class="k">return</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">vga_start</span><span class="p">[</span><span class="w"> </span><span class="p">(</span><span class="n">vga_line</span><span class="o">&lt;&lt;</span><span class="mi">7</span><span class="p">)</span><span class="o">+</span><span class="n">vga_ch</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ch</span><span class="p">;</span>
+<span class="w">  </span><span class="n">vga_ch</span><span class="o">++</span><span class="p">;</span>
+<span class="w">  </span><span class="k">if</span><span class="p">(</span><span class="n">vga_ch</span><span class="o">&gt;=</span><span class="n">VGA_MAXCOL</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">//TODO</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">putstr</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">str</span><span class="p">){</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="o">=</span><span class="n">str</span><span class="p">;</span><span class="o">*</span><span class="n">p</span><span class="o">!=</span><span class="mi">0</span><span class="p">;</span><span class="n">p</span><span class="o">++</span><span class="p">)</span>
+<span class="w">      </span><span class="n">putch</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>After compiling and outputting main.mif, we can use Quartus’s In-System Memory Content Editor to update the instruction memory. This saves time by eliminating the need to recompile the entire hardware after each software modification.
+Since our data memory is dual-port RAM, Quartus does not support real-time modifications to dual-port RAM. Therefore, if global variables in the code are changed, main_d.mif must be updated and the entire hardware recompiled.
+If you need to update the data segment in real time, we recommend modifying the hardware to add a read-only data storage and then using memcopy to copy the read-only storage to the actual data memory at the start of the main function.</p>
+</section>
+<section id="execution-of-unimplemented-instructions">
+<h3>Execution of Unimplemented Instructions<a class="headerlink" href="#execution-of-unimplemented-instructions" title="Link to this heading"></a></h3>
+<p>RV32I instructions don’t have multiplication instructions. However, when gcc encounters integer multiplication during compilation, it directly calls the software multiplication function mulsi3 to perform integer multiplication in software. If you need integer multiplication or division in your code, refer to the <a class="reference external" href="https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/epiphany/mulsi3.c">gcc implementation of __mulsi3</a> and link the corresponding function into your main program.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">__mulsi3</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="w">        </span><span class="n">a</span><span class="w"> </span><span class="o">&gt;&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">b</span><span class="w"> </span><span class="o">&lt;&lt;=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">__umodsi3</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">bit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">b</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">bit</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="p">(</span><span class="n">b</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="mi">1UL</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">31</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">b</span><span class="w"> </span><span class="o">&lt;&lt;=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bit</span><span class="w"> </span><span class="o">&lt;&lt;=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">bit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">a</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="w">            </span><span class="n">res</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="n">bit</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">bit</span><span class="w"> </span><span class="o">&gt;&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">b</span><span class="w"> </span><span class="o">&gt;&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">__udivsi3</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">bit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">b</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">bit</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="p">(</span><span class="n">b</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="mi">1UL</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">31</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">b</span><span class="w"> </span><span class="o">&lt;&lt;=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bit</span><span class="w"> </span><span class="o">&lt;&lt;=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">bit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">a</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="w">            </span><span class="n">res</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="n">bit</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">bit</span><span class="w"> </span><span class="o">&gt;&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">b</span><span class="w"> </span><span class="o">&gt;&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="lab-check-in-contents">
+<h2>Lab check-in contents<a class="headerlink" href="#lab-check-in-contents" title="Link to this heading"></a></h2>
+<section id="on-board-check-in">
+<h3>On-Board Check-in<a class="headerlink" href="#on-board-check-in" title="Link to this heading"></a></h3>
+<p>This lab is conducted in groups and requires only a on-board check-in. During this check-in, a complete computer system must be demonstrated. Required functions include:</p>
+<ol class="arabic simple">
+<li><p>Accept keyboard input and display it on the screen.</p></li>
+<li><p>Support operations such as line breaks, deletions, and scrolling.</p></li>
+<li><p>Command analysis: Execute the corresponding subroutine based on keyboard input commands and output the results to the screen.</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>Type “hello” to display “Hello World!”</p></li>
+<li><p>Type “time” to display the time</p></li>
+<li><p>Type “fib n” to calculate the Fibonacci sequence and display the result</p></li>
+<li><p>Type unknown commands to display “Unknown Command.”</p></li>
+</ul>
+</div></blockquote>
+<p>The computer system described above already possesses the basic capabilities of a late 1980s personal computer. Such a system can perform many interesting functions.
+Interested students are welcome to explore and implement additional functions. These additional functions may include, but are not limited to, the following.</p>
+<p><strong>Optional Hardware Features:</strong></p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Implement a five-stage pipelined CPU</p></li>
+<li><p>Expand the CPU instruction types to include system calls, multiplication and division, or custom instructions</p></li>
+<li><p>Support a simple interrupt mechanism</p></li>
+<li><p>Increase the number of peripherals, including support for onboard LEDs and seven-segment displays</p></li>
+<li><p>Increase the display complexity and provide a simplified graphical interface</p></li>
+</ol>
+</div></blockquote>
+<p><strong>Optional Software Features:</strong></p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Input simple expressions, such as (9+6*6)-3, and output the result.</p></li>
+<li><p>Implement simple C language library functions, port them from other courses, such as the code for <a class="reference external" href="https://nju-projectn.github.io/ics-pa-gitbook/ics2021/2.3.html">AM</a> in the advanced class PA.</p></li>
+<li><p>Compile and run popular benchmarks to evaluate CPU performance</p></li>
+</ol>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="11.html" class="btn btn-neutral float-left" title="Lab 11: RV32I Single Cycle CPU" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Wei Wang, Haijun Wu, Lu Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

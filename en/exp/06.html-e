@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en-US" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 6: Shift Registers and Barrel Shifters &mdash; NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=b5540729" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8fdbbf67"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lab 7: Finite State Machines and Keyboard Input" href="07.html" />
+    <link rel="prev" title="Lab 5: Register File and Memory" href="05.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">Lab 1: Multiplexers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">Lab 2: Decoders and Encoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">Lab 3: Adders and ALUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">Lab 4: Counters and Clocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">Lab 5: Register File and Memory</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lab 6: Shift Registers and Barrel Shifters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#shift-registers">Shift registers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#arithmetic-shift-and-logic-shift-registers">Arithmetic shift and logic shift registers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#barrel-shifter">Barrel Shifter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lab-check-in-contents">Lab check-in contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">Lab 7: Finite State Machines and Keyboard Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">Lab 8:  VGA interface controller’s implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">Lab 9: Character Input Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">Lab 10: CPU Datapath</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">Lab 11: RV32I Single Cycle CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">Lab 12: Computer Systems</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Lab 6: Shift Registers and Barrel Shifters</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lab-6-shift-registers-and-barrel-shifters">
+<h1>Lab 6: Shift Registers and Barrel Shifters<a class="headerlink" href="#lab-6-shift-registers-and-barrel-shifters" title="Link to this heading"></a></h1>
+<p><em>“I want a clean teacup,” the Hatter interjected, “Let’s all move our seats around!”</em></p>
+<p><a href="#id1"><span class="problematic" id="id2">*</span></a>Saying that, he moved to another spot, followed by the Dormouse, who then moved to the Hatter’s seat. Alice reluctantly sat down in the Hatter’s seat. The only one who got a good seat this time was the Hatter, while Alice’s seat was worse than before because the March Hare had spilled milk on it.</p>
+<blockquote>
+<div><p>— Alice’s Adventures in Wonderland by Lewis Carroll</p>
+</div></blockquote>
+<p>In this lab, we will learn about the design of commonly used shift registers and implement the barrel shifters needed in shift instructions.</p>
+<section id="shift-registers">
+<h2>Shift registers<a class="headerlink" href="#shift-registers" title="Link to this heading"></a></h2>
+<p>On the rising edge of the clock, the shift register shifts the data stored in it one bit in a certain direction according to its control signal. Shift registers are also commonly used devices in digital systems.</p>
+<p>Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-shift01</span></code> shows a simple right shift register consisting of four D flip-flops. Data is input from the left end of the shift register, and the contents of each flip-flop are transferred to the next flip-flop at the positive edge (rising edge) of the clock. Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-shift02</span></code> shows an example of serial transfer using this shift register.</p>
+<figure class="align-default" id="fig-shift01">
+<img alt="../_images/shift01.png" src="../_images/shift01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 48 </span><span class="caption-text">Shift register block diagram</span><a class="headerlink" href="#fig-shift01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-shift02">
+<img alt="../_images/shift02.png" src="../_images/shift02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 49 </span><span class="caption-text">Shift register</span><a class="headerlink" href="#fig-shift02" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="arithmetic-shift-and-logic-shift-registers">
+<h3>Arithmetic shift and logic shift registers<a class="headerlink" href="#arithmetic-shift-and-logic-shift-registers" title="Link to this heading"></a></h3>
+<p>Arithmetic shifting here refers to shifting while considering the sign bit. Arithmetic shifting must ensure that the sign bit remains unchanged. Arithmetic left shifting is the same as logical left shifting, while arithmetic right shifting fills the leftmost empty position with the sign bit. Logical shifting, whether left or right, fills empty positions with 0s. Circular shifting is a shifting method that fills the highest/lowest empty position with the shifted-out bit. Setting is entering an 8-bit data into the register, that is, assigning an initial value to the register.</p>
+<p>Shift registers can be easily described using Verilog HDL language, for example:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="n">Q</span><span class="p">[</span><span class="mh">0</span><span class="p">],</span><span class="n">Q</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">1</span><span class="p">]};</span><span class="w"> </span><span class="c1">// circular right shift</span>
+<span class="n">Q</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="n">Q</span><span class="p">[</span><span class="mh">7</span><span class="p">],</span><span class="n">Q</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">1</span><span class="p">]};</span><span class="w"> </span><span class="c1">// arithmetic right shift</span>
+</pre></div>
+</div>
+<p>Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-shift</span></code> describes the common shift register operation mode.
+The left end serially inputs a 1-bit value, and the parallel output of an 8-bit value means that each clock cycle shifts one bit to the right, and the leftmost bit shifted in is determined by an external switch to be either 1 or 0. As in other cases, the output is 8 bits simultaneously.
+This function is useful for serial-to-parallel conversion, as it can store the 8 bits entered in sequence in the shift register and output an 8-bit number after 8 cycles. Subsequent keyboard serial inputs can use this function.
+Please think about how these functions can be implemented in Verilog.</p>
+<table class="docutils align-default" id="tab-shift">
+<caption><span class="caption-number">Table 6 </span><span class="caption-text">Shift register work modes</span><a class="headerlink" href="#tab-shift" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Control bit</p></th>
+<th class="head"><p>Working mode</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0 0 0</p></td>
+<td><p>set to 0</p></td>
+</tr>
+<tr class="row-odd"><td><p>0 0 1</p></td>
+<td><p>set value</p></td>
+</tr>
+<tr class="row-even"><td><p>0 1 0</p></td>
+<td><p>logic right shift</p></td>
+</tr>
+<tr class="row-odd"><td><p>0 1 1</p></td>
+<td><p>logic left shift</p></td>
+</tr>
+<tr class="row-even"><td><p>1 0 0</p></td>
+<td><p>arithmetic right shift</p></td>
+</tr>
+<tr class="row-odd"><td><p>1 0 1</p></td>
+<td><p>Serial input of 1-bit value on the left end, parallel output 8-bit value</p></td>
+</tr>
+<tr class="row-even"><td><p>1 1 0</p></td>
+<td><p>circular right shift</p></td>
+</tr>
+<tr class="row-odd"><td><p>1 1 1</p></td>
+<td><p>circular left shift</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="barrel-shifter">
+<h2>Barrel Shifter<a class="headerlink" href="#barrel-shifter" title="Link to this heading"></a></h2>
+<p>In CPUs, we often need to perform shift operations on data. However, traditional shift registers can only move one bit per cycle, so multiple clock cycles are required to perform multiple shifts, which is inefficient.
+Barrel shifters use combinational logic to move multiple bits simultaneously, which is extremely efficient. Therefore, barrel shifters are often used in ALUs to perform shifts.
+Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-barrel01</span></code> shows the input and output pin diagram of an 8-bit barrel shift register.
+The input data din and output data dout are both 8 bits, and the shift amount shamt is 3 bits.
+The select pin L/R indicates left shift and right shift, with 1 representing left shift and 0 representing right shift.
+The A/L select pin is for arithmetic/logic selection: set to 1 for arithmetic shift, set to 0 for logical shift.</p>
+<figure class="align-default" id="fig-barrel01">
+<img alt="../_images/barrel01.png" src="../_images/barrel01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 50 </span><span class="caption-text">Barrel Shifter’s block diagram</span><a class="headerlink" href="#fig-barrel01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-barrel02">
+<img alt="../_images/barrel02.png" src="../_images/barrel02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 51 </span><span class="caption-text">Barrel Shifter’s circuit diagram</span><a class="headerlink" href="#fig-barrel02" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-barrel02</span></code> shows the specific implementation of the barrel shifter.
+This implementation uses a large number of four-to-one multiplexers to implement arbitrary left or right shifts of 0 to 7 bits in three stages.
+The first stage uses shamt[0] to control whether to shift one bit, the second stage uses shamt[1] to control whether to shift two bits based on the shift result of the first stage, and the third stage determines whether to shift four bits based on the second stage.
+Each 4-to-1 multiplexer has two control pins. The lower bit S0 of the control pin indicates whether the current stage needs to shift. When it is 0, neither input 0 nor 2 will be shifted.
+The high-order bit S1 of the 4-to-1 selector is controlled by the L/R input. When a shift is required (S0 = 1), a left shift selects input 11 (input 3), and a right shift selects input 01 (input 1). These two inputs are connected to the previous level’s output of the data’s low-order or high-order bits, respectively.
+The choice between arithmetic and logical right shifts is determined by whether the high-order bit is set to 0 or din[7].
+Note that this circuit is pure combinational logic, so the shift result can be directly changed without a clock signal when the input changes.</p>
+<div class="admonition myquestion">
+<p class="admonition-title">Thinking question</p>
+<p>How can 32-bit data shifting be implemented in the RV32I instruction set using Verilog language?</p>
+</div>
+</section>
+<section id="lab-check-in-contents">
+<h2>Lab check-in contents<a class="headerlink" href="#lab-check-in-contents" title="Link to this heading"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">On-Board Lab: Using shift registers to implement random number generators</p>
+<p>We can use an 8-bit shift register to implement a simple random number generator.
+The classic LFSR (linear-feedback shift register, <a class="reference external" href="https://en.wikipedia.org/wiki/Linear-feedback_shift_register">Linear-feedback shift register</a> ) can use an n-bit shift register to generate a binary cyclic sequence of length <span class="math notranslate nohighlight">\(2^n-1\)</span>.
+Segments of such sequences appear random, so they are widely used for random sequence generation in communications. For example, the length of the long code in CDMA communications is a pseudo-random sequence of length <span class="math notranslate nohighlight">\(2^{42}-1\)</span>.</p>
+<p>In practice, an 8-bit right shift register can be used, with bits from left to right represented as <span class="math notranslate nohighlight">\(x_7x_6x_5x_4x_3x_2x_1x_0\)</span>. Each clock cycle shifts one bit to the right, <span class="math notranslate nohighlight">\(x_0\)</span> is shifted out, and the leftmost bit shifted in is calculated according to the value of the previous cycle <a class="footnote-reference brackets" href="#f1" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> :</p>
+<div class="math notranslate nohighlight">
+\[x_8=x_4\oplus x_3\oplus x_2 \oplus x_0\]</div>
+<p>For example, when the initial binary value is 00000001, the state of the shift register will change as follows: <span class="math notranslate nohighlight">\(00000001 \rightarrow 10000000 \rightarrow 01000000 \rightarrow 001000000 \rightarrow 00010000 \rightarrow 10001000 \ldots\)</span>.
+The period of this sequence is 255.
+Of course, when the initial value is all zeros, the system will remain in the all-zero state indefinitely, so special handling is required for the all-zero state.</p>
+<p>Please implement an 8-bit pseudo-random sequence with a period of 255, using a button as the clock signal. Display the 8-bit binary number in hexadecimal on the LED display and observe the generated random number sequence on the DE10-Standard development board.</p>
+</div>
+<div class="admonition myquestion">
+<p class="admonition-title">Thinking question</p>
+<p>The generated pseudo-random number sequence still has certain patterns. How can we generate more complex pseudo-random number sequences?</p>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">Online test</p>
+<ul class="simple">
+<li><p>Shift register implementation</p></li>
+<li><p>Barrel shifter</p></li>
+<li><p>Linear feedback shift register</p></li>
+</ul>
+</div>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="f1" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">1</a><span class="fn-bracket">]</span></span>
+<p>The formula for generating random sequences with a cycle length of <span class="math notranslate nohighlight">\(2^n-1\)</span> can be found in textbooks and online.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05.html" class="btn btn-neutral float-left" title="Lab 5: Register File and Memory" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="07.html" class="btn btn-neutral float-right" title="Lab 7: Finite State Machines and Keyboard Input" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Wei Wang, Haijun Wu, Lu Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

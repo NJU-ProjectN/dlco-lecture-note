@@ -1,0 +1,544 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en-US" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 1: Multiplexers &mdash; NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=b5540729" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8fdbbf67"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lab 2: Decoders and Encoders" href="02.html" />
+    <link rel="prev" title="NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lab 1: Multiplexers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#to-1-multiplexer">2-to-1 multiplexer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dataflow-modeling">Dataflow modeling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#structured-modeling">Structured modeling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#behavior-modeling">Behavior modeling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">4-to-1 multiplexer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#a-generic-multiplexer-template">A generic multiplexer template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lab-check-in-contents">Lab check-in contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">Lab 2: Decoders and Encoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">Lab 3: Adders and ALUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">Lab 4: Counters and Clocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">Lab 5: Register File and Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">Lab 6: Shift Registers and Barrel Shifters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">Lab 7: Finite State Machines and Keyboard Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">Lab 8:  VGA interface controller’s implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">Lab 9: Character Input Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">Lab 10: CPU Datapath</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">Lab 11: RV32I Single Cycle CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">Lab 12: Computer Systems</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Lab 1: Multiplexers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lab-1-multiplexers">
+<h1>Lab 1: Multiplexers<a class="headerlink" href="#lab-1-multiplexers" title="Link to this heading"></a></h1>
+<blockquote>
+<div><p>To be, or not to be, that is the question.</p>
+<p class="attribution">—Hamlet, Shakespeare</p>
+</div></blockquote>
+<p>A multiplexer is a commonly used circuit in digital logic systems and one of the main components of combinational logic circuits. It consists of multiple data inputs, one or more selection control ports, and one data output. A multiplexer selects one of the multiple inputs and transmits it to the output port. The selection control signal determines which input signal is output. There are a large number of parallel computations in digital circuits. The usual design idea is to use the circuit to generate all possible digital signals at the same time, and then use a multiplexer to select which signal to output.</p>
+<p>This lab will introduce several commonly used multiplexer design methods, as well as the use of always statements, if-else statements, and case statements in Verilog. Finally, readers are asked to design a multiplexer themselves to familiarize themselves with the basic circuit design process and the use of Quartus.</p>
+<section id="to-1-multiplexer">
+<h2>2-to-1 multiplexer<a class="headerlink" href="#to-1-multiplexer" title="Link to this heading"></a></h2>
+<p>The following figure shows the block diagram and truth table of a 2-to-1 multiplexer. In the figure, <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> are the inputs; <span class="math notranslate nohighlight">\(y\)</span> is the output port, and <span class="math notranslate nohighlight">\(s\)</span> is the selection port, which selects one of the two inputs to output. When <span class="math notranslate nohighlight">\(s\)</span> is 0, the output value of <span class="math notranslate nohighlight">\(y\)</span> is <span class="math notranslate nohighlight">\(a\)</span>. When <span class="math notranslate nohighlight">\(s\)</span> is 1, the output value of <span class="math notranslate nohighlight">\(y\)</span> is <span class="math notranslate nohighlight">\(b\)</span>.</p>
+<figure class="align-default" id="id2">
+<img alt="../_images/mux01.png" src="../_images/mux01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">2-to-1 multiplexer module and its truth table</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The figure below shows the Karnaugh map of a 2-to-1 multiplexer. Based on the Karnaugh map, the expression for the 2-to-1 multiplexer can be derived as <span class="math notranslate nohighlight">\(y=(\sim s\&amp;a)|(s\&amp;b)\)</span>.</p>
+<figure class="align-default" id="id3">
+<img alt="../_images/mux02.png" src="../_images/mux02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">Karnaugh map of a 2-out-of-1 multiplexer</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Draw the logic circuit for the expression as shown in the figure below.</p>
+<figure class="align-default" id="id4">
+<img alt="../_images/mux03.png" src="../_images/mux03.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">Logic circuit for a 2-to-1 multiplexer</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="dataflow-modeling">
+<h3>Dataflow modeling<a class="headerlink" href="#dataflow-modeling" title="Link to this heading"></a></h3>
+<p>Dataflow modeling mainly describes the function of a circuit through continuous assignment statements <code class="docutils literal notranslate"><span class="pre">assign</span></code>.
+Based on this logic circuit diagram, the logic circuit of a 2-to-1 multiplexer is implemented using Verilog HDL, as shown in the following example:</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-number">Listing 1 </span><span class="caption-text">Describing 2-to-1 multiplexer code using dataflow modeling</span><a class="headerlink" href="#id5" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">m_mux21</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">   </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">;</span><span class="w">        </span><span class="c1">// Declare three wire-type input variables a, b, and s, each with a width of 1 bit.</span>
+<span class="w">  </span><span class="k">output</span><span class="w">  </span><span class="n">y</span><span class="p">;</span><span class="w">           </span><span class="c1">// Declare 1 wire-type output variable y, with a width of 1 bit.</span>
+
+<span class="w">  </span><span class="k">assign</span><span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">s</span><span class="o">&amp;</span><span class="n">a</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="n">s</span><span class="o">&amp;</span><span class="n">b</span><span class="p">);</span><span class="w">  </span><span class="c1">// Implement the logic function of the circuit.</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>Design a stimulation code to simulate the function of the multiplexer in the design:</p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-number">Listing 2 </span><span class="caption-text">2-to-1 multiplexer simulation code</span><a class="headerlink" href="#id6" title="Link to this code"></a></div>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;verilated.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;verilated_vcd_c.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;obj_dir/Vmux21.h&quot;</span>
+
+<span class="n">VerilatedContext</span><span class="o">*</span><span class="w"> </span><span class="n">contextp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="n">VerilatedVcdC</span><span class="o">*</span><span class="w"> </span><span class="n">tfp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">Vmux21</span><span class="o">*</span><span class="w"> </span><span class="n">top</span><span class="p">;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">step_and_dump_wave</span><span class="p">(){</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">eval</span><span class="p">();</span>
+<span class="w">  </span><span class="n">contextp</span><span class="o">-&gt;</span><span class="n">timeInc</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">  </span><span class="n">tfp</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">contextp</span><span class="o">-&gt;</span><span class="n">time</span><span class="p">());</span>
+<span class="p">}</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">sim_init</span><span class="p">(){</span>
+<span class="w">  </span><span class="n">contextp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">VerilatedContext</span><span class="p">;</span>
+<span class="w">  </span><span class="n">tfp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">VerilatedVcdC</span><span class="p">;</span>
+<span class="w">  </span><span class="n">top</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">Vmux21</span><span class="p">;</span>
+<span class="w">  </span><span class="n">contextp</span><span class="o">-&gt;</span><span class="n">traceEverOn</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">trace</span><span class="p">(</span><span class="n">tfp</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">  </span><span class="n">tfp</span><span class="o">-&gt;</span><span class="n">open</span><span class="p">(</span><span class="s">&quot;dump.vcd&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">sim_exit</span><span class="p">(){</span>
+<span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">  </span><span class="n">tfp</span><span class="o">-&gt;</span><span class="n">close</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">sim_init</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span><span class="w">   </span><span class="c1">// Initialize s, a, and b to “0”.</span>
+<span class="w">                      </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span><span class="w">   </span><span class="c1">// Change b to “1”, keep the values of s and a unchanged, and continue to keep them as “0”.</span>
+<span class="w">            </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span><span class="w">   </span><span class="c1">// Change a and b to “1” and “0” respectively, and the value of s remains unchanged.</span>
+<span class="w">                      </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span><span class="w">   </span><span class="c1">// Change b to “1”, keep the values of s and a unchanged, and maintain 10 time units.</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span><span class="w">   </span><span class="c1">// Set s, a, and b to “1, 0, 0” respectively, and maintain for 10 time units.</span>
+<span class="w">                      </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">            </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">                      </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">sim_exit</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>The simulation results obtained after analyzing and synthesizing the above code are shown in the figure below. As can be seen from the figure, when <span class="math notranslate nohighlight">\(s=0\)</span>, <span class="math notranslate nohighlight">\(y=a\)</span>, i.e., <span class="math notranslate nohighlight">\(y\)</span> changes with the change in the value of <span class="math notranslate nohighlight">\(a\)</span>, and the value of <span class="math notranslate nohighlight">\(b\)</span> does not affect the value of <span class="math notranslate nohighlight">\(y\)</span> regardless of how it changes. When <span class="math notranslate nohighlight">\(s=1\)</span>, <span class="math notranslate nohighlight">\(y=b\)</span>, meaning that <span class="math notranslate nohighlight">\(y\)</span> changes with the value of <span class="math notranslate nohighlight">\(b\)</span>. At this point, changing the value of <span class="math notranslate nohighlight">\(a\)</span> in any way does not affect the value of <span class="math notranslate nohighlight">\(y\)</span>.</p>
+<figure class="align-default" id="id7">
+<img alt="../_images/muxtest.png" src="../_images/muxtest.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">2-to-1 multiplexer simulation results</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="structured-modeling">
+<h3>Structured modeling<a class="headerlink" href="#structured-modeling" title="Link to this heading"></a></h3>
+<p>Structured modeling mainly describes the functions of circuits through layer-by-layer instantiation of submodules. The program listing for designing a multiplexer using structured modeling is shown below:</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-number">Listing 3 </span><span class="caption-text">Describe the code for a 2-to-1 multiplexer using structured modeling.</span><a class="headerlink" href="#id8" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">my_and</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="k">endmodule</span>
+
+<span class="k">module</span><span class="w"> </span><span class="n">my_or</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="k">endmodule</span>
+
+<span class="k">module</span><span class="w"> </span><span class="n">my_not</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="n">a</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="n">a</span><span class="p">;</span>
+<span class="k">endmodule</span>
+
+<span class="k">module</span><span class="w"> </span><span class="n">mux21b</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+
+<span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">s_n</span><span class="p">;</span><span class="w"> </span><span class="c1">// Internal wire Declaration</span>
+<span class="w">  </span><span class="n">my_not</span><span class="w"> </span><span class="n">i1</span><span class="p">(.</span><span class="n">a</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">b</span><span class="p">(</span><span class="n">s_n</span><span class="p">));</span><span class="w">        </span><span class="c1">// Instantiation of not gate, implementation of ~s</span>
+<span class="w">  </span><span class="n">my_and</span><span class="w"> </span><span class="n">i2</span><span class="p">(.</span><span class="n">a</span><span class="p">(</span><span class="n">s_n</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">b</span><span class="p">(</span><span class="n">a</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">c</span><span class="p">(</span><span class="n">l</span><span class="p">));</span><span class="w"> </span><span class="c1">// Instantiation of and gate, implementation of (~s&amp;a)</span>
+<span class="w">  </span><span class="n">my_and</span><span class="w"> </span><span class="n">i3</span><span class="p">(.</span><span class="n">a</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w">   </span><span class="p">.</span><span class="n">b</span><span class="p">(</span><span class="n">b</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">c</span><span class="p">(</span><span class="n">r</span><span class="p">));</span><span class="w"> </span><span class="c1">// Instantiation of and gate, implementation of (s&amp;b)</span>
+<span class="w">  </span><span class="n">my_or</span><span class="w">  </span><span class="n">i4</span><span class="p">(.</span><span class="n">a</span><span class="p">(</span><span class="n">l</span><span class="p">),</span><span class="w">   </span><span class="p">.</span><span class="n">b</span><span class="p">(</span><span class="n">r</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">c</span><span class="p">(</span><span class="n">y</span><span class="p">));</span><span class="w"> </span><span class="c1">// Instantiation of or gate, implementation of (~s&amp;a)|(s&amp;b)</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="behavior-modeling">
+<h3>Behavior modeling<a class="headerlink" href="#behavior-modeling" title="Link to this heading"></a></h3>
+<p>Behavior modeling describes the behavior of circuits using a process-oriented programming language. For example, in Verilog, an if statement can be used to implement the behavior of a 2-to-1 multiplexer. The program listing for designing a multiplexer using an if statement is shown below:</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-number">Listing 4 </span><span class="caption-text">2-to-1 multiplexer if statement implementation</span><a class="headerlink" href="#id9" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">mux21c</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">   </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w">  </span><span class="n">y</span><span class="p">;</span><span class="w">   </span><span class="c1">// y is assigned a value in the always block, so it must be declared as a reg type variable.</span>
+
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="o">==</span><span class="mh">0</span><span class="p">)</span>
+<span class="w">      </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">      </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition myinfo">
+<p class="admonition-title">Execution of Verilog statements</p>
+<p>In Verilog, statements are executed concurrently, and all assign statements, always statement blocks, and instantiation statements in a module are executed in no particular order. If statements are executed sequentially. During execution, the condition after the if must be evaluated first. If the condition is met, the statement after the if is executed; otherwise, the statement after the else is executed. Verilog syntax specifies that sequentially executed statements must be contained within an always block, and the statements within the always block are executed in the order they appear in the code.</p>
+</div>
+<div class="admonition myhint">
+<p class="admonition-title">Using the always statement block</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="o">&lt;</span><span class="n">list</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">sensitive</span><span class="w"> </span><span class="n">events</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">executable</span><span class="w"> </span><span class="n">statements</span><span class="p">;</span>
+<span class="p">......</span>
+</pre></div>
+</div>
+<p>The list of sensitive events contains all signals that affect the output of the always block. In other words, if any variable in the list of sensitive events changes, the statements in the always statement block are executed. For example, <code class="docutils literal notranslate"><span class="pre">always</span> <span class="pre">&#64;</span> <span class="pre">(a</span> <span class="pre">or</span> <span class="pre">b</span> <span class="pre">or</span> <span class="pre">s)</span></code> means that as soon as any of the variables a, b, or s changes, the statements in the always statement block are executed immediately.</p>
+<p>For convenience, the sensitive list can also be replaced with <span class="math notranslate nohighlight">\(*\)</span>, such as <code class="docutils literal notranslate"><span class="pre">always</span> <span class="pre">&#64;</span> <span class="pre">(*)</span></code>. Here, the <span class="math notranslate nohighlight">\(*\)</span> symbol will automatically include all signals that appear on the right side of the statements or conditional expressions in the always statement block. As shown in the always statement block on line 5 of the above code, whenever any of the variables a and b appearing on the right side of the expression in the always statement block, or the variable s appearing in the conditional expression, changes, the statements within the always statement block are immediately executed.</p>
+<p>The always statement also has another form, namely: when the <code class="docutils literal notranslate"><span class="pre">always</span></code> keyword is used without any information about a list of sensitive events, it indicates that the statements within the always statement block will be executed under any circumstances.</p>
+<p>In addition, the output signals in the always block must be declared as reg type, rather than the default wire type.</p>
+</div>
+<div class="admonition myhint">
+<p class="admonition-title">About if statements</p>
+<p>The if statement is a commonly used conditional statement in Verilog HDL. It can be used in conjunction with the else statement or on its own.</p>
+<p>However, if an if statement is used without a corresponding else statement, the following situation occurs: the compiler evaluates whether the condition expression following the if statement is satisfied. If it is satisfied, the subsequent statements are executed. But what if the condition expression is not satisfied? In this case, the compiler automatically generates a register to store the current value, preserving the previous value when the condition is not met. This results in the creation of an extra register that the user did not design. Therefore, it is recommended that readers include an else statement to pair with the if statement when using it, to prevent the creation of unnecessary registers.</p>
+<p>Additionally, the compiler assumes only one functional statement per if statement. If there are multiple functional statements, they must be enclosed using the keywords <code class="docutils literal notranslate"><span class="pre">begin</span></code> and <code class="docutils literal notranslate"><span class="pre">end</span></code>. For example:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="o">==</span><span class="mh">0</span><span class="p">)</span>
+<span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="k">else</span>
+<span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This is incorrect and should be changed to:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="o">==</span><span class="mh">0</span><span class="p">)</span>
+<span class="w">  </span><span class="k">begin</span><span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="k">end</span>
+<span class="k">else</span>
+<span class="w">  </span><span class="k">begin</span><span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="k">end</span>
+</pre></div>
+</div>
+<p>In programming, conditional statements can also be used instead of if statements. If sequential statements are not used at this point, the always statement block is not required. For example, <code class="docutils literal notranslate"><span class="pre">?</span></code> can also be used instead of if statements. Its usage is as follows:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The meaning is as follows: if s = 1, then y = b; otherwise, y = a.
+This 2-out-of-1 multiplexer code can also be written as follows:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">mux21d</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">   </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w">  </span><span class="n">y</span><span class="p">;</span><span class="w">   </span><span class="c1">// you don&#39;t need to declare y as a reg type anymore.</span>
+<span class="w">  </span><span class="k">assign</span><span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition mydanger">
+<p class="admonition-title">It is strongly recommended that beginners do not use behavior modeling to design circuits.</p>
+<p>Verilog was not originally proposed for designing synthesizable circuits. It is essentially a circuit modeling language based on an event queue model. Therefore, behavior modeling can easily distract beginners from the original purpose of describing circuits: developers need to look at the circuit diagram, imagine the behavior of the circuit in their minds, then convert it into an event queue model way of thinking, and finally use behavior modeling to describe the behavior of the circuit. The synthesizer then derives the corresponding circuit based on this description. From this process, it is not only unnecessary but also prone to errors:</p>
+<ul class="simple">
+<li><p>If developers already have a circuit diagram in mind, it is most convenient to describe it directly.</p></li>
+<li><p>If developers already have a circuit diagram in mind, but their understanding of behavior modeling is biased, they may use the wrong description method and design an unexpected circuit.</p></li>
+<li><p>If the developer does not have a circuit diagram in mind, but expects the synthesizer to generate a circuit with a certain behavior through behavior modeling, this deviates from the essence of “describing circuits.” Most students are prone to making this mistake, treating behavior modeling as procedural C language and attempting to map arbitrary complex behavior descriptions to circuits. Ultimately, the synthesizer will only generate low-quality circuits with high latency, large area, and high power consumption.</p></li>
+</ul>
+<p>Therefore, until everyone has mastered the concept of “describing circuits” and is no longer misled by behavior modeling, we strongly recommend that beginners stay away from behavior modeling and only describe circuits directly through dataflow modeling and structured modeling. For example, the above statements about if and always are correct to a certain extent, but the following questions can help you test whether you have mastered the essence of Verilog:</p>
+<ul class="simple">
+<li><p>What is the precise meaning of “execution” in hardware description languages?</p></li>
+<li><p>Who executes Verilog statements? Is it the circuit, the synthesizer, or something else?</p></li>
+<li><p>If the condition of an “if” statement is met, the statements following ‘else’ are not executed. What does “not executed” mean here? How is this related to describing circuits?</p></li>
+<li><p>There is “concurrent execution,” “sequential execution,” “execution immediately upon any variable change,” and “execution under any circumstances.” How are these manifested in the designed circuit?</p></li>
+</ul>
+<p>If you cannot answer these questions clearly, we strongly recommend that you do not use behavior modeling. If you really want to understand them, you need to read the <a class="reference external" href="https://inst.eecs.berkeley.edu/~cs150/fa06/Labs/verilog-ieee.pdf">Verilog Standard Manual</a> .</p>
+</div>
+<div class="admonition mydanger">
+<p class="admonition-title">True description of circuits = instantiation + wiring</p>
+<p>Forget about behavior modeling, and you can easily return to the simple essence of describing circuits. Imagine that you have a circuit diagram in your hand. If you need to describe the contents of the diagram to others, how would you describe it? You would definitely say something like, “There is an A component/module, and its x pin is connected to the y pin of another B component/module,” because this is the most natural way to describe a circuit. Designing circuits using HDL is essentially describing the circuit diagram using HDL. Whatever is on the diagram is directly described. Therefore, describing circuits using HDL boils down to two things:</p>
+<ul class="simple">
+<li><p>Instantiation: Place a component/module on the circuit board. It can be a gate circuit or a module composed of gate circuits.</p></li>
+<li><p>Wiring: Use wires to connect the pins of the components/modules correctly.</p></li>
+</ul>
+<p>You can see how dataflow modeling and structured modeling reflect these two things, and how behavior modeling complicates these two simple things.</p>
+</div>
+</section>
+</section>
+<section id="id1">
+<h2>4-to-1 multiplexer<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>The block diagram and truth table of the 4-to-1 multiplexer are shown in the figure below. <span class="math notranslate nohighlight">\(a_0 - a_3\)</span> are the four input ports, <span class="math notranslate nohighlight">\(s_0\)</span> and <span class="math notranslate nohighlight">\(s_1\)</span> are the selection ports, and <span class="math notranslate nohighlight">\(y\)</span> is the output port. Depending on the values of <span class="math notranslate nohighlight">\(s_0\)</span> and <span class="math notranslate nohighlight">\(s_1\)</span>, <span class="math notranslate nohighlight">\(y\)</span> selects one of <span class="math notranslate nohighlight">\(a_0-a_3\)</span> as the output. For details, please refer to the truth table.</p>
+<figure class="align-default" id="id10">
+<img alt="../_images/mux41.png" src="../_images/mux41.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 5 </span><span class="caption-text">4-to-1 multiplexer module and truth table</span><a class="headerlink" href="#id10" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The case statement in Verilog can synthesize a “multiplexer” circuit, which is very readable. The following shows how to implement a 4-to-1 multiplexer using a case statement:</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-number">Listing 5 </span><span class="caption-text">4-to-1 multiplexer implementation with case statement</span><a class="headerlink" href="#id11" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">mux41</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w">  </span><span class="c1">// Declare a wire-type input variable a with a variable width of 4 bits.</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w">  </span><span class="c1">// Declare a wire-type input variable s with a variable width of 2 bits.</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="n">y</span><span class="p">;</span><span class="w">   </span><span class="c1">// Declare a 1-bit reg type output variable y.</span>
+
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="n">a</span><span class="p">)</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="w">      </span><span class="mh">0</span><span class="o">:</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">      </span><span class="mh">1</span><span class="o">:</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+<span class="w">      </span><span class="mh">2</span><span class="o">:</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">2</span><span class="p">];</span>
+<span class="w">      </span><span class="mh">3</span><span class="o">:</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">3</span><span class="p">];</span>
+<span class="w">      </span><span class="k">default</span><span class="o">:</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">endcase</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>The test code for the above design is shown below.</p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-number">Listing 6 </span><span class="caption-text">4-to-1 multiplexer stimulation code</span><a class="headerlink" href="#id12" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">sim_init</span><span class="p">();</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">s</span><span class="o">=</span><span class="mh">0</span><span class="n">b00</span><span class="p">;</span><span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b1110</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">                </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b0001</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">s</span><span class="o">=</span><span class="mh">0</span><span class="n">b01</span><span class="p">;</span><span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b1110</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">                </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b0010</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">s</span><span class="o">=</span><span class="mh">0</span><span class="n">b10</span><span class="p">;</span><span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b1010</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">                </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b0100</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">s</span><span class="o">=</span><span class="mh">0</span><span class="n">b11</span><span class="p">;</span><span class="w">  </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b0111</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">                </span><span class="n">top</span><span class="o">-&gt;</span><span class="n">a</span><span class="o">=</span><span class="mh">0</span><span class="n">b1001</span><span class="p">;</span><span class="w">  </span><span class="n">step_and_dump_wave</span><span class="p">();</span>
+<span class="w">  </span><span class="n">sim_exit</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>The simulation results of the above program are shown in the figure below.</p>
+<figure class="align-default" id="id13">
+<img alt="../_images/mux41test.png" src="../_images/mux41test.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 6 </span><span class="caption-text">4-to-1 multiplexer simulation diagram</span><a class="headerlink" href="#id13" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<div class="admonition myhint">
+<p class="admonition-title">Using case statements</p>
+<p>The case statement begins with the keyword case followed by an enclosed “selection expression”. The result of the expression represents an integer. Below are the case options, each consisting of a selection list and a procedure statement. The selection list can be a single integer value or multiple integer values, separated by commas. The selection list and procedure statement are connected by a colon, such as <code class="docutils literal notranslate"><span class="pre">0,1:</span> <span class="pre">y</span> <span class="pre">=</span> <span class="pre">a[0];</span></code>.</p>
+<p>The execution process of a case statement is as follows: first, calculate the value of the selection expression; then, find the first selection in the case options that matches the value of the selection expression; finally, execute the process statement following this selection value.</p>
+<p>The list of options in a case statement may not always include all possible values of the selection expression. In such cases, the keyword default must be used as the last option in the case statement, representing all other values not covered by the list of options. Even if the selection list includes all options of the selection expression, it is generally recommended to retain the default option. If the selection list does not include all options of the selection expression and there is no default option, the synthesizer will synthesize a latch to preserve the previous output value in cases where it is not covered. This is generally an undesirable situation, so it is recommended to retain the default option in the case statement regardless of the circumstances.</p>
+<p>If you want to execute multiple statements when a certain expression is true, you should also use the keywords <code class="docutils literal notranslate"><span class="pre">begin</span></code> and <code class="docutils literal notranslate"><span class="pre">end</span></code> to enclose these statements.</p>
+</div>
+<div class="admonition mydanger">
+<p class="admonition-title">Similarly, we recommend that beginners avoid using case statements.</p>
+<p>This is because using case statements to describe circuits is a form of behavior modeling. As circuits become more complex, you may end up writing case statements that contain if statements, which in turn contain nested case statements, but you will probably no longer understand what kind of circuit it describes.</p>
+</div>
+</section>
+<section id="a-generic-multiplexer-template">
+<h2>A generic multiplexer template<a class="headerlink" href="#a-generic-multiplexer-template" title="Link to this heading"></a></h2>
+<p>We provide a generalized multiplexer template that can easily replace the case statement. The Verilog code for this multiplexer template is as follows:</p>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-number">Listing 7 </span><span class="caption-text">Multiplexer template</span><a class="headerlink" href="#id14" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">MuxKeyInternal</span><span class="w"> </span><span class="p">#(</span><span class="n">NR_KEY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">,</span><span class="w"> </span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">HAS_DEFAULT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">)</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">out</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">KEY_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">key</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">default_out</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">NR_KEY</span><span class="o">*</span><span class="p">(</span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="p">)</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">lut</span>
+<span class="p">);</span>
+
+<span class="w">  </span><span class="k">localparam</span><span class="w"> </span><span class="n">PAIR_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="n">PAIR_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">pair_list</span><span class="w"> </span><span class="p">[</span><span class="n">NR_KEY</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="n">KEY_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">key_list</span><span class="w"> </span><span class="p">[</span><span class="n">NR_KEY</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">data_list</span><span class="w"> </span><span class="p">[</span><span class="n">NR_KEY</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="w">  </span><span class="k">generate</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">genvar</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NR_KEY</span><span class="p">;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">      </span><span class="k">assign</span><span class="w"> </span><span class="n">pair_list</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lut</span><span class="p">[</span><span class="n">PAIR_LEN</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mh">1</span><span class="p">)</span><span class="o">-</span><span class="mh">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">PAIR_LEN</span><span class="o">*</span><span class="n">n</span><span class="p">];</span>
+<span class="w">      </span><span class="k">assign</span><span class="w"> </span><span class="n">data_list</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pair_list</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">      </span><span class="k">assign</span><span class="w"> </span><span class="n">key_list</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">pair_list</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">PAIR_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="n">DATA_LEN</span><span class="p">];</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">  </span><span class="k">endgenerate</span>
+
+<span class="w">  </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">lut_out</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">reg</span><span class="w"> </span><span class="n">hit</span><span class="p">;</span>
+<span class="w">  </span><span class="k">integer</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">lut_out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">hit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NR_KEY</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">      </span><span class="n">lut_out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lut_out</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">({</span><span class="n">DATA_LEN</span><span class="p">{</span><span class="n">key</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">key_list</span><span class="p">[</span><span class="n">i</span><span class="p">]}}</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">data_list</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">      </span><span class="n">hit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hit</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">key_list</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">HAS_DEFAULT</span><span class="p">)</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lut_out</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">hit</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">lut_out</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">default_out</span><span class="p">);</span>
+<span class="w">  </span><span class="k">end</span>
+
+<span class="k">endmodule</span>
+
+<span class="k">module</span><span class="w"> </span><span class="n">MuxKey</span><span class="w"> </span><span class="p">#(</span><span class="n">NR_KEY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">,</span><span class="w"> </span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">out</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">KEY_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">key</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">NR_KEY</span><span class="o">*</span><span class="p">(</span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="p">)</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">lut</span>
+<span class="p">);</span>
+<span class="w">  </span><span class="n">MuxKeyInternal</span><span class="w"> </span><span class="p">#(</span><span class="n">NR_KEY</span><span class="p">,</span><span class="w"> </span><span class="n">KEY_LEN</span><span class="p">,</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="p">,</span><span class="w"> </span><span class="mh">0</span><span class="p">)</span><span class="w"> </span><span class="n">i0</span><span class="w"> </span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">DATA_LEN</span><span class="p">{</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">}},</span><span class="w"> </span><span class="n">lut</span><span class="p">);</span>
+<span class="k">endmodule</span>
+
+<span class="k">module</span><span class="w"> </span><span class="n">MuxKeyWithDefault</span><span class="w"> </span><span class="p">#(</span><span class="n">NR_KEY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">,</span><span class="w"> </span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">out</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">KEY_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">key</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_LEN</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">default_out</span><span class="p">,</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">NR_KEY</span><span class="o">*</span><span class="p">(</span><span class="n">KEY_LEN</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="p">)</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">lut</span>
+<span class="p">);</span>
+<span class="w">  </span><span class="n">MuxKeyInternal</span><span class="w"> </span><span class="p">#(</span><span class="n">NR_KEY</span><span class="p">,</span><span class="w"> </span><span class="n">KEY_LEN</span><span class="p">,</span><span class="w"> </span><span class="n">DATA_LEN</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="n">i0</span><span class="w"> </span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">default_out</span><span class="p">,</span><span class="w"> </span><span class="n">lut</span><span class="p">);</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">MuxKey</span></code> module implements the “key-value selection” function, which means that in a list <code class="docutils literal notranslate"><span class="pre">lut</span></code> of <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">data)</span></code>, based on the given key <code class="docutils literal notranslate"><span class="pre">key</span></code>, <code class="docutils literal notranslate"><span class="pre">out</span></code> is set to the matching data. If there is no data with the key <code class="docutils literal notranslate"><span class="pre">key</span></code> in the list, then <code class="docutils literal notranslate"><span class="pre">out</span></code> is set to <code class="docutils literal notranslate"><span class="pre">0</span></code>. In particular, the <code class="docutils literal notranslate"><span class="pre">MuxKeyWithDefault</span></code> module can provide a default value <code class="docutils literal notranslate"><span class="pre">default_out</span></code>. When there is no data with the key <code class="docutils literal notranslate"><span class="pre">key</span></code> in the list, <code class="docutils literal notranslate"><span class="pre">out</span></code> is <code class="docutils literal notranslate"><span class="pre">default_out</span></code>. When instantiating these two modules, note the following two points:</p>
+<ul class="simple">
+<li><p>The user must provide three parameters: the number of key-value pairs <code class="docutils literal notranslate"><span class="pre">NR_KEY</span></code>, the bit width of the key <code class="docutils literal notranslate"><span class="pre">KEY_LEN</span></code>, and the bit width of the data <code class="docutils literal notranslate"><span class="pre">DATA_LEN</span></code>. The signal width of the port must match the provided parameters; otherwise, incorrect results will be output.</p></li>
+<li><p>If there are multiple data entries with the same key <code class="docutils literal notranslate"><span class="pre">key</span></code> in the list, the value of <code class="docutils literal notranslate"><span class="pre">out</span></code> is undefined. The user must ensure that the keys in the list are unique.</p></li>
+</ul>
+<p>The implementation of the <code class="docutils literal notranslate"><span class="pre">MuxKeyInternal</span></code> module uses many advanced features, such as <code class="docutils literal notranslate"><span class="pre">generate</span></code> and <code class="docutils literal notranslate"><span class="pre">for</span></code> loops. For ease of writing, behavior modeling is also used, which we will not discuss here. Through the abstraction of structured modeling, users do not need to concern themselves with these details.</p>
+<p>The following code implements a 2-to-1 multiplexer and a 4-to-1 multiplexer using multiplexer templates:</p>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-number">Listing 8 </span><span class="caption-text">Implementing multiplexers using multiplexer templates</span><a class="headerlink" href="#id15" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">mux21e</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">   </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">s</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w">  </span><span class="n">y</span><span class="p">;</span>
+<span class="w">  </span><span class="n">MuxKey</span><span class="w"> </span><span class="p">#(</span><span class="mh">2</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="n">i0</span><span class="w"> </span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span>
+<span class="w">    </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">,</span><span class="w"> </span><span class="n">b</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="k">endmodule</span>
+
+<span class="k">module</span><span class="w"> </span><span class="n">mux41b</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="w">  </span><span class="n">MuxKeyWithDefault</span><span class="w"> </span><span class="p">#(</span><span class="mh">4</span><span class="p">,</span><span class="w"> </span><span class="mh">2</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="n">i0</span><span class="w"> </span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="mh">2</span><span class="mb">&#39;b00</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">0</span><span class="p">],</span>
+<span class="w">    </span><span class="mh">2</span><span class="mb">&#39;b01</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">1</span><span class="p">],</span>
+<span class="w">    </span><span class="mh">2</span><span class="mb">&#39;b10</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">2</span><span class="p">],</span>
+<span class="w">    </span><span class="mh">2</span><span class="mb">&#39;b11</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mh">3</span><span class="p">]</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="lab-check-in-contents">
+<h2>Lab check-in contents<a class="headerlink" href="#lab-check-in-contents" title="Link to this heading"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">On-Board Lab: 2-bit 4-to-1 multiplexer</p>
+<p>Use a multiplexer template to implement a 2-bit 4-to-1 multiplexer, as shown in the figure below. The multiplexer has five 2-bit inputs, namely X0, X1, X2, X3, and Y, and the output is F. X0, X1, X2, and X3 are four 2-bit input variables. The output port F is controlled by the control port Y, selecting one of the X outputs. When Y = 00, the output port outputs X0, i.e., F = X0; when Y = 01, the output port outputs X1, i.e., F = X1; and so on.</p>
+<figure class="align-default" id="id16">
+<img alt="../_images/mux241_en.png" src="../_images/mux241_en.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 7 </span><span class="caption-text">2-bit 4-to-1 multiplexer</span><a class="headerlink" href="#id16" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Select SW0 and SW1 on the development board as control terminal Y, and SW2–SW9 as the four two-bit data input ports X0–X3. Connect the two-bit output port F to the light-emitting diodes LEDR0 and LEDR1 to display the output. Complete the design, perform functional simulation on your design, and download it to the development board to verify the circuit performance.</p>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">Online test</p>
+<p>Implement a simple 2-bit 4-to-1 multiplexer.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="02.html" class="btn btn-neutral float-right" title="Lab 2: Decoders and Encoders" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Wei Wang, Haijun Wu, Lu Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

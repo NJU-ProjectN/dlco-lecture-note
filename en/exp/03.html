@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en-US" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 3: Adders and ALUs &mdash; NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=b5540729" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8fdbbf67"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lab 4: Counters and Clocks" href="04.html" />
+    <link rel="prev" title="Lab 2: Decoders and Encoders" href="02.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">Lab 1: Multiplexers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">Lab 2: Decoders and Encoders</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lab 3: Adders and ALUs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#adders">Adders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implementation-of-an-8-bit-adder">Implementation of an 8-bit adder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#design-of-a-simple-addition-and-subtraction-arithmetic-unit">Design of a simple addition and subtraction arithmetic unit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#alu-design">ALU design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lab-check-in-contents">Lab check-in contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">Lab 4: Counters and Clocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">Lab 5: Register File and Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">Lab 6: Shift Registers and Barrel Shifters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">Lab 7: Finite State Machines and Keyboard Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">Lab 8:  VGA interface controller’s implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">Lab 9: Character Input Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">Lab 10: CPU Datapath</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">Lab 11: RV32I Single Cycle CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">Lab 12: Computer Systems</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Lab 3: Adders and ALUs</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lab-3-adders-and-alus">
+<h1>Lab 3: Adders and ALUs<a class="headerlink" href="#lab-3-adders-and-alus" title="Link to this heading"></a></h1>
+<p><em>“Six by nine. Forty-two.”</em></p>
+<p><em>“That’s it. That’s all there is.”</em></p>
+<p><em>“I always thought something was fundamentally wrong with the universe.”</em></p>
+<blockquote>
+<div><p>— “The Restaurant at the End of the Universe”， Douglas Adams</p>
+</div></blockquote>
+<p>Addition is the most frequently performed operation in digital systems, and the adder is the core component of the ALU (<a class="reference external" href="https://en.wikipedia.org/wiki/Arithmetic_logic_unit">Arithmetic-Logic Unit</a>).
+Subtraction can be viewed as the addition of the minuend and the negative of the subtrahend. That is, the adder can perform both addition and subtraction operations simultaneously. Multiplication can also be implemented using the shift-and-add algorithm. Therefore, the adder can be considered the busiest component in a computer.</p>
+<p>The purpose of this lab is to review the principles of adders and learn how to design simple ALUs.</p>
+<section id="adders">
+<h2>Adders<a class="headerlink" href="#adders" title="Link to this heading"></a></h2>
+<p>Multiple adders can be cascaded from single-bit adders. Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">adder01</span></code> is a full adder truth table with inputs <span class="math notranslate nohighlight">\(a_i\)</span>, <span class="math notranslate nohighlight">\(b_i\)</span>, and <span class="math notranslate nohighlight">\(c_i\)</span> (two addends and a carry bit).
+The output is <span class="math notranslate nohighlight">\(s_i\)</span> and <span class="math notranslate nohighlight">\(c_{i+1}\)</span> (the result and the next carry digit); Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">adder02</span></code> is a one-bit adder circuit diagram, and Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">adder04</span></code> is a four-bit ripple carry adder block diagram.
+Its inputs are <span class="math notranslate nohighlight">\(a\)</span> ( <span class="math notranslate nohighlight">\(a_0-a_3\)</span> ), <span class="math notranslate nohighlight">\(b\)</span> ( <span class="math notranslate nohighlight">\(b_0-b_3\)</span> ), and <span class="math notranslate nohighlight">\(c_{in}\)</span> , and its outputs are <span class="math notranslate nohighlight">\(s\)</span> ( <span class="math notranslate nohighlight">\(s_0-s_3\)</span> ) and <span class="math notranslate nohighlight">\(c_{out}\)</span>.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-number">Table 3 </span><span class="caption-text">Full adders</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<tbody>
+<tr class="row-odd"><td><figure class="align-default" id="adder01">
+<img alt="../_images/adder01.png" src="../_images/adder01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 17 </span><span class="caption-text">One-bit full adder truth table</span><a class="headerlink" href="#adder01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+<td><figure class="align-default" id="adder02">
+<img alt="../_images/adder02.png" src="../_images/adder02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 18 </span><span class="caption-text">One-bit full adder circuit diagram</span><a class="headerlink" href="#adder02" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-even"><td><figure class="align-default" id="adder03">
+<img alt="../_images/adder03.png" src="../_images/adder03.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 19 </span><span class="caption-text">One-bit full adder block diagram</span><a class="headerlink" href="#adder03" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+<td><figure class="align-default" id="adder04">
+<img alt="../_images/adder04.png" src="../_images/adder04.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 20 </span><span class="caption-text">Four-bit serial full adder</span><a class="headerlink" href="#adder04" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The design of a full adder is relatively simple. Please refer to the circuit diagram and think about how to design a serial carry adder circuit.
+Serial adders are very slow because the carry must be propagated from the least significant bit to the most significant bit. To build a faster adder, additional logic must be used to calculate the carry information in advance. This is the design concept behind the carry-lookahead adder. There are several commonly used algorithms for lookahead addition. Interested students can refer to relevant materials for further reading.</p>
+</section>
+<section id="implementation-of-an-8-bit-adder">
+<h2>Implementation of an 8-bit adder<a class="headerlink" href="#implementation-of-an-8-bit-adder" title="Link to this heading"></a></h2>
+<p>The design of the above four serial adders would become extremely complex and inefficient if extended to more bits. In Verilog, arithmetic assignment statements and vectors can be used to perform such arithmetic operations. If we define the following vector:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="n">in_x</span><span class="p">,</span><span class="w"> </span><span class="n">in_y</span><span class="p">;</span>
+<span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="n">out_s</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Then arithmetic assignment statement</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="n">out_s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in_x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">in_y</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>allows you to implement an n-bit adder.</p>
+<p>Please note that this code defines a circuit that can generate an n-bit adder, but the adder circuit does not include the carry output signal and arithmetic overflow signal generated during the addition process.</p>
+<p>The overflow signal is used to determine whether the result of the operation <span class="math notranslate nohighlight">\(out\_s\)</span> is correct. It can be proven that the arithmetic overflow signal for signed two’s complement operations can be obtained using the following expression:</p>
+<div class="math notranslate nohighlight">
+\[Overflow=(in\_x_{n-1} == in\_y_{n-1})\&amp;\&amp;(out\_s_{n-1} != in\_x_{n-1})\]</div>
+<p>The principle behind this determination is as follows: if the signs of the two variables involved in an addition operation are the same, but the sign of the result differs from theirs, the result is inaccurate and an overflow occurs. Specifically, if two positive numbers are added to yield a negative result, or two negative numbers are added to yield a positive result, an overflow has occurred. Adding one positive number and one negative number will not cause an overflow. Of course, there are other methods for determining overflow, so please refer to relevant materials to learn about other ways to determine whether an operation has caused an overflow.</p>
+<p>The carry signal can be obtained using the following expression:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="n">out_c</span><span class="p">,</span><span class="n">out_s</span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="n">in_x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">in_y</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>After this expression is executed, <span class="math notranslate nohighlight">\(out\_c\)</span> is the carry bit, and <span class="math notranslate nohighlight">\(out\_s\)</span> is the result of the addition operation. The carry bit here is solely used to indicate whether there is a carry from the most significant bit of the operand during the addition operation. This concept is opposite to the carry flag (CF) in the X86 architecture during subtraction operations, where <span class="math notranslate nohighlight">\(CF = out_c \oplus cin\)</span>, with <span class="math notranslate nohighlight">\(cin\)</span> set to 1 during subtraction. In signed addition and subtraction, the overflow bit is used for overflow detection, while the carry bit is not. In unsigned addition and subtraction, the carry bit is used for overflow detection, while the overflow bit is not.</p>
+<div class="admonition mycomment">
+<p class="admonition-title">Carry in subtraction</p>
+<p>There is a universally accepted definition for the carry bit in addition, but there are two completely different definitions for the carry mechanism in subtraction. For more details, please refer to <a class="reference external" href="https://en.wikipedia.org/wiki/Carry_flag">Carry flag</a>. In the X86 processor introduced in the ICS course, the carry in subtraction is implemented using the borrow method.</p>
+</div>
+</section>
+<section id="design-of-a-simple-addition-and-subtraction-arithmetic-unit">
+<h2>Design of a simple addition and subtraction arithmetic unit<a class="headerlink" href="#design-of-a-simple-addition-and-subtraction-arithmetic-unit" title="Link to this heading"></a></h2>
+<p>The above adder can only perform addition operations. If subtraction operations are to be performed, a separate subtraction unit must be designed. In fact, in actual arithmetic units, if the operands involved in the operation are all two’s complement, the adder can be used to perform both addition and subtraction operations simultaneously.</p>
+<figure class="align-default" id="alu0">
+<img alt="../_images/alu1.png" src="../_images/alu1.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 21 </span><span class="caption-text">Simple addition and subtraction ALU</span><a class="headerlink" href="#alu0" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">alu0</span></code> is a reference logic diagram of a 32-bit adder/subtractor. The input signals include: two 32-bit two’s complement operands A and B participating in the operation, and a Sub/Add control pin that determines whether to perform addition or subtraction. When set to 1, the device performs subtraction. The output signals include: a 32-bit result (Result), a carry bit, an overflow bit, and an output bit indicating whether the result is zero.</p>
+<p>The figure shows the process of taking the two’s  complement of a subtrahend to convert subtraction into addition. That is, for A – B, we can first calculate the value of (– B), then add it to A, i.e., A – B = A + (–B). For two’s complement, the two’s complement of – B is obtained by inverting all bits of B, including the sign bit, and then adding one.</p>
+<p>Please look up the relevant information and design an adder with addition and subtraction functions on your own.</p>
+<div class="admonition myquestion">
+<p class="admonition-title">Subtraction Overflow</p>
+<p>Although subtraction is also implemented using an adder, subtraction operations require special handling for overflow checks when the subtrahend is the smallest negative number. Consider the following two implementations. Which one is correct?</p>
+<p>Implementation 1:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">t_no_Cin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">n</span><span class="p">{</span><span class="w"> </span><span class="n">Cin</span><span class="w"> </span><span class="p">}}</span><span class="o">^</span><span class="n">B</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="p">{</span><span class="n">Carry</span><span class="p">,</span><span class="n">Result</span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">t_no_Cin</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Cin</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">Overflow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">t_no_Cin</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">])</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">Result</span><span class="w"> </span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>Implementation 2:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">t_add_Cin</span><span class="w"> </span><span class="o">=</span><span class="p">(</span><span class="w"> </span><span class="p">{</span><span class="n">n</span><span class="p">{</span><span class="n">Cin</span><span class="p">}}</span><span class="o">^</span><span class="n">B</span><span class="w"> </span><span class="p">)</span><span class="o">+</span><span class="w"> </span><span class="n">Cin</span><span class="p">;</span><span class="w">  </span><span class="c1">//  please note the order of the ^ operation and the + operation here</span>
+<span class="k">assign</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Carry</span><span class="p">,</span><span class="w"> </span><span class="n">Result</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">t_add_Cin</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">Overflow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">t_add_Cin</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">])</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">Result</span><span class="w"> </span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mh">1</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition myquestion">
+<p class="admonition-title">Zero output</p>
+<p>There are two ways to determine whether the output result is zero. One is to use an if statement to compare Result with <code class="docutils literal notranslate"><span class="pre">0</span></code>, which will generate a comparator in the hardware. Another way is to use the following statement:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">zero</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="p">(</span><span class="o">|</span><span class="w"> </span><span class="n">Result</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">|Result</span></code> The operation is called unary reduction, which can be implemented with several logic gates in hardware. Please refer to the relevant Verilog syntax documentation to understand the operation process of this operation.</p>
+<p>Choose the method you think is best to determine whether the result is <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p>
+</div>
+<div class="admonition myhint">
+<p class="admonition-title">Design of Adder Test Values</p>
+<p>In this lab’s testing process, there are many operands and the number of bits is relatively long. If we use enumeration to test each value, the test will certainly be very thorough, but the test results will be too long, difficult to read, and not entirely necessary. Therefore, when testing, it is important to select some key, boundary, and typical values. For example, here we are required to design a 4-bit two’s complement adder/subtractor, where both the input and output are in two’s complement format. The range of values for the operands is from -8 to +7. We can assign the following values to the two operands: 7, 6, 2, 1, 0, -1, -2, -7, -8, etc. Observe the simulation results, and then add additional test values as needed.</p>
+<p>In the adder test, you can use the task function in the test bench to perform automatic testing. Note: The task function is primarily used for calculating and verifying results during testing and is not recommended for use when implementing circuits.</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">task</span><span class="w"> </span><span class="n">check</span><span class="p">;</span><span class="w">  </span><span class="c1">//  test task</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">results</span><span class="p">;</span><span class="w">  </span><span class="c1">//  the expected correct output of ALU results</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="n">resultof</span><span class="p">,</span><span class="w"> </span><span class="n">resultc</span><span class="p">,</span><span class="w"> </span><span class="n">resultz</span><span class="p">;</span><span class="w">  </span><span class="c1">//  expected overflow, carry, and zero in ALU</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">outputs</span><span class="o">!=</span><span class="n">results</span><span class="p">)</span><span class="w">  </span><span class="c1">//  compare expected results and test unit outputs</span>
+<span class="w">      </span><span class="k">begin</span><span class="w">               </span><span class="c1">//  display when an error occurs</span>
+<span class="w">        </span><span class="nb">$display</span><span class="p">(</span><span class="s">&quot;Error:x=%h,y=%h,ctrl=%b,s should be %h,</span>
+<span class="w">          </span><span class="n">get</span><span class="w"> </span><span class="o">%</span><span class="n">h</span><span class="s">&quot;, inputa, inputb, inputaluop, results, outputs);</span>
+<span class="w">      </span><span class="k">end</span>
+<span class="w">    </span><span class="c1">//  add overflow, carry, and zero comparison yourself</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">endtask</span>
+</pre></div>
+</div>
+<p>During testing, you can call the check task to determine whether the results are correct.</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=-</span><span class="mh">8</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="mh">7</span><span class="p">;</span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="c1">//  it is recommended that i and j be signed numbers with more than 5 digits</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="o">=-</span><span class="mh">8</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;=</span><span class="mh">7</span><span class="p">;</span><span class="n">j</span><span class="o">=</span><span class="n">j</span><span class="o">+</span><span class="mh">1</span><span class="p">)</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">      </span><span class="n">inputa</span><span class="o">=</span><span class="n">i</span><span class="p">;</span>
+<span class="w">      </span><span class="n">inputb</span><span class="o">=</span><span class="n">j</span><span class="p">;</span><span class="w">  </span><span class="c1">//  set two inputs</span>
+<span class="w">      </span><span class="n">inputaluop</span><span class="o">=</span><span class="mh">4</span><span class="mb">&#39;b0000</span><span class="p">;</span><span class="w"> </span><span class="c1">//  ALU opcode</span>
+<span class="w">      </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">;</span><span class="w">    </span><span class="c1">//  calculate the correct output yourself and fill in the * field</span>
+<span class="w">      </span><span class="n">of</span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">;</span><span class="w">    </span><span class="c1">//  can be filled out manually depending on the situation</span>
+<span class="w">      </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">;</span>
+<span class="w">      </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">;</span>
+<span class="w">      </span><span class="p">#</span><span class="mh">20</span><span class="w"> </span><span class="n">check</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">],</span><span class="n">of</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">z</span><span class="p">);</span>
+<span class="w">    </span><span class="k">end</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="alu-design">
+<h2>ALU design<a class="headerlink" href="#alu-design" title="Link to this heading"></a></h2>
+<p>In a CPU, the ALU’s functions often include not only addition and subtraction operations, but also logical operations, shifts, multiplication and division, comparisons, and so on. Here, we will introduce the ALU design requirements based on the RV32I basic instruction set in RISC-V.</p>
+<p>The RISC-V RV32I basic instruction set only supports 32-bit integer operations. Operands can be signed two’s complement integers or unsigned numbers. The ALU does not need to perform multiplication or division, nor does it need to perform overflow checks. These operations are performed by software. The RV32I ALU needs to perform the following operations:</p>
+<ul class="simple">
+<li><p><strong>Arithmetic Operations</strong>: Perform addition and subtraction operations on signed two’s complement numbers and unsigned numbers without needing to check for overflow or carry. Under these conditions, signed and unsigned numbers can be handled uniformly.</p></li>
+<li><p><strong>Logical Operations</strong>: Perform XOR, AND, and OR operations. Other operations are implemented in software. For example, NOT can be implemented using XOR with a full-one operand.</p></li>
+<li><p><strong>Shift operations</strong>: Perform logical left shift, logical right shift, arithmetic right shift, and other functions. Shift operations will be introduced in the shift register lab later.</p></li>
+<li><p><strong>Comparison operations</strong>: Perform equality and inequality comparisons between signed and unsigned numbers. These operations can be implemented using subtraction.</p>
+<ul>
+<li><p>Equivalence can be determined by the zero output of subtraction.</p></li>
+<li><p>The comparison of the magnitude of signed numbers can be done by subtraction, i.e., when comparing the magnitudes of two numbers A and B, first take the complement of B and add one, then add it to A. If there is no overflow, the sign bit of the result is 1, meaning A is less than B. If the subtraction overflows, the original signs of A and B must be different. At this point, if the sign bit of the result is 0, it means that A is negative and B is positive. After B is inverted and incremented by one, it becomes negative, and the sum of the two is positive, so A should be less than B. When there is an overflow, if the sign bit of the result is 1, then B is less than or equal to A. Therefore, <span class="math notranslate nohighlight">\(Less_s=out\_s_{n-1}\oplus Overflow\)</span> can be used for judgment. Please analyze the specific reasons yourself.</p></li>
+<li><p>Unsigned number comparisons can also be determined using subtraction. At this point, if the most significant bit carries, then A is greater than or equal to B; otherwise, A is less than B. In actual circuits, this is often implemented using <span class="math notranslate nohighlight">\(Less_u=cin\oplus Carry\)</span>. Please analyze the specific reasons yourself.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="lab-check-in-contents">
+<h2>Lab check-in contents<a class="headerlink" href="#lab-check-in-contents" title="Link to this heading"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">On-Board Lab: Implementing a simple ALU with logical operations</p>
+<p>Design a 4-bit signed <strong>two’s complement</strong> ALU that can perform the following operations:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-number">Table 4 </span><span class="caption-text">ALU operations list</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>opcode</p></th>
+<th class="head"><p>function</p></th>
+<th class="head"><p>operation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>000</p></td>
+<td><p>addition</p></td>
+<td><p>A+B</p></td>
+</tr>
+<tr class="row-odd"><td><p>001</p></td>
+<td><p>subtraction</p></td>
+<td><p>A-B</p></td>
+</tr>
+<tr class="row-even"><td><p>010</p></td>
+<td><p>negation</p></td>
+<td><p>Not A</p></td>
+</tr>
+<tr class="row-odd"><td><p>011</p></td>
+<td><p>and</p></td>
+<td><p>A and B</p></td>
+</tr>
+<tr class="row-even"><td><p>100</p></td>
+<td><p>or</p></td>
+<td><p>A or B</p></td>
+</tr>
+<tr class="row-odd"><td><p>101</p></td>
+<td><p>xor</p></td>
+<td><p>A xor B</p></td>
+</tr>
+<tr class="row-even"><td><p>110</p></td>
+<td><p>comparison</p></td>
+<td><p>If A&lt;B then out=1; else out=0;</p></td>
+</tr>
+<tr class="row-odd"><td><p>111</p></td>
+<td><p>test equivalence</p></td>
+<td><p>If A==B then out=1; else out=0;</p></td>
+</tr>
+</tbody>
+</table>
+<p>When performing addition and subtraction operations, the ALU needs to be able to determine whether the result is 0, whether there is an overflow, whether there is a carry, etc. Here, the input operands A and B are already in two’s complement form. Compare sizes using signed numbers.</p>
+<p>When performing logical operations, overflow and carry do not need to be considered.</p>
+<p>Since the number of inputs on the development board is limited, SW can be used as data input and button as the selection port.</p>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">Online test</p>
+<ul class="simple">
+<li><p>4-bit two’s complement adder/subtractor</p></li>
+<li><p>Simple 4-bit ALU</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02.html" class="btn btn-neutral float-left" title="Lab 2: Decoders and Encoders" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="04.html" class="btn btn-neutral float-right" title="Lab 4: Counters and Clocks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Wei Wang, Haijun Wu, Lu Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

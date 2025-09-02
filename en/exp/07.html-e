@@ -1,0 +1,692 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en-US" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 7: Finite State Machines and Keyboard Input &mdash; NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=b5540729" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8fdbbf67"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lab 8: VGA interface controller’s implementation" href="08.html" />
+    <link rel="prev" title="Lab 6: Shift Registers and Barrel Shifters" href="06.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">Lab 1: Multiplexers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">Lab 2: Decoders and Encoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">Lab 3: Adders and ALUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">Lab 4: Counters and Clocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">Lab 5: Register File and Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">Lab 6: Shift Registers and Barrel Shifters</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lab 7: Finite State Machines and Keyboard Input</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#state-machines">State Machines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#finate-state-machines">Finate State Machines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simple-state-machine">Simple state machine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#encoding-methods-for-state-machines">Encoding methods for state machines</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ps-2-interface-controller-and-keyboard-input">PS/2 interface controller and keyboard input</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ps-2-interface-timing">PS/2 interface timing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#keyboard-scan-code">Keyboard scan code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connection-between-ps-2-interface-and-fpga">Connection between PS/2 interface and FPGA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ps-2-keyboard-controller-design">PS/2 Keyboard Controller Design</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fpga-debugging-guide">FPGA Debugging Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lab-check-in-contents">Lab check-in contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">Lab 8:  VGA interface controller’s implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">Lab 9: Character Input Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">Lab 10: CPU Datapath</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">Lab 11: RV32I Single Cycle CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">Lab 12: Computer Systems</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Lab 7: Finite State Machines and Keyboard Input</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lab-7-finite-state-machines-and-keyboard-input">
+<h1>Lab 7: Finite State Machines and Keyboard Input<a class="headerlink" href="#lab-7-finite-state-machines-and-keyboard-input" title="Link to this heading"></a></h1>
+<p><em>We know the state of the system if we know the sequence of symbols on the tape, which of these are observed by the computer (possibly with a special order), and the state of mind of the computer.</em></p>
+<blockquote>
+<div><p>—“On Computable Numbers, with an Application to the Entscheidungsproblem”, A. M. Turing</p>
+</div></blockquote>
+<p>A Finite State Machine (FSM) is a computational model that transitions between a finite number of states and performs actions. A finite state machine consists of a starting state, an input list (containing all possible input signal sequences), a state transition function, and an output port. During operation, the state transition function determines the next state and output based on the current state and input signal. State machines typically start from the initial state and use the state transition function to determine the next state based on the input signal.</p>
+<p>A Finite State Machine (FSM) is a crucial circuit module in digital circuit systems. It is a sequential logic circuit whose output depends on both past and current inputs, combining elements of both combinational logic and sequential logic circuits. The combinational logic is divided into two parts: one is the next-state logic used to generate the next state of the finite state machine, and the other is the output logic used to generate the output signal. The function of the next-state logic is to determine the next state of the finite state machine, and the function of the output logic is to determine the output of the finite state machine. In addition to inputs and outputs, the state machine also has a set of registers with a “memory” function. The function of these registers is to remember the internal state of the finite state machine, and they are often referred to as state registers.</p>
+<p>The purpose of this lab is to learn how state machines work, understand how they are coded, and design a simple state machine using PS/2 keyboard input.</p>
+<section id="state-machines">
+<h2>State Machines<a class="headerlink" href="#state-machines" title="Link to this heading"></a></h2>
+<section id="finate-state-machines">
+<h3>Finate State Machines<a class="headerlink" href="#finate-state-machines" title="Link to this heading"></a></h3>
+<p>In practical applications, Finate State Machines are divided into two types: Moore Finate State Machines and Mealy Finate State Machines. The output signal of a Moore Finate State Machine is only related to the current state of the Finate State Machine and is not related to the current value of the input signal. The current value of the input signal only affects the next state of the state machine and does not affect the current output of the state machine. That is, the output signal of a Moore Finate State Machine is directly decoded from the state register. After the clock CLK signal is valid, the Moore-type Finate State Machine undergoes a period of delay before the output reaches a stable value. Even if the input signal changes during this clock cycle, the output will remain stable and unchanged during this complete clock cycle. The effect of the input on the output will not be reflected until the next clock cycle. The most important feature of a Moore finite state machine is that it separates the input and output signals. Unlike a Moore finite state machine, the output of a Mealy state machine is not only related to the current state of the state machine, but also to the current value of the input signal. The output of a Mealy finite state machine is directly affected by the current value of the input signal, and the input signal may change at any time during a clock cycle, which causes the Mealy finite state machine to respond to the input in the current clock cycle, one cycle earlier than the Moore finite state machine responds to the input signal. Therefore, noise in the input signal may affect the output signal.</p>
+</section>
+<section id="simple-state-machine">
+<h3>Simple state machine<a class="headerlink" href="#simple-state-machine" title="Link to this heading"></a></h3>
+<p>This section introduces the working process and design methods of state machines by designing an actual state machine.</p>
+<p>Design a Finate State Machine (FSM) that distinguishes between two specific timings: The FSM has one input w and one output z. When w is four consecutive 0s or four consecutive 1s, the output z = 1, otherwise z = 0. Timing overlap is allowed. That is, if w is five consecutive 1s, then after the fourth and fifth clocks, z is 1. Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-state01</span></code> is the timing diagram of this finite state machine.</p>
+<figure class="align-default" id="fig-state01">
+<img alt="../_images/state01.png" src="../_images/state01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 52 </span><span class="caption-text">FSM timing diagram</span><a class="headerlink" href="#fig-state01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The state diagram of this state machine is shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-state02</span></code>.</p>
+<figure class="align-default" id="fig-state02">
+<img alt="../_images/state02.png" src="../_images/state02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 53 </span><span class="caption-text">FSM state diagram</span><a class="headerlink" href="#fig-state02" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Use Verilog code to implement the state machine shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-state02</span></code>. This state machine has nine states and requires at least four state registers to store these state values in binary code, as shown in Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-state01</span></code>.</p>
+<table class="docutils align-default" id="tab-state01">
+<caption><span class="caption-number">Table 7 </span><span class="caption-text">Binary encoding of the FSM</span><a class="headerlink" href="#tab-state01" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>State</p></th>
+<th class="head"><p>y3</p></th>
+<th class="head"><p>y2</p></th>
+<th class="head"><p>y1</p></th>
+<th class="head"><p>y0</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>A</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>B</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>C</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>D</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>E</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>F</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>G</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>H</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>I</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+<p>Create a Verilog file using SW0 as the FSM low-level synchronous reset port, SW1 as input w, KEY0 as manual clock input, LEDR0 as output z, and LEDR4-LEDR7 to display the states of the four flip-flops, and complete the specific design of the state machine.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-number">Listing 21 </span><span class="caption-text">State machine distinguishing between two input states</span><a class="headerlink" href="#id1" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">FSM_bin</span>
+<span class="p">(</span>
+<span class="w">  </span><span class="k">input</span><span class="w">   </span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">reset</span><span class="p">,</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="n">out</span>
+<span class="p">);</span>
+
+<span class="k">parameter</span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">S0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">,</span><span class="w"> </span><span class="n">S1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">S2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">,</span><span class="w"> </span><span class="n">S3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="p">,</span>
+<span class="w">          </span><span class="n">S4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">4</span><span class="p">,</span><span class="w"> </span><span class="n">S5</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">5</span><span class="p">,</span><span class="w"> </span><span class="n">S6</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">6</span><span class="p">,</span><span class="w"> </span><span class="n">S7</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">7</span><span class="p">,</span><span class="w"> </span><span class="n">S8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8</span><span class="p">;</span>
+
+<span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">state_din</span><span class="p">,</span><span class="w"> </span><span class="n">state_dout</span><span class="p">;</span>
+<span class="kt">wire</span><span class="w"> </span><span class="n">state_wen</span><span class="p">;</span>
+
+<span class="n">SimReg</span><span class="p">#(</span><span class="mh">4</span><span class="p">,</span><span class="mh">0</span><span class="p">)</span><span class="w"> </span><span class="n">state</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="w"> </span><span class="n">reset</span><span class="p">,</span><span class="w"> </span><span class="n">state_din</span><span class="p">,</span><span class="w"> </span><span class="n">state_dout</span><span class="p">,</span><span class="w"> </span><span class="n">state_wen</span><span class="p">);</span>
+
+<span class="k">assign</span><span class="w"> </span><span class="n">state_wen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+
+<span class="n">MuxKeyWithDefault</span><span class="p">#(</span><span class="mh">9</span><span class="p">,</span><span class="w"> </span><span class="mh">4</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="n">outMux</span><span class="p">(.</span><span class="n">out</span><span class="p">(</span><span class="n">out</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">key</span><span class="p">(</span><span class="n">state_dout</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">default_out</span><span class="p">(</span><span class="mh">0</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">lut</span><span class="p">({</span>
+<span class="w">  </span><span class="n">S0</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S1</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S2</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S3</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S4</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S5</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S6</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S7</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S8</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span>
+<span class="p">}));</span>
+
+<span class="n">MuxKeyWithDefault</span><span class="p">#(</span><span class="mh">9</span><span class="p">,</span><span class="w"> </span><span class="mh">4</span><span class="p">,</span><span class="w"> </span><span class="mh">4</span><span class="p">)</span><span class="w"> </span><span class="n">stateMux</span><span class="p">(.</span><span class="n">out</span><span class="p">(</span><span class="n">state_din</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">key</span><span class="p">(</span><span class="n">state_dout</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">default_out</span><span class="p">(</span><span class="n">S0</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">lut</span><span class="p">({</span>
+<span class="w">  </span><span class="n">S0</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">S5</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">S1</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S1</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">S5</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">S2</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S2</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">S5</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">S3</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S3</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">S5</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">S4</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S4</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">S5</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">S4</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S5</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">S6</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">S1</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S6</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">S7</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">S1</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S7</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">S8</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">S1</span><span class="p">,</span>
+<span class="w">  </span><span class="n">S8</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">S8</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">S1</span>
+<span class="p">}));</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>Compile the project, write test code, and simulate this state machine.
+Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-statesim01</span></code> shows the functional simulation results of this state machine.</p>
+<figure class="align-default" id="fig-statesim01">
+<img alt="../_images/statesim01.png" src="../_images/statesim01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 54 </span><span class="caption-text">Simulation diagram of FSM</span><a class="headerlink" href="#fig-statesim01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Please constrain the pins of the circuit yourself, download it to the development board, and verify its functionality.</p>
+<p>The above is an example of a Moore Finate State Machine design. Please refer to the relevant materials and study how it differs from the design of a Mealy Finate State Machine.</p>
+</section>
+<section id="encoding-methods-for-state-machines">
+<h3>Encoding methods for state machines<a class="headerlink" href="#encoding-methods-for-state-machines" title="Link to this heading"></a></h3>
+<p>The state register of the state machine in the previous example uses sequential binary encoding, which encodes the states of the state machine as sequential binary numbers. Sequential binary encoding minimizes the number of bits in the state vector. In this example, only 4-bit binary numbers are needed for encoding. This saves logical resources required to store the state vector. However, when outputting, the state vector must be decoded to generate the output (each state has a specific output, so the state must be decoded during output to ensure that the specific value is output when the state number is met). This decoding process often requires a significant amount of combinational logic gates.</p>
+<p>In addition, when the chip is exposed to radiation or other interference, it may cause abnormal state machine jumps, or even jump to an invalid state and cause a crash. For example, if the state machine abnormally jumps to a certain state, and this state requires waiting for input and responding, the state machine will enter a deadlock state because the state operation is abnormal and no input will appear.</p>
+<p>One-hot encoding is also a commonly used encoding method in state machine design. In one-hot encoding, for any given state, only one bit in the state vector is set to <code class="docutils literal notranslate"><span class="pre">1</span></code>, while all other bits are set to <code class="docutils literal notranslate"><span class="pre">0</span></code>. Since there are n states, an n-bit state vector is required, making one-hot encoding the longest encoding. One-hot encoding makes it very convenient to determine the state. If a bit is set to <code class="docutils literal notranslate"><span class="pre">1</span></code>, it represents a specific state; if it is <code class="docutils literal notranslate"><span class="pre">0</span></code>, it does not represent that state. Therefore, determining the state output is very simple, requiring only one or two simple <code class="docutils literal notranslate"><span class="pre">AND</span> <span class="pre">gates</span></code> or <code class="docutils literal notranslate"><span class="pre">OR</span> <span class="pre">gates</span></code>.</p>
+<p>The state transition speed of a one-hot encoded state machine from one state to another is very fast, while sequential binary encoding requires multiple transitions to move from one state to another, and the speed decreases sharply as the number of states increases.
+When the chip is disrupted, one-hot encoding generally only jumps to an invalid state (if it jumps to another valid state, the current <code class="docutils literal notranslate"><span class="pre">1</span></code> must become <code class="docutils literal notranslate"><span class="pre">0</span></code>, while another bit changes from <code class="docutils literal notranslate"><span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">1</span></code>, which is highly unlikely). Therefore, the state machine stability of one-hot encoding is high.</p>
+<p>Gray code is also a commonly used encoding method in state machine design. Its advantage is that when a state transition occurs in a Gray code state machine, only one bit of the state vector changes.</p>
+<p>Generally speaking, sequential binary encoding and Gray code state machines use the fewest flip-flops and more combinational logic, making them suitable for CPLD chips that provide more combinational logic. For FPGAs with more flip-flop resources, implementing state machines using one-hot encoding is more efficient. Therefore, CPLDs typically use Gray code, while FPGAs typically use one-hot encoding. For FPGA devices with abundant flip-flop resources, using one-hot encoding is common practice.</p>
+<p>In Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-state02</span></code>, the state machine has nine states, which can be implemented using nine flip-flops. These nine state flip-flops are denoted by y8, y7, y6, y5, y4, y3, y2, y1, and y0. The one-hot encoding of this state machine is shown in Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-state02</span></code>.</p>
+<table class="docutils align-default" id="tab-state02">
+<caption><span class="caption-number">Table 8 </span><span class="caption-text">FSM’s One-Hot Encoding</span><a class="headerlink" href="#tab-state02" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>State</p></th>
+<th class="head"><p>y8</p></th>
+<th class="head"><p>y7</p></th>
+<th class="head"><p>y6</p></th>
+<th class="head"><p>y5</p></th>
+<th class="head"><p>y4</p></th>
+<th class="head"><p>y3</p></th>
+<th class="head"><p>y2</p></th>
+<th class="head"><p>y1</p></th>
+<th class="head"><p>y0</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>A</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>B</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>C</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>D</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>E</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>F</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>G</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>H</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>I</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ps-2-interface-controller-and-keyboard-input">
+<h2>PS/2 interface controller and keyboard input<a class="headerlink" href="#ps-2-interface-controller-and-keyboard-input" title="Link to this heading"></a></h2>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/IBM_Personal_System/2">PS/2</a> is a standard for personal computer serial I/O interfaces, named after its first use in IBM PS/2 (Personal System/2) machines. PS/2 interfaces can connect PS/2 keyboards and PS/2 mice.
+A serial interface refers to a type of interface where information is sent one bit at a time in sequence over a single signal line.</p>
+<section id="ps-2-interface-timing">
+<h3>PS/2 interface timing<a class="headerlink" href="#ps-2-interface-timing" title="Link to this heading"></a></h3>
+<p>The PS/2 interface uses two signal lines: one for the clock signal PS2_CLK and the other for data transmission PS2_DAT. The clock signal primarily indicates when the bits on the data line are valid. Data can be transmitted bidirectionally between the keyboard and the host, but this discussion focuses solely on data transmission from the keyboard to the host. When both the PS2_DAT and PS2_CLK signal lines are high (idle), the keyboard can send signals to the host. If the host sets the PS2_CLK signal low, the keyboard will be ready to accept commands from the host. In our lab, the host does not need to send commands, but only needs to use these two signal lines as inputs.</p>
+<p>When a user presses or releases a key, the keyboard serially transmits data to the host in an 11-bit-per-frame format, while simultaneously transmitting the corresponding clock signal (typically 10.0-16.7 kHz) on the PS2_CLK clock signal. The first bit is the start bit (logic 0), followed by 8 data bits (low-order bit first), one parity bit (odd parity), and one stop bit (logic 1). Each bit is valid on the <strong>falling edge</strong> of the clock. Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-ps01</span></code> shows the timing of the keyboard transmitting a single byte of data. The primary reason for using the falling edge is that it occurs exactly at the midpoint of the data bit, allowing sufficient signal settling time for the data bit to transition from its initial state to the reception sampling point.</p>
+<figure class="align-default" id="fig-ps01">
+<img alt="../_images/ps01.png" src="../_images/ps01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 55 </span><span class="caption-text">Keyboard output timing diagram</span><a class="headerlink" href="#fig-ps01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The information sent by the keyboard via the PS2_DAT pin is called scan code. Each scan code can consist of a single data frame or multiple consecutive data frames. The scan code sent when a key is pressed is called the <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">code</span></code>, and the scan code sent when a key is released is called the <code class="docutils literal notranslate"><span class="pre">break</span> <span class="pre">code</span></code>. Taking the <code class="docutils literal notranslate"><span class="pre">W</span></code> key as an example, the Make Code for the <code class="docutils literal notranslate"><span class="pre">W</span></code> key is 1Dh. If the <code class="docutils literal notranslate"><span class="pre">W</span></code> key is pressed, the PS2_DAT pin will output a data frame, with the 8-bit data field set to 1Dh. If the <code class="docutils literal notranslate"><span class="pre">W</span></code> key remains pressed, the scan code will continuously output 1Dh 1Dh … 1Dh, until another key is pressed or the <code class="docutils literal notranslate"><span class="pre">W</span></code> key is released. The break code for a key is F0h plus the key’s make code. For example, when the <code class="docutils literal notranslate"><span class="pre">W</span></code> key is released, the break code output is F0h 1Dh, transmitted in two frames.</p>
+<p>When multiple keys are pressed simultaneously, the scan codes are output sequentially. For example, if you first press the left <code class="docutils literal notranslate"><span class="pre">Shift</span></code> key (scan code 12h), then press the <code class="docutils literal notranslate"><span class="pre">W</span></code> key, release the <code class="docutils literal notranslate"><span class="pre">W</span></code> key, and then release the left <code class="docutils literal notranslate"><span class="pre">Shift</span></code> key, the complete sequence of scan codes sent during this process is: 12h 1Dh F0h 1Dh F0h 12h.</p>
+</section>
+<section id="keyboard-scan-code">
+<h3>Keyboard scan code<a class="headerlink" href="#keyboard-scan-code" title="Link to this heading"></a></h3>
+<p>Each key has a unique make code and break code. The set of scan codes for all keys on the keyboard is called the scan code set. There are three standard scan code sets, and all modern keyboards use the second scan code set by default. Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-ps02</span></code> shows the scan codes (in hexadecimal) for each key on the keyboard. For example, the scan code for the Caps key is 58h.
+As shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-ps02</span></code>, the scan codes of the keys on the keyboard are arranged randomly. If you want to quickly convert the keyboard scan codes to ASCII codes, the simplest method is to use a <a class="reference external" href="https://en.wikipedia.org/wiki/Lookup_table">LookUp Table (LUT)</a>. Readers are encouraged to generate their own conversion tables from scan codes to ASCII codes.</p>
+<figure class="align-default" id="fig-ps02">
+<img alt="../_images/ps02.png" src="../_images/ps02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 56 </span><span class="caption-text">Keyboard scan code</span><a class="headerlink" href="#fig-ps02" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-ps03</span></code> shows the scan codes for the extended keyboard and numeric keypad.</p>
+<figure class="align-default" id="fig-ps03">
+<img alt="../_images/ps03.png" src="../_images/ps03.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 57 </span><span class="caption-text">Scan codes for extended keyboard and numeric keypad</span><a class="headerlink" href="#fig-ps03" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="connection-between-ps-2-interface-and-fpga">
+<h3>Connection between PS/2 interface and FPGA<a class="headerlink" href="#connection-between-ps-2-interface-and-fpga" title="Link to this heading"></a></h3>
+<p>Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-ps05</span></code> shows the PS/2 interface on the DE10-Standard development board. This interface can be used to connect two devices via a Y-shaped adapter, as shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-ps06</span></code>.
+When only one device is connected, the signal is connected to PS2_DAT and PS2_CLK.</p>
+<figure class="align-default" id="fig-ps05">
+<img alt="../_images/ps05.png" src="../_images/ps05.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 58 </span><span class="caption-text">PS/2 connection</span><a class="headerlink" href="#fig-ps05" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-ps06">
+<img alt="../_images/ps06.png" src="../_images/ps06.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 59 </span><span class="caption-text">Y-shaped adapter</span><a class="headerlink" href="#fig-ps06" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-ps07</span></code> shows the pin list for the PS/2 interface on the DE10-Standard.</p>
+<figure class="align-default" id="fig-ps07">
+<img alt="../_images/ps07.png" src="../_images/ps07.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 60 </span><span class="caption-text">PS/2 Pins on DE10-Standard Development Board</span><a class="headerlink" href="#fig-ps07" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="ps-2-keyboard-controller-design">
+<h3>PS/2 Keyboard Controller Design<a class="headerlink" href="#ps-2-keyboard-controller-design" title="Link to this heading"></a></h3>
+<p>The following is the Verilog HDL code for receiving keyboard data. This code is only responsible for receiving data sent from the keyboard. Identifying which key has been pressed is handled by other modules. How to display this data or key symbols is left to the reader to design.</p>
+<div class="literal-block-wrapper docutils container" id="list-ps02">
+<div class="code-block-caption"><span class="caption-number">Listing 22 </span><span class="caption-text">Keyboard Controller</span><a class="headerlink" href="#list-ps02" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">ps2_keyboard</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="n">clrn</span><span class="p">,</span><span class="n">ps2_clk</span><span class="p">,</span><span class="n">ps2_data</span><span class="p">,</span><span class="n">data</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">ready</span><span class="p">,</span><span class="n">nextdata_n</span><span class="p">,</span><span class="n">overflow</span><span class="p">);</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="n">clrn</span><span class="p">,</span><span class="n">ps2_clk</span><span class="p">,</span><span class="n">ps2_data</span><span class="p">;</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="n">nextdata_n</span><span class="p">;</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="n">ready</span><span class="p">;</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="n">overflow</span><span class="p">;</span><span class="w">     </span><span class="c1">// fifo overflow</span>
+<span class="w">    </span><span class="c1">// internal signal, for test</span>
+<span class="w">    </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">buffer</span><span class="p">;</span><span class="w">        </span><span class="c1">// ps2_data bits</span>
+<span class="w">    </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">fifo</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span><span class="w">     </span><span class="c1">// data fifo</span>
+<span class="w">    </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">w_ptr</span><span class="p">,</span><span class="n">r_ptr</span><span class="p">;</span><span class="w">   </span><span class="c1">// fifo write and read pointers</span>
+<span class="w">    </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w">  </span><span class="c1">// count ps2_data bits</span>
+<span class="w">    </span><span class="c1">// detect falling edge of ps2_clk</span>
+<span class="w">    </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ps2_clk_sync</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">ps2_clk_sync</span><span class="w"> </span><span class="o">&lt;=</span><span class="w">  </span><span class="p">{</span><span class="n">ps2_clk_sync</span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">],</span><span class="n">ps2_clk</span><span class="p">};</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="kt">wire</span><span class="w"> </span><span class="n">sampling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ps2_clk_sync</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">~</span><span class="n">ps2_clk_sync</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+
+<span class="w">    </span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">clrn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">0</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span><span class="w"> </span><span class="c1">// reset</span>
+<span class="w">            </span><span class="n">count</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">w_ptr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">r_ptr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">overflow</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">ready</span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">ready</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="k">begin</span><span class="w"> </span><span class="c1">// read to output next data</span>
+<span class="w">                </span><span class="k">if</span><span class="p">(</span><span class="n">nextdata_n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">)</span><span class="w"> </span><span class="c1">//read next data</span>
+<span class="w">                </span><span class="k">begin</span>
+<span class="w">                    </span><span class="n">r_ptr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">r_ptr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">3</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                    </span><span class="k">if</span><span class="p">(</span><span class="n">w_ptr</span><span class="o">==</span><span class="p">(</span><span class="n">r_ptr</span><span class="o">+</span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">))</span><span class="w"> </span><span class="c1">//empty</span>
+<span class="w">                        </span><span class="n">ready</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">                </span><span class="k">end</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sampling</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">              </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">count</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d10</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">buffer</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w">  </span><span class="c1">// start bit</span>
+<span class="w">                    </span><span class="p">(</span><span class="n">ps2_data</span><span class="p">)</span><span class="w">       </span><span class="o">&amp;&amp;</span><span class="w">  </span><span class="c1">// stop bit</span>
+<span class="w">                    </span><span class="p">(</span><span class="o">^</span><span class="n">buffer</span><span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">1</span><span class="p">]))</span><span class="w"> </span><span class="k">begin</span><span class="w">      </span><span class="c1">// odd  parity</span>
+<span class="w">                    </span><span class="n">fifo</span><span class="p">[</span><span class="n">w_ptr</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">buffer</span><span class="p">[</span><span class="mh">8</span><span class="o">:</span><span class="mh">1</span><span class="p">];</span><span class="w">  </span><span class="c1">// kbd scan code</span>
+<span class="w">                    </span><span class="n">w_ptr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">w_ptr</span><span class="o">+</span><span class="mh">3</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                    </span><span class="n">ready</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                    </span><span class="n">overflow</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">overflow</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">r_ptr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="n">w_ptr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">3</span><span class="mb">&#39;b1</span><span class="p">));</span>
+<span class="w">                </span><span class="k">end</span>
+<span class="w">                </span><span class="n">count</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w">     </span><span class="c1">// for next</span>
+<span class="w">              </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">buffer</span><span class="p">[</span><span class="n">count</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ps2_data</span><span class="p">;</span><span class="w">  </span><span class="c1">// store ps2_data</span>
+<span class="w">                </span><span class="n">count</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">3</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">              </span><span class="k">end</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fifo</span><span class="p">[</span><span class="n">r_ptr</span><span class="p">];</span><span class="w"> </span><span class="c1">//always set output data</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>The code first records the historical information of the PS2 clock signal through ps2_clk_sync and detects the falling edge of the clock. When a falling edge is detected, sampling is set to 1. Then, data is received bit by bit and placed in the buffer FIFO queue. After collecting 11 bits, the buffer is transferred to the data queue FIFO.</p>
+<p>The keyboard controller module has set up an 8-byte FIFO queue to prevent keyboard data from being sent too quickly, causing the processing module to be unable to retrieve the data in time and resulting in data loss. Such FIFO queues are common in digital systems and are primarily used to transfer data between modules with different processing speeds.
+The upstream module is responsible for adding data to the queue, while the downstream module is responsible for retrieving the data for processing. The buffering function of the FIFO queue allows data to be temporarily stored when the downstream processing module cannot process the data in time.
+FIFO is a first-in, first-out queue equipped with write and read pointers. When the queue is not empty, a ready signal is sent to indicate that there is data to be processed at this time.
+When the queue overflows, an overflow signal is sent. When the key processing system calls this module, it needs to read the keyboard data when the keyboard controller ready signal is 1, and after confirming that the reading is complete, set nextdata_n to zero <strong>one cycle</strong>.
+At this point, the keyboard controller module receives the confirmation signal that reading is complete, moves the read pointer forward, and prepares to provide the next data. Readers are advised to consider the timing coordination between the processing module and this module to avoid missed keys or duplicate reads. Of course, the timing for interaction between the two modules can also be designed independently.</p>
+<p>Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-ps08</span></code> shows the simulated waveform of this code, displaying the scan codes <code class="docutils literal notranslate"><span class="pre">12h</span></code> and <code class="docutils literal notranslate"><span class="pre">1Dh</span></code> received from the left <code class="docutils literal notranslate"><span class="pre">Shift</span></code> key and <code class="docutils literal notranslate"><span class="pre">W</span></code> key. Note that, taking the receiving of <code class="docutils literal notranslate"><span class="pre">12h</span></code> as an example, the data transmission order for the PS/2 interface is: start bit (1’b0) + eight data bits (from low to high) + parity bit + stop bit (1’b1). Therefore, when transmitting <code class="docutils literal notranslate"><span class="pre">12h</span></code>, the data sequence sent from the PS2_DAT pin should be <code class="docutils literal notranslate"><span class="pre">0010</span> <span class="pre">0100</span> <span class="pre">011</span></code>.</p>
+<figure class="align-default" id="fig-ps08">
+<img alt="../_images/ps08.png" src="../_images/ps08.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 61 </span><span class="caption-text">Keyboard simulation waveform</span><a class="headerlink" href="#fig-ps08" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="fpga-debugging-guide">
+<h2>FPGA Debugging Guide<a class="headerlink" href="#fpga-debugging-guide" title="Link to this heading"></a></h2>
+<p>This experiment involves connecting an FPGA to a keyboard. Compared to switches, LEDs, and other devices, the interface logic for keyboards is much more complex. In addition, since a state machine is required to process input data, multiple modules are inevitably needed. Once the project becomes complex, choosing the right debugging tool becomes very important. If you use a development board for step-by-step debugging, it will be a time-consuming and laborious task, because generating a bitstream file is a relatively lengthy process. In such cases, we generally choose to perform simulation first to verify that the code logic is correct.</p>
+<p>In previous experiments, the input devices were generally buttons and switches, which were easy to simulate using input arrays. In this experiment, you will need to write your own simulation model to simulate the keyboard interface timing described above.</p>
+<div class="literal-block-wrapper docutils container" id="list-ps03">
+<div class="code-block-caption"><span class="caption-number">Listing 23 </span><span class="caption-text">Keyboard simulation model</span><a class="headerlink" href="#list-ps03" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="no">`timescale</span><span class="w"> </span><span class="mh">1</span><span class="n">ns</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mh">1</span><span class="n">ps</span>
+<span class="k">module</span><span class="w"> </span><span class="n">ps2_keyboard_model</span><span class="p">(</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="n">ps2_clk</span><span class="p">,</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="n">ps2_data</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="k">parameter</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">kbd_clk_period</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">60</span><span class="p">;</span>
+<span class="k">initial</span><span class="w"> </span><span class="n">ps2_clk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+
+<span class="k">task</span><span class="w"> </span><span class="n">kbd_sendcode</span><span class="p">;</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">code</span><span class="p">;</span><span class="w"> </span><span class="c1">// key to be sent</span>
+<span class="w">    </span><span class="k">integer</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">reg</span><span class="p">[</span><span class="mh">10</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">send_buffer</span><span class="p">;</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">send_buffer</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span><span class="w">  </span><span class="c1">// start bit</span>
+<span class="w">        </span><span class="n">send_buffer</span><span class="p">[</span><span class="mh">8</span><span class="o">:</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">code</span><span class="p">;</span><span class="w">  </span><span class="c1">// code</span>
+<span class="w">        </span><span class="n">send_buffer</span><span class="p">[</span><span class="mh">9</span><span class="p">]</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="p">(</span><span class="o">^</span><span class="n">code</span><span class="p">);</span><span class="w"> </span><span class="c1">// odd parity bit</span>
+<span class="w">        </span><span class="n">send_buffer</span><span class="p">[</span><span class="mh">10</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// stop bit</span>
+<span class="w">        </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mh">11</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// set kbd_data</span>
+<span class="w">            </span><span class="n">ps2_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">send_buffer</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">            </span><span class="p">#(</span><span class="n">kbd_clk_period</span><span class="o">/</span><span class="mh">2</span><span class="p">)</span><span class="w"> </span><span class="n">ps2_clk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">            </span><span class="p">#(</span><span class="n">kbd_clk_period</span><span class="o">/</span><span class="mh">2</span><span class="p">)</span><span class="w"> </span><span class="n">ps2_clk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">endtask</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="list-ps04">
+<div class="code-block-caption"><span class="caption-number">Listing 24 </span><span class="caption-text">Keyboard test code</span><a class="headerlink" href="#list-ps04" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="no">`timescale</span><span class="w"> </span><span class="mh">1</span><span class="n">ns</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mh">1</span><span class="n">ps</span>
+<span class="k">module</span><span class="w"> </span><span class="n">keyboard_sim</span><span class="p">;</span>
+
+<span class="cm">/* parameter */</span>
+<span class="k">parameter</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">clock_period</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">10</span><span class="p">;</span>
+
+<span class="cm">/* ps2_keyboard interface signals */</span>
+<span class="kt">reg</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="n">clrn</span><span class="p">;</span>
+<span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="kt">wire</span><span class="w"> </span><span class="n">ready</span><span class="p">,</span><span class="n">overflow</span><span class="p">;</span>
+<span class="kt">wire</span><span class="w"> </span><span class="n">kbd_clk</span><span class="p">,</span><span class="w"> </span><span class="n">kbd_data</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="n">nextdata_n</span><span class="p">;</span>
+
+<span class="n">ps2_keyboard_model</span><span class="w"> </span><span class="n">model</span><span class="p">(</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ps2_clk</span><span class="p">(</span><span class="n">kbd_clk</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ps2_data</span><span class="p">(</span><span class="n">kbd_data</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="n">ps2_keyboard</span><span class="w"> </span><span class="n">inst</span><span class="p">(</span>
+<span class="w">    </span><span class="p">.</span><span class="n">clk</span><span class="p">(</span><span class="n">clk</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">clrn</span><span class="p">(</span><span class="n">clrn</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ps2_clk</span><span class="p">(</span><span class="n">kbd_clk</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ps2_data</span><span class="p">(</span><span class="n">kbd_data</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ready</span><span class="p">(</span><span class="n">ready</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">nextdata_n</span><span class="p">(</span><span class="n">nextdata_n</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">overflow</span><span class="p">(</span><span class="n">overflow</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">initial</span><span class="w"> </span><span class="k">begin</span><span class="w"> </span><span class="cm">/* clock driver */</span>
+<span class="w">    </span><span class="n">clk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">forever</span>
+<span class="w">        </span><span class="p">#(</span><span class="n">clock_period</span><span class="o">/</span><span class="mh">2</span><span class="p">)</span><span class="w"> </span><span class="n">clk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="n">clk</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="k">initial</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">clrn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span><span class="w">  </span><span class="p">#</span><span class="mh">20</span><span class="p">;</span>
+<span class="w">    </span><span class="n">clrn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="p">#</span><span class="mh">20</span><span class="p">;</span>
+<span class="w">    </span><span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;h1C</span><span class="p">);</span><span class="w"> </span><span class="c1">// press &#39;A&#39;</span>
+<span class="w">    </span><span class="p">#</span><span class="mh">20</span><span class="w"> </span><span class="n">nextdata_n</span><span class="w"> </span><span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span><span class="w"> </span><span class="p">#</span><span class="mh">20</span><span class="w"> </span><span class="n">nextdata_n</span><span class="w"> </span><span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="c1">//read data</span>
+<span class="w">    </span><span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;hF0</span><span class="p">);</span><span class="w"> </span><span class="c1">// break code</span>
+<span class="w">    </span><span class="p">#</span><span class="mh">20</span><span class="w"> </span><span class="n">nextdata_n</span><span class="w"> </span><span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span><span class="w"> </span><span class="p">#</span><span class="mh">20</span><span class="w"> </span><span class="n">nextdata_n</span><span class="w"> </span><span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w"> </span><span class="c1">//read data</span>
+<span class="w">    </span><span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;h1C</span><span class="p">);</span><span class="w"> </span><span class="c1">// release &#39;A&#39;</span>
+<span class="w">    </span><span class="p">#</span><span class="mh">20</span><span class="w"> </span><span class="n">nextdata_n</span><span class="w"> </span><span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span><span class="w"> </span><span class="p">#</span><span class="mh">20</span><span class="w"> </span><span class="n">nextdata_n</span><span class="w"> </span><span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w"> </span><span class="c1">//read data</span>
+<span class="w">    </span><span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;h1B</span><span class="p">);</span><span class="w"> </span><span class="c1">// press &#39;S&#39;</span>
+<span class="w">    </span><span class="p">#</span><span class="mh">20</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;h1B</span><span class="p">);</span><span class="w"> </span><span class="c1">// keep pressing &#39;S&#39;</span>
+<span class="w">    </span><span class="p">#</span><span class="mh">20</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;h1B</span><span class="p">);</span><span class="w"> </span><span class="c1">// keep pressing &#39;S&#39;</span>
+<span class="w">    </span><span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;hF0</span><span class="p">);</span><span class="w"> </span><span class="c1">// break code</span>
+<span class="w">    </span><span class="n">model</span><span class="p">.</span><span class="n">kbd_sendcode</span><span class="p">(</span><span class="mh">8&#39;h1B</span><span class="p">);</span><span class="w"> </span><span class="c1">// release &#39;S&#39;</span>
+<span class="w">    </span><span class="p">#</span><span class="mh">20</span><span class="p">;</span>
+<span class="w">    </span><span class="nb">$stop</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">list-ps03</span></code> shows that we created the ps2_keyboard_model module, which outputs two interface signals corresponding to the keyboard. The module mainly consists of the kbd_sendcode task.</p>
+<p>In Verilog, structures similar to C language functions include tasks and functions, which can improve code readability and reusability. Functions are used to describe combinational logic and can only have one return value. The internal structure of a function cannot contain timing control. Tasks are similar to procedures and execute a segment of Verilog code. A task can have any number of inputs and outputs and can also contain timing control.</p>
+<p>The kbd_sendcode task is used to control the keyboard interface to send a keyboard code, make code, or break code. You only need to enter the 8-bit code, and the task will add the start bit, odd parity bit, and stop bit internally.
+Note: kbd_clk_period is set to 60ns. The actual keyboard clock is not that fast, but this is done here to speed up the simulation.</p>
+<p>In keyboard_sim, ps2_keyboard_model and ps2_keyboard are instantiated and connected. In the initial section, model.kbd_sendcode can be directly called to send a specific scan code. Please modify this part of the code to simulate the keyboard key sequence required for the experiment. The simulation code uses a direct setting method to read signals, and you can also control the reading signals according to your own implementation of the upper layer module.</p>
+<p>When conducting actual physical keyboard tests, it is recommended to first route important signals such as ready, sampling, or overflow from the keyboard control module to the top-level module for LED display, ensuring basic keyboard communication functionality.
+If testing the accuracy of key codes is required, each received key code can be displayed using two seven-segment displays. The six seven-segment displays on the development board can display three-digit key codes. By shifting the previously received key codes to the left each time, you can view the three most recently received key codes in the history.
+In this scenario, conduct thorough and repeated testing to ensure there are no missing key codes or duplicate key codes. For example, when pressing and releasing the <code class="docutils literal notranslate"><span class="pre">A</span></code> key once, the seven-segment display should show <code class="docutils literal notranslate"><span class="pre">1C</span> <span class="pre">F0</span> <span class="pre">1C</span></code>.</p>
+</section>
+<section id="lab-check-in-contents">
+<h2>Lab check-in contents<a class="headerlink" href="#lab-check-in-contents" title="Link to this heading"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">On-Board Lab: Displaying the ASCII code for a single key</p>
+<ul class="simple">
+<li><p>The lower two digits of the seven-segment display show the key code of the currently pressed key, while the middle two digits show the corresponding ASCII code (the conversion can be implemented by designing a custom ROM and initializing it). Only character and numeric key input needs to be implemented; combination keys and the numeric keypad are not required.</p></li>
+<li><p>When the key is released, the lower four digits of the seven-segment display turn off completely.</p></li>
+<li><p>The upper two digits of the seven-segment display show the total number of times the key has been pressed. Holding the key down counts as a single press. Only sequential presses and releases are considered; simultaneous presses of multiple keys are not considered.</p></li>
+</ul>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">Advanced optional content</p>
+<ul class="simple">
+<li><p>Supports Shift, CTRL, and other combination keys, displaying on the LED whether the combination keys are pressed</p></li>
+<li><p>Supports simultaneous pressing of the Shift key and letter/number keys without conflict</p></li>
+<li><p>Supports input of uppercase characters, displaying the corresponding ASCII code</p></li>
+</ul>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">Online test</p>
+<p>PS/2 keyboard simulation</p>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">Online test</p>
+<p>Bitstream encryption</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="06.html" class="btn btn-neutral float-left" title="Lab 6: Shift Registers and Barrel Shifters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="08.html" class="btn btn-neutral float-right" title="Lab 8: VGA interface controller’s implementation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Wei Wang, Haijun Wu, Lu Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

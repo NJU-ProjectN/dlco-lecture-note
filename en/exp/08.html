@@ -1,0 +1,351 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en-US" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 8: VGA interface controller’s implementation &mdash; NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=b5540729" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8fdbbf67"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lab 9: Character Input Interface" href="09.html" />
+    <link rel="prev" title="Lab 7: Finite State Machines and Keyboard Input" href="07.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">Lab 1: Multiplexers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">Lab 2: Decoders and Encoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">Lab 3: Adders and ALUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">Lab 4: Counters and Clocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">Lab 5: Register File and Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">Lab 6: Shift Registers and Barrel Shifters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">Lab 7: Finite State Machines and Keyboard Input</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lab 8:  VGA interface controller’s implementation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vga-overview">VGA Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vga-interface-appearance-and-pin-functions">VGA interface appearance and pin functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vga-working-principle">VGA working principle</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#implementation-of-vga-display">Implementation of VGA display</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vga-interface-on-the-de10-standard-development-board">VGA interface on the DE10-Standard development board</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#lab-check-in-contents">Lab check-in contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">Lab 9: Character Input Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">Lab 10: CPU Datapath</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">Lab 11: RV32I Single Cycle CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">Lab 12: Computer Systems</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Lab 8:  VGA interface controller’s implementation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lab-8-vga-interface-controller-s-implementation">
+<h1>Lab 8:  VGA interface controller’s implementation<a class="headerlink" href="#lab-8-vga-interface-controller-s-implementation" title="Link to this heading"></a></h1>
+<p><em>About twenty bottles of paint were neatly arranged in a row on the table. Seurat picked up the smallest paintbrush Vincent had ever seen, dipped the tip into one of the bottles of paint, and began to apply dots of color to the canvas with mathematical precision. He worked calmly and emotionlessly, dotting, dotting, dotting. He held the brush straight, dipping it briefly into the paint bottle before dotting it onto the canvas, creating hundreds of tiny color dots.</em></p>
+<blockquote>
+<div><p>— <em>Lust for Life: The Life of Vincent van Gogh</em>, by Irving Stone</p>
+</div></blockquote>
+<p>The VGA interface is a video data transmission standard established by IBM and is the most typical interface for computer monitors. The purpose of this experiment is to learn the principles of the VGA interface and the design methods for VGA interface controllers.</p>
+<section id="vga-overview">
+<h2>VGA Overview<a class="headerlink" href="#vga-overview" title="Link to this heading"></a></h2>
+<section id="vga-interface-appearance-and-pin-functions">
+<h3>VGA interface appearance and pin functions<a class="headerlink" href="#vga-interface-appearance-and-pin-functions" title="Link to this heading"></a></h3>
+<p>VGA (Video Graphics Array) interface was originally designed to connect CRT monitors. Due to design and manufacturing limitations, CRT monitors could only accept analog signal inputs, which required graphics cards to output analog signals. For more information on the differences between analog and digital signals, please refer to <a class="reference external" href="https://en.wikipedia.org/wiki/Analog_signal">Analog Signal</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/Digital_signal">Digital Signal</a>. The VGA interface is the port on the graphics card that outputs analog signals. In traditional CRT monitors, VGA interfaces were universally used, and many LCD monitors or projectors still support VGA ports today. The VGA interface is a 15-pin/hole trapezoidal connector, divided into three rows of five pins each, as shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-vga01</span></code>:</p>
+<figure class="align-default" id="fig-vga01">
+<img alt="../_images/vga01.png" src="../_images/vga01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 62 </span><span class="caption-text">Schematic diagram of VGA interface shape</span><a class="headerlink" href="#fig-vga01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The VGA interface primarily consists of five signal lines: R, G, B, HS, and VS, which correspond to red, green, blue, horizontal synchronization, and vertical synchronization (also known as line synchronization and frame synchronization).</p>
+</section>
+<section id="vga-working-principle">
+<h3>VGA working principle<a class="headerlink" href="#vga-working-principle" title="Link to this heading"></a></h3>
+<p>Images are displayed in pixels (dots). The resolution of a display refers to the number of pixels per line on the screen and the number of lines per frame. The standard VGA resolution is <span class="math notranslate nohighlight">\(640\times 480\)</span>, and there are higher resolutions such as <span class="math notranslate nohighlight">\(1024\times 768\)</span>, <span class="math notranslate nohighlight">\(1280\times 1024\)</span>, and <span class="math notranslate nohighlight">\(1920\times 1200\)</span>. Considering the visual effect on the human eye, the screen refresh rate (the number of frames displayed per second) should be greater than 24 to prevent the screen from flickering. The typical refresh rate for a VGA monitor is 60 Hz.</p>
+<p>Each frame of the image is displayed starting from the upper-left corner of the screen, one line at a time. The horizontal sync signal is a negative pulse. After the horizontal sync signal becomes active, the RGB terminal sends the RGB voltage values for each pixel point in the current line. When a frame is finished displaying, the frame sync signal sends a negative pulse, and the next frame begins displaying from the top-left corner of the screen, as shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-vga02</span></code>.</p>
+<figure class="align-default" id="fig-vga02">
+<img alt="../_images/vga02.png" src="../_images/vga02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 63 </span><span class="caption-text">Display scan diagram</span><a class="headerlink" href="#fig-vga02" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The RGB port does not continuously transmit pixel information at all times. This is because the electron beam of a CRT requires time to move from the end of the previous line to the start of the next line, and also needs time to return from the bottom-right corner of the screen to the top-left corner to begin the next frame. During these periods, the voltage values sent by the RGB port are 0 (black). These time intervals are referred to as the electron beam’s horizontal blanking time and vertical blanking time. Horizontal blanking time is measured in pixels, while vertical blanking time is measured in lines. The VGA line scan and field scan timing diagram is shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-vga03</span></code>:</p>
+<figure class="align-default" id="fig-vga03">
+<img alt="../_images/vga03.png" src="../_images/vga03.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 64 </span><span class="caption-text">VGA line scan and field scan timing diagram</span><a class="headerlink" href="#fig-vga03" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>As shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-vga03</span></code>, effectively displaying a line of signals on a standard <span class="math notranslate nohighlight">\(640\times 480\)</span> VGA requires 96+48+640+16=800 pixel display times, where the line synchronization negative pulse width is 96 pixel display times, the line blanking trailing edge requires 48 pixel display times, then 640 pixels are displayed per line, and finally the line blanking leading edge requires 16 pixel display times. Therefore, the time required to display pixels in a line is 640 pixel display times, and the line blanking time is 160 pixel display times.</p>
+<p>On a standard <span class="math notranslate nohighlight">\(640\times 480\)</span> VGA, it takes 2+33+480+10=525 line display times to effectively display a frame of images, where the field synchronization negative pulse width is 2 line display times, the field blanking trailing edge requires 33 line display times, then 480 lines are displayed per field, the field blanking leading edge requires 10 line display times, the display time for one frame is 525 line display times, and the blanking time for one frame is 45 line display times.</p>
+<p>Therefore, an image on a <span class="math notranslate nohighlight">\(640\times 480\)</span> VGA requires <span class="math notranslate nohighlight">\(525\times 800=420k\)</span> pixel display time. Scanning 60 frames per second requires a total of approximately 25M pixel display time.</p>
+</section>
+</section>
+<section id="implementation-of-vga-display">
+<h2>Implementation of VGA display<a class="headerlink" href="#implementation-of-vga-display" title="Link to this heading"></a></h2>
+<section id="vga-interface-on-the-de10-standard-development-board">
+<h3>VGA interface on the DE10-Standard development board<a class="headerlink" href="#vga-interface-on-the-de10-standard-development-board" title="Link to this heading"></a></h3>
+<p>The DE10-Standard development board uses an ADV7123 VGA DAC chip to implement VGA functionality. This chip converts the FPGA digital signal to VGA analog signal. The specific connection method is shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-vga04</span></code>.</p>
+<figure class="align-default" id="fig-vga04">
+<img alt="../_images/vga04.png" src="../_images/vga04.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 65 </span><span class="caption-text">DE10-Standard VGA connection diagram</span><a class="headerlink" href="#fig-vga04" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The interface pins between the development board and the ADV7123 chip include three sets of 8-bit color signals: VGA_R[7:0], VGA_G[7:0], VGA_B[7:0], horizontal sync signal VGA_HS, vertical sync signal VGA_VS, VGA clock signal VGA_CLK, VGA sync (low active) VGA_SYNC_N, and VGA blanking signal (low active) VGA_BLANK_N. As shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-vga05</span></code>.</p>
+<figure class="align-default" id="fig-vga05">
+<img alt="../_images/vga05.png" src="../_images/vga05.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 66 </span><span class="caption-text">VGA pins on the DE10 Standard development board</span><a class="headerlink" href="#fig-vga05" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The VGA signal first needs a clock drive. Here, we use a 25MHz clock to drive VGA_CLK. Each clock cycle scans one pixel, so at a resolution of <span class="math notranslate nohighlight">\(640\times 480\)</span>, we need <span class="math notranslate nohighlight">\(800\times 525=420,000\)</span> clock cycles to scan a frame (the blanking time is taken into account here). At a clock cycle of 25MHz, the total duration is 16.8 milliseconds, which corresponds to approximately 60 frames per second.</p>
+<p>We use a simple divider to generate the required VGA_CLK from a 50MHz clock.</p>
+<div class="literal-block-wrapper docutils container" id="list-clock">
+<div class="code-block-caption"><span class="caption-number">Listing 25 </span><span class="caption-text">Generic clock generation code</span><a class="headerlink" href="#list-clock" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">clkgen</span><span class="p">(</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="n">clkin</span><span class="p">,</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="n">rst</span><span class="p">,</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="n">clken</span><span class="p">,</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="n">clkout</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="k">parameter</span><span class="w"> </span><span class="n">clk_freq</span><span class="o">=</span><span class="mh">1000</span><span class="p">;</span>
+<span class="w">    </span><span class="k">parameter</span><span class="w"> </span><span class="n">countlimit</span><span class="o">=</span><span class="mh">50000000</span><span class="o">/</span><span class="mh">2</span><span class="o">/</span><span class="n">clk_freq</span><span class="p">;</span><span class="w"> </span><span class="c1">// Automatically calculate the number of counts</span>
+
+<span class="w">  </span><span class="kt">reg</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">clkcount</span><span class="p">;</span>
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="p">(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clkin</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">rst</span><span class="p">)</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">clkcount</span><span class="o">=</span><span class="mh">0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">clkout</span><span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">clken</span><span class="p">)</span>
+<span class="w">        </span><span class="k">begin</span>
+<span class="w">            </span><span class="n">clkcount</span><span class="o">=</span><span class="n">clkcount</span><span class="o">+</span><span class="mh">1</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">clkcount</span><span class="o">&gt;=</span><span class="n">countlimit</span><span class="p">)</span>
+<span class="w">            </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">clkcount</span><span class="o">=</span><span class="mh">32</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">                </span><span class="n">clkout</span><span class="o">=~</span><span class="n">clkout</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">                </span><span class="n">clkout</span><span class="o">=</span><span class="n">clkout</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">        </span><span class="k">begin</span>
+<span class="w">            </span><span class="n">clkcount</span><span class="o">=</span><span class="n">clkcount</span><span class="p">;</span>
+<span class="w">            </span><span class="n">clkout</span><span class="o">=</span><span class="n">clkout</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>This generator can generate clocks of different frequencies based on the parameters specified when it is called:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="n">clkgen</span><span class="w"> </span><span class="p">#(</span><span class="mh">25000000</span><span class="p">)</span><span class="w"> </span><span class="n">my_vgaclk</span><span class="p">(</span><span class="n">CLOCK_50</span><span class="p">,</span><span class="n">SW</span><span class="p">[</span><span class="mh">0</span><span class="p">],</span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">,</span><span class="n">VGA_CLK</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Under the drive of this clock, we need to generate various drive signals. Among them, the VGA synchronization signal VGA_SYNC_N can be set to zero for a long time. Other signals can be implemented by referring to table <code class="xref std std-numref docutils literal notranslate"><span class="pre">list-vga01</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="list-vga01">
+<div class="code-block-caption"><span class="caption-number">Listing 26 </span><span class="caption-text">VGA reference code</span><a class="headerlink" href="#list-vga01" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">vga_ctrl</span><span class="p">(</span>
+<span class="w">    </span><span class="k">input</span><span class="w">           </span><span class="n">pclk</span><span class="p">,</span><span class="w">     </span><span class="c1">// 25MHz clock</span>
+<span class="w">    </span><span class="k">input</span><span class="w">           </span><span class="n">reset</span><span class="p">,</span><span class="w">    </span><span class="c1">// set</span>
+<span class="w">    </span><span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="mh">23</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">   </span><span class="n">vga_data</span><span class="p">,</span><span class="w"> </span><span class="c1">// VGA color data provided by the upper module</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">    </span><span class="n">h_addr</span><span class="p">,</span><span class="w">   </span><span class="c1">// current scan pixel coordinates provided to the upper module</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">    </span><span class="n">v_addr</span><span class="p">,</span>
+<span class="w">    </span><span class="k">output</span><span class="w">          </span><span class="n">hsync</span><span class="p">,</span><span class="w">    </span><span class="c1">// horizontal sync and vertical sync signals</span>
+<span class="w">    </span><span class="k">output</span><span class="w">          </span><span class="n">vsync</span><span class="p">,</span>
+<span class="w">    </span><span class="k">output</span><span class="w">          </span><span class="n">valid</span><span class="p">,</span><span class="w">    </span><span class="c1">// blanking signal</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">    </span><span class="n">vga_r</span><span class="p">,</span><span class="w">    </span><span class="c1">// RGB color signal</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">    </span><span class="n">vga_g</span><span class="p">,</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">    </span><span class="n">vga_b</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// VGA parameter settings at 640x480 resolution</span>
+<span class="w">  </span><span class="k">parameter</span><span class="w">    </span><span class="n">h_frontporch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">96</span><span class="p">;</span>
+<span class="w">  </span><span class="k">parameter</span><span class="w">    </span><span class="n">h_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">144</span><span class="p">;</span>
+<span class="w">  </span><span class="k">parameter</span><span class="w">    </span><span class="n">h_backporch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">784</span><span class="p">;</span>
+<span class="w">  </span><span class="k">parameter</span><span class="w">    </span><span class="n">h_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">800</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">parameter</span><span class="w">    </span><span class="n">v_frontporch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span>
+<span class="w">  </span><span class="k">parameter</span><span class="w">    </span><span class="n">v_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">35</span><span class="p">;</span>
+<span class="w">  </span><span class="k">parameter</span><span class="w">    </span><span class="n">v_backporch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">515</span><span class="p">;</span>
+<span class="w">  </span><span class="k">parameter</span><span class="w">    </span><span class="n">v_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">525</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// pixel count value</span>
+<span class="w">  </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">    </span><span class="n">x_cnt</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">    </span><span class="n">y_cnt</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">wire</span><span class="w">         </span><span class="n">h_valid</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">wire</span><span class="w">         </span><span class="n">v_valid</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">reset</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="k">posedge</span><span class="w"> </span><span class="n">pclk</span><span class="p">)</span><span class="w"> </span><span class="c1">// horizontal pixel counting</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">reset</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">)</span>
+<span class="w">        </span><span class="n">x_cnt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">      </span><span class="k">begin</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x_cnt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">h_total</span><span class="p">)</span>
+<span class="w">            </span><span class="n">x_cnt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">            </span><span class="n">x_cnt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">x_cnt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">10</span><span class="mi">&#39;d1</span><span class="p">;</span>
+<span class="w">      </span><span class="k">end</span>
+
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">pclk</span><span class="p">)</span><span class="w">  </span><span class="c1">// vertical pixel counting</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">reset</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">)</span>
+<span class="w">        </span><span class="n">y_cnt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">      </span><span class="k">begin</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">y_cnt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">v_total</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">x_cnt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">h_total</span><span class="p">)</span>
+<span class="w">            </span><span class="n">y_cnt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x_cnt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">h_total</span><span class="p">)</span>
+<span class="w">            </span><span class="n">y_cnt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">y_cnt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">10</span><span class="mi">&#39;d1</span><span class="p">;</span>
+<span class="w">      </span><span class="k">end</span>
+<span class="w">  </span><span class="c1">// generate synchronization signals</span>
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">hsync</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">x_cnt</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">h_frontporch</span><span class="p">);</span>
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">vsync</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">y_cnt</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">v_frontporch</span><span class="p">);</span>
+<span class="w">  </span><span class="c1">// generate blanking signals</span>
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">h_valid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">x_cnt</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">h_active</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">x_cnt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">h_backporch</span><span class="p">);</span>
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">v_valid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">y_cnt</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">v_active</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">y_cnt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">v_backporch</span><span class="p">);</span>
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">valid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h_valid</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v_valid</span><span class="p">;</span>
+<span class="w">  </span><span class="c1">// calculate the current effective pixel coordinates</span>
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">h_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h_valid</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="p">(</span><span class="n">x_cnt</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mh">10</span><span class="mi">&#39;d145</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="mh">10</span><span class="p">{</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">}};</span>
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">v_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v_valid</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="p">(</span><span class="n">y_cnt</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mh">10</span><span class="mi">&#39;d36</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="mh">10</span><span class="p">{</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">}};</span>
+<span class="w">  </span><span class="c1">// set the output color values</span>
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">vga_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vga_data</span><span class="p">[</span><span class="mh">23</span><span class="o">:</span><span class="mh">16</span><span class="p">];</span>
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">vga_g</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vga_data</span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">8</span><span class="p">];</span>
+<span class="w">  </span><span class="k">assign</span><span class="w"> </span><span class="n">vga_b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vga_data</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p>This code provides VGA control signals externally. By counting the clock, it determines which pixel on which line is currently being scanned and whether to blank the screen. The code outputs the three colors red (R), green (G), and blue (B) represented by the 8-bit binary signals vga_r, vga_g, and vga_b, respectively. These three sets of 8-bit digital signals are transmitted to the analog-to-digital converter on the development board, converted into analog signals, and sent to the display via the VGA interface.</p>
+<p>A key feature of this controller is its ability to facilitate control of the display content by the upper-level system. For example, if vga_data is set to the constant 24’hFF0000 when the module is called, the entire screen will be displayed in red. The upper-level system can also select appropriate colors based on the current pixel coordinates and set different vga_data values for different pixels. More importantly, the upper-level system can allocate a display memory, use v_addr and h_addr to index this display memory, and set vga_data according to the value in the display memory each time a specific pixel point is scanned. This way, other applications can directly operate on the display memory, and changes to the display memory are automatically reflected on the VGA display without needing to concern themselves with the specific scanning process of the VGA.</p>
+<p>Unfortunately, if each pixel is represented by three 8-bit numbers, a single pixel requires 24 bits, and a <span class="math notranslate nohighlight">\(640\times 480\)</span> pixels requires 7.372M bits of RAM. Our FPGA only has 5.57M bits of on-chip memory, which is insufficient to implement 24-bit color VGA memory. Possible solutions include</p>
+<ul class="simple">
+<li><p>Reducing the color resolution to 12 bits, with each RGB component represented by 4 bits, resulting in fewer color options ( <strong>recommended solution</strong> )</p></li>
+<li><p>Allocating memory only for the <span class="math notranslate nohighlight">\(256×256\)</span> pixel range</p></li>
+<li><p>Accessing external 64M SDRAM (this solution is too complex and not recommended)</p></li>
+</ul>
+</section>
+</section>
+<section id="lab-check-in-contents">
+<h2>Lab check-in contents<a class="headerlink" href="#lab-check-in-contents" title="Link to this heading"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">On-Board Lab: Display images</p>
+<p>Use the above controller to display a static image on the monitor. Please convert the image format to a mif file yourself.</p>
+</div>
+<div class="admonition myhint">
+<p class="admonition-title">Low-bit color display scheme</p>
+<p>We recommend using a low-bit color display method to work around the RAM shortage issue. Of course, interested students can use other methods to achieve high-resolution image display.</p>
+<ul class="simple">
+<li><p>The video memory allocation size is <span class="math notranslate nohighlight">\(640\times 512\)</span> words, with each word being 12 bits. The 19-bit address is formed by combining the full 10 bits of h_addr and the lower 9 bits of v_addr to index the video memory. To simplify addressing, we have allocated 512 rows of space for the row v_addr. This way, there is no need for complex address conversion. Here, only 327,680 consecutive storage units need to be allocated, without considering cases where h_addr exceeds 640.</p></li>
+<li><p>When assigning red, green, and blue colors, set the upper 4 bits of the 8-bit output data based on the 4-bit value corresponding to the color in the 12-bit video memory data, and set the lower 4 bits to zero.</p></li>
+<li><p>Initialize the video memory using a .mif file. You can generate the .mif file using a common scripting language. We also provide a <span class="math notranslate nohighlight">\(640×512\)</span> 12-bit image file named my_picture.mif, where each pixel is represented by 4 bits for RGB, and the addresses are arranged by column. The first column contains 512 pixels, with pixels above row 480 set to white. The remaining 640 columns are then arranged sequentially.</p></li>
+</ul>
+</div>
+<div class="admonition mydanger">
+<p class="admonition-title">Implementation of video memory</p>
+<p>The video memory occupies a large amount of space, so clock edge-driven video memory is required for implementation. This allows the system to use BLOCK RAM (M10K) for implementation. When resources are insufficient, Quartus may fail to synthesize and spend a lot of time compiling.</p>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">Implementing elastic collision effects for images</p>
+<p>Display an image moving across the screen at a specific speed. The image itself is much smaller than the display resolution, for example, <span class="math notranslate nohighlight">\(100 \times 100\)</span> pixels. The image moves within the screen in a specific direction at a random speed (the x-direction and y-direction speeds can be different) in sync with the clock. When the image’s boundary touches the screen boundary, it changes its direction of movement using an elastic collision mechanism. The final effect is similar to a pinball game, with the image continuously bouncing within the screen.</p>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">Online test
+- Deterministic Finite-State Automata</p>
+<ul class="simple">
+<li><p>Sign-in questions</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="07.html" class="btn btn-neutral float-left" title="Lab 7: Finite State Machines and Keyboard Input" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="09.html" class="btn btn-neutral float-right" title="Lab 9: Character Input Interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Wei Wang, Haijun Wu, Lu Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

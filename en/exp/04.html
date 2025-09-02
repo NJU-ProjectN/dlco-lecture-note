@@ -1,0 +1,261 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en-US" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 4: Counters and Clocks &mdash; NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=b5540729" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8fdbbf67"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lab 5: Register File and Memory" href="05.html" />
+    <link rel="prev" title="Lab 3: Adders and ALUs" href="03.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">Lab 1: Multiplexers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">Lab 2: Decoders and Encoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">Lab 3: Adders and ALUs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lab 4: Counters and Clocks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#up-counters">Up Counters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#down-counters">Down Counters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#timers">Timers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#clock-signals-on-the-development-board">Clock signals on the development board</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-desired-clock-signals">Generate desired clock signals</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#lab-check-in-contents">Lab check-in contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">Lab 5: Register File and Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">Lab 6: Shift Registers and Barrel Shifters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">Lab 7: Finite State Machines and Keyboard Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">Lab 8:  VGA interface controller’s implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">Lab 9: Character Input Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">Lab 10: CPU Datapath</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11.html">Lab 11: RV32I Single Cycle CPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">Lab 12: Computer Systems</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Lab 4: Counters and Clocks</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lab-4-counters-and-clocks">
+<h1>Lab 4: Counters and Clocks<a class="headerlink" href="#lab-4-counters-and-clocks" title="Link to this heading"></a></h1>
+<p><em>On receiving an interrupt, decrement the counter to zero.</em></p>
+<blockquote>
+<div><p>— <em>“Count Zero”</em> William Gibson</p>
+</div></blockquote>
+<p>In digital systems, counters are often used to record the working status of the system. This lab reviews the working principle of counters. By introducing the working process and design methods of several simple counters, as well as the use of the development board’s system clock, students will learn the design of counters and the working principle of timers.</p>
+<section id="up-counters">
+<h2>Up Counters<a class="headerlink" href="#up-counters" title="Link to this heading"></a></h2>
+<p>A simple counter can be constructed using flip-flops. Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">counter01</span></code> is a 3-bit binary asynchronous up counter consisting of three D flip-flops triggered by rising edges, i.e., at each rising edge of Clock, the counter outputs <span class="math notranslate nohighlight">\(Q_2Q_1Q_0\)</span> plus 1.</p>
+<figure class="align-default" id="counter01">
+<img alt="../_images/counter01.png" src="../_images/counter01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 22 </span><span class="caption-text">3-bit binary up counter</span><a class="headerlink" href="#counter01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">counter02</span></code> is the state transition diagram of this 3-bit binary asynchronous up counter.</p>
+<figure class="align-default" id="counter02">
+<img alt="../_images/counter02.png" src="../_images/counter02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 23 </span><span class="caption-text">3-bit binary up counter state diagram</span><a class="headerlink" href="#counter02" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>You can also add “clear” and “set” pins to the D flip-flop to form a binary asynchronous up counter that can clear and set values. Please design and verify this circuit yourself.</p>
+</section>
+<section id="down-counters">
+<h2>Down Counters<a class="headerlink" href="#down-counters" title="Link to this heading"></a></h2>
+<p>D flip-flops can also be used to construct down counters. Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">counter03</span></code> shows a 3-bit binary asynchronous down counter consisting of three D flip-flops triggered by rising edges.</p>
+<figure class="align-default" id="counter03">
+<img alt="../_images/counter03.png" src="../_images/counter03.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 24 </span><span class="caption-text">3-bit binary asynchronous down counter</span><a class="headerlink" href="#counter03" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">counter04</span></code> is the state transition diagram of this 3-bit binary asynchronous down counter.</p>
+<figure class="align-default" id="counter04">
+<img alt="../_images/counter04.png" src="../_images/counter04.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 25 </span><span class="caption-text">3-bit binary down counter state diagram</span><a class="headerlink" href="#counter04" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The Verilog language can be used to easily construct counters. Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">counter01</span></code> is a 3-bit binary down counter, and similar code can be used to construct an up counter.</p>
+<div class="literal-block-wrapper docutils container" id="list-counter01">
+<div class="code-block-caption"><span class="caption-number">Listing 15 </span><span class="caption-text">3-bit binary down counter code with enable bit</span><a class="headerlink" href="#list-counter01" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">vminus3</span><span class="p">(</span><span class="n">clk</span><span class="p">,</span><span class="n">en</span><span class="p">,</span><span class="n">out_q</span><span class="p">);</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="n">clk</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w">  </span><span class="n">en</span><span class="p">;</span>
+<span class="w">  </span><span class="k">output</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">out_q</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">always</span><span class="w"> </span><span class="p">@</span><span class="w"> </span><span class="p">(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">en</span><span class="p">)</span><span class="w">   </span><span class="n">out_q</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">out_q</span><span class="w"> </span><span class="o">-</span><span class="mh">1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span><span class="w">   </span><span class="n">out_q</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</div>
+<p><code class="xref std std-numref docutils literal notranslate"><span class="pre">list-counter01</span></code> The simulation diagram of the down counter constructed is shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-countersim</span></code>.</p>
+<figure class="align-default" id="fig-countersim">
+<img alt="../_images/countersim.png" src="../_images/countersim.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 26 </span><span class="caption-text">Simulation diagram of down counter</span><a class="headerlink" href="#fig-countersim" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<div class="admonition myinfo">
+<p class="admonition-title">Undefined output value at simulation time</p>
+<p>When simulating counters, it is common for the output value to remain undefined, i.e., XXXX. This is mainly because the counter value or output is undefined when simulation begins. When accumulating or flipping the output, operating on undefined values will still result in XXXX. In this case, you need to add an <code class="docutils literal notranslate"><span class="pre">initial</span></code> statement inside the counter code to initialize the counter value and output result.</p>
+</div>
+</section>
+<section id="timers">
+<h2>Timers<a class="headerlink" href="#timers" title="Link to this heading"></a></h2>
+<p>If a clock with a fixed period is input to the clock input port of the counter, then the counter becomes a timer.</p>
+<p>The purpose of this lab is to learn how to use clock sources on FPGA development platforms and to learn timer design by combining counter design methods.</p>
+<section id="clock-signals-on-the-development-board">
+<h3>Clock signals on the development board<a class="headerlink" href="#clock-signals-on-the-development-board" title="Link to this heading"></a></h3>
+<p>The DE-10 Standard development board provides four external input clocks with a frequency of 50MHz for the Cyclone V SOC FPGA, all of which are available for user use. In addition, a 25MHz clock is provided for the HPS on the open platform, as shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-clock01</span></code>.</p>
+<figure class="align-default" id="fig-clock01">
+<img alt="../_images/clock01.png" src="../_images/clock01.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 27 </span><span class="caption-text">Development board clock connections</span><a class="headerlink" href="#fig-clock01" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The pins connecting each clock to the FPGA and HPS are shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-clock02</span></code>:</p>
+<figure class="align-default" id="fig-clock02">
+<img alt="../_images/clock02.png" src="../_images/clock02.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 28 </span><span class="caption-text">DE10 Standard clock pins</span><a class="headerlink" href="#fig-clock02" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>By using this clock signal as the clock signal for the counter, a timer can be constructed:</p>
+<div class="math notranslate nohighlight">
+\[\text{Counting time} = \text{number of pulses} \times \text{pulse period}\]</div>
+</section>
+<section id="generate-desired-clock-signals">
+<h3>Generate desired clock signals<a class="headerlink" href="#generate-desired-clock-signals" title="Link to this heading"></a></h3>
+<p>Using the 50MHz clock signal and timer provided on the development board, we can design any clock signal we need. The following example is reference code for generating a clock signal with a period of 1 second. In this example, clk is the system clock, and clk_1s is the clock signal with a period of 1 second.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-number">Listing 16 </span><span class="caption-text">1-second clock generator code</span><a class="headerlink" href="#id1" title="Link to this code"></a></div>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span>
+<span class="w">  </span><span class="k">if</span><span class="p">(</span><span class="n">count_clk</span><span class="o">==</span><span class="mh">24999999</span><span class="p">)</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">count_clk</span><span class="w"> </span><span class="o">&lt;=</span><span class="mh">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">clk_1s</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="o">~</span><span class="n">clk_1s</span><span class="p">;</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="w">  </span><span class="k">else</span>
+<span class="w">    </span><span class="n">count_clk</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">count_clk</span><span class="o">+</span><span class="mh">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<p>Please read and understand this code segment, and consider how the width of the variable <code class="docutils literal notranslate"><span class="pre">count_clk</span></code> should be set to meet the counting requirement of <span class="math notranslate nohighlight">\(0 \sim 24999999\)</span>.</p>
+</section>
+</section>
+<section id="lab-check-in-contents">
+<h2>Lab check-in contents<a class="headerlink" href="#lab-check-in-contents" title="Link to this heading"></a></h2>
+<div class="admonition mytodo">
+<p class="admonition-title">On-Board Lab (basic):</p>
+<p>Please implement a timer on the DE10-Standard development board and display the result directly on a seven-segment LED display in decimal format.</p>
+<p>Using the 50MHz clock on the development board, first design a frequency divider with an input of 50MHz clock and an output of a 1Hz clock signal with a period of 1 second. Then use this new 1Hz clock signal as the clock signal for your design to perform counting.</p>
+<p>The timer must have start, pause, and reset functions. It should count from 00 to 99, and after reaching 99, it should restart counting from zero. The count value should be displayed on the seven-segment display using two digits.</p>
+<p>At the end of the timing, you may have a specific LED flash for one clock cycle to indicate the timing has ended.</p>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">On-Board Lab (advanced):</p>
+<p>Implement an electronic clock on the DE-10 Standard development board. The clock must be able to display hours, minutes, and seconds. It should also have the following functions: time adjustment; alarm (LED flashes at a specific time); stopwatch (provides 1/100th of a second accuracy, can be stopped and restarted), etc.</p>
+</div>
+<div class="admonition mytodo">
+<p class="admonition-title">Online test</p>
+<p>Counter cascading</p>
+</div>
+<div class="admonition myoption">
+<p class="admonition-title">Online test</p>
+<p>Hamming code error correction</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="03.html" class="btn btn-neutral float-left" title="Lab 3: Adders and ALUs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="05.html" class="btn btn-neutral float-right" title="Lab 5: Register File and Memory" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Wei Wang, Haijun Wu, Lu Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

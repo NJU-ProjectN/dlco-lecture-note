@@ -1,0 +1,1385 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en-US" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 11: RV32I Single Cycle CPU &mdash; NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=b5540729" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8fdbbf67"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lab 12: Computer Systems" href="12.html" />
+    <link rel="prev" title="Lab 10: CPU Datapath" href="10.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01.html">Lab 1: Multiplexers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02.html">Lab 2: Decoders and Encoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03.html">Lab 3: Adders and ALUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04.html">Lab 4: Counters and Clocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05.html">Lab 5: Register File and Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.html">Lab 6: Shift Registers and Barrel Shifters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07.html">Lab 7: Finite State Machines and Keyboard Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08.html">Lab 8:  VGA interface controller’s implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09.html">Lab 9: Character Input Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10.html">Lab 10: CPU Datapath</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lab 11: RV32I Single Cycle CPU</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#risc-v-instruction-set-overview">RISC-V Instruction Set Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#rv32i-instruction-encoding">RV32I Instruction Encoding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#general-purpose-registers-in-rv32i">General Purpose Registers in RV32I</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instruction-types-in-rv32i">Instruction types in RV32I</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#integer-arithmetic-instructions">Integer Arithmetic Instructions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#control-transfer-instructions">Control Transfer Instructions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-access-instructions">Memory Access Instructions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#common-pseudoinstructions">Common Pseudoinstructions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#rv32i-circuit-implementation">RV32I Circuit Implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#single-cycle-circuit-design">Single-cycle circuit design</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#control-path">Control Path</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pc-generation">PC Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instruction-memory">Instruction Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instruction-decoding-and-immediate-number-generation">Instruction decoding and immediate number generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#control-signal-generation">Control signal generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jump-control">Jump Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#datapath">Datapath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#timing-design-of-single-cycle-cpu">Timing design of single-cycle CPU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#modular-design">Modular Design</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#software-and-testing-section">Software and Testing Section</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#unit-testing">Unit Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#single-step-simulation">Single-step simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#system-function-simulation">System Function Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#introduction-to-the-riscv-tests-test-suite">Introduction to the riscv-tests test suite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#test-program-porting">Test Program Porting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testbench">TestBench</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#on-board-testing">On-Board Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#lab-check-in-contents">Lab check-in contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#online-test">Online test</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="12.html">Lab 12: Computer Systems</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">NJU School of Computer Science, Digital Logic and Computer Organization Course Experiment</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Lab 11: RV32I Single Cycle CPU</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lab-11-rv32i-single-cycle-cpu">
+<h1>Lab 11: RV32I Single Cycle CPU<a class="headerlink" href="#lab-11-rv32i-single-cycle-cpu" title="Link to this heading"></a></h1>
+<p>“Your Majesty, we have named this computer ‘Qin No. 1’. Please look at the center part, which is the CPU, the core computing component of the computer. It is composed of your five most elite legions. Referring to this diagram, you can see the adder, registers, and stack memory inside. The neatly arranged outer section is the memory. When constructing this part, we found ourselves short-handed, but fortunately, each unit’s operation was the simplest. We trained each soldier to carry flags of multiple colors, and when combined, a single person could perform the operations originally requiring twenty people, thereby meeting the minimum memory capacity requirement for running the ‘Qin 1.0’ operating system;”</p>
+<blockquote>
+<div><p>— “The Three-Body Problem”, Liu Cixin</p>
+</div></blockquote>
+<p>The goal of this lab is to use FPGA to implement all RV32I instructions except for system control instructions. The RV32I control path and data path are implemented using a single-cycle method, and functional simulation is successfully completed. After completing functional simulation, single-step testing can be performed on the DE10-Standard development board. Through the actual design of a single-cycle CPU, you will understand the principles of internal control and data paths of the CPU, and master basic system-level testing and debugging techniques.</p>
+<section id="risc-v-instruction-set-overview">
+<h2>RISC-V Instruction Set Overview<a class="headerlink" href="#risc-v-instruction-set-overview" title="Link to this heading"></a></h2>
+<p><a class="reference external" href="https://riscv.org/">RISC-V</a> is an open source instruction set introduced by UC Berkeley.
+The instruction set contains a series of basic instruction sets and optional extension instruction sets. In this lab, we will mainly focus on the 32-bit basic instruction set RV32I.
+The RV32I instruction set contains 40 basic instructions covering several major categories: integer operations, memory access, control transfers, and system control. In this lab, we do not need to implement the ECALL/EBREAK system control, memory synchronization FENCE instructions, and CSR access instructions, so we need to implement a total of 37 instructions.
+The program counter PC and 32 general-purpose registers in RV32I are 32 bits long, and the memory access address line width is also 32 bits. The instruction length of RV32I is also unified to 32 bits, so there is no need to support 16-bit compressed instruction formats during implementation.</p>
+<section id="rv32i-instruction-encoding">
+<h3>RV32I Instruction Encoding<a class="headerlink" href="#rv32i-instruction-encoding" title="Link to this heading"></a></h3>
+<p>The RV32I instruction encoding is very regular, divided into six types, four of which are basic encoding types, and the remaining two are variants:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>R-Type</strong> : register operand instructions, it contains two source registers rs1 and rs2 and one destination register rd.</p></li>
+<li><p><strong>I-Type</strong> : immediate number operation instructions, containing a source register, a destination register, and a 12-bit immediate number operand.</p></li>
+<li><p><strong>S-Type</strong> : memory write instructions, containing two source registers and a 12-bit immediate value.</p></li>
+<li><p>B-Type: jump instructions, it’s actually a variant of the S-Type. The main difference between the two is the immediate number encoding. In the S-Type, imm[11:5] becomes {immm[12], imm[10:5]}, and imm[4:0] becomes {imm[4:1], imm[11]}.</p></li>
+<li><p><strong>U-Type</strong> : long immediate number instructions, containing a destination register and a 20-bit immediate number operand.</p></li>
+<li><p>J-Type: long jump instructions, it’s actually a variant of the U-Type. The main difference between the two is the immediate number encoding. In the U-Type, imm[31:12] becomes {imm[20], imm[10:1], imm[11], imm[19:12]}.</p></li>
+</ul>
+</div></blockquote>
+<p>The four basic formats are shown in Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-riscvisa</span></code>:</p>
+<figure class="align-default" id="fig-riscvisa">
+<img alt="../_images/riscvisa.png" src="../_images/riscvisa.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 73 </span><span class="caption-text">The four basic formats of RV32I instructions</span><a class="headerlink" href="#fig-riscvisa" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>In instruction encoding, the opcode must be the lower 7 bits of the instruction, and the source registers rs1, rs2, and destination register rd also appear in specific positions, so instruction decoding is very convenient.</p>
+<div class="admonition myquestion">
+<p class="admonition-title">Thinking question</p>
+<p>Why are there different immediate number encoding schemes such as S-Type/B-Type and U-Type/J-Type? Why do instruction-related immediate numbers use such a “strange” bit order when encoding?</p>
+</div>
+</section>
+<section id="general-purpose-registers-in-rv32i">
+<h3>General Purpose Registers in RV32I<a class="headerlink" href="#general-purpose-registers-in-rv32i" title="Link to this heading"></a></h3>
+<p>RV32I has a total of 32 32-bit general purpose registers x0 to x31 (register addresses are 5-bit encoded), among which the content of register x0 is always 0 and cannot be changed.
+For the aliases and usage conventions of other registers, see Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-regname</span></code>. It should be noted that some registers are saved by the caller when a function is called, while others are saved by the callee. This should be taken into consideration when mixing C and assembly language programming.</p>
+<table class="docutils align-default" id="tab-regname">
+<caption><span class="caption-number">Table 12 </span><span class="caption-text">Definition and usage of general purpose registers in RV32I</span><a class="headerlink" href="#tab-regname" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Register</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Use</p></th>
+<th class="head"><p>Saver</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>x0</p></td>
+<td><p>zero</p></td>
+<td><p>Constant 0</p></td>
+<td><p>–</p></td>
+</tr>
+<tr class="row-odd"><td><p>x1</p></td>
+<td><p>ra</p></td>
+<td><p>Return Address</p></td>
+<td><p>Caller</p></td>
+</tr>
+<tr class="row-even"><td><p>x2</p></td>
+<td><p>sp</p></td>
+<td><p>Stack Pointer</p></td>
+<td><p>Callee</p></td>
+</tr>
+<tr class="row-odd"><td><p>x3</p></td>
+<td><p>gp</p></td>
+<td><p>Global Pointer</p></td>
+<td><p>–</p></td>
+</tr>
+<tr class="row-even"><td><p>x4</p></td>
+<td><p>tp</p></td>
+<td><p>Thread Pointer</p></td>
+<td><p>–</p></td>
+</tr>
+<tr class="row-odd"><td><p>x5~x7</p></td>
+<td><p>t0~t2</p></td>
+<td><p>Temp</p></td>
+<td><p>Caller</p></td>
+</tr>
+<tr class="row-even"><td><p>x8</p></td>
+<td><p>s0/fp</p></td>
+<td><p>Saved/Frame pointer</p></td>
+<td><p>Callee</p></td>
+</tr>
+<tr class="row-odd"><td><p>x9</p></td>
+<td><p>s1</p></td>
+<td><p>Saved</p></td>
+<td><p>Callee</p></td>
+</tr>
+<tr class="row-even"><td><p>x10~x11</p></td>
+<td><p>a0~a1</p></td>
+<td><p>Arguments/Return Value</p></td>
+<td><p>Caller</p></td>
+</tr>
+<tr class="row-odd"><td><p>x12~x17</p></td>
+<td><p>a2~a7</p></td>
+<td><p>Arguments</p></td>
+<td><p>Caller</p></td>
+</tr>
+<tr class="row-even"><td><p>x18~x27</p></td>
+<td><p>s2~s11</p></td>
+<td><p>Saved</p></td>
+<td><p>Callee</p></td>
+</tr>
+<tr class="row-odd"><td><p>x28~x31</p></td>
+<td><p>t3~t6</p></td>
+<td><p>Temp</p></td>
+<td><p>Caller</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="instruction-types-in-rv32i">
+<h3>Instruction types in RV32I<a class="headerlink" href="#instruction-types-in-rv32i" title="Link to this heading"></a></h3>
+<p>The RV32I instructions to be implemented in this experiment include the following three categories:</p>
+<ul class="simple">
+<li><p><strong>Integer arithmetic instructions</strong>: These can be calculations performed on two source register operands, or one register and one immediate operand, with the result sent to the destination register. Arithmetic operations include arithmetic operations with signed and unsigned numbers, shifts, logical operations, and comparison with bits setting.</p></li>
+<li><p><strong>Control transfer instructions</strong>: Conditional branches include beq, bne, etc., which select whether to jump based on the contents of the register. Unconditional jump instructions store the address of the next instruction PC+4 in rd for use when the function returns.</p></li>
+<li><p><strong>Memory access instructions</strong>: Memory operations first add the immediate offset to the register, and then read/write memory based on the calculated result. Reading and writing can be performed in 32-bit words, 16-bit half-words, or 8-bit bytes. Reading and writing distinguish between unsigned and signed numbers. Note: RV32I is a <a class="reference external" href="https://en.wikipedia.org/wiki/Load%E2%80%93store_architecture">Load/Store</a> type architecture. All data in memory must first be loaded into the register before it can be operated on. Unlike x86, arithmetic operations cannot be performed directly on memory data.</p></li>
+</ul>
+</section>
+<section id="integer-arithmetic-instructions">
+<h3>Integer Arithmetic Instructions<a class="headerlink" href="#integer-arithmetic-instructions" title="Link to this heading"></a></h3>
+<p>The RV32I’s integer arithmetic instructions include 21 different instructions, whose instruction encoding methods are shown in Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-integercode</span></code>.</p>
+<figure class="align-default" id="fig-integercode">
+<img alt="../_images/riscv-encoding.png" src="../_images/riscv-encoding.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 74 </span><span class="caption-text">List of integer arithmetic instruction encodings in RV32I</span><a class="headerlink" href="#fig-integercode" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The operations required to complete these integer operation instructions are shown in Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-integerop</span></code>. In the description, R[reg] indicates an operation on the register with address reg, M[addr] denotes an operation on memory at address addr, SEXT(imm) denotes signed extension of imm to 32 bits, <span class="math notranslate nohighlight">\(\leftarrow\)</span> denotes assignment, &lt;&lt; and &gt;&gt; denote logical left and right shifts, respectively, &gt;&gt;&gt; denotes arithmetic right shift (note the difference in definition between Verilog and Java), and comparisons with s and u subscripts denote signed and unsigned comparisons, respectively.</p>
+<table class="docutils align-default" id="tab-integerop">
+<caption><span class="caption-number">Table 13 </span><span class="caption-text">Integer Arithmetic Instructions Manual</span><a class="headerlink" href="#tab-integerop" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction</p></th>
+<th class="head"><p>Operation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>lui rd,imm20</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow \{imm20, 12'b0\}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>auipc rd,imm20</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow PC + \{imm20, 12'b0\}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>addi rd,rs1,imm12</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] + SEXT(imm12)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>slti rd,rs1,imm12</p></td>
+<td><p><span class="math notranslate nohighlight">\(if\ R[rs1] &lt;_s SEXT(imm12)\ then\ R[rd] \leftarrow 32'b1 else R[rd] \leftarrow 32'b0\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>sltiu rd,rs1,imm12</p></td>
+<td><p><span class="math notranslate nohighlight">\(if\ R[rs1] &lt;_u SEXT(imm12)\ then\ R[rd] \leftarrow 32'b1 else R[rd] \leftarrow 32'b0\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>xori rd,rs1,imm12</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] \oplus SEXT(imm12)\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>ori rd,rs1,imm12</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] | SEXT(imm12)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>andi rd,rs1,imm12</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] \&amp; SEXT(imm12)\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>slli rd,rs1,shamt</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] &lt;&lt; shamt\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>srli rd,rs1,shamt</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] &gt;&gt; shamt\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>srai rd,rs1,shamt</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] &gt;&gt;&gt; shamt\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>add rd,rs1,rs2</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] + R[rs2]\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>sub rd,rs1,rs2</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] - R[rs2]\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>sll rd,rs1,rs2</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] &lt;&lt; R[rs2][4:0]\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>slt rd,rs1,rs2</p></td>
+<td><p><span class="math notranslate nohighlight">\(if\ R[rs1] &lt;_s R[rs2] \hspace{0.1in} then\ R[rd] \leftarrow 32'b1 else R[rd] \leftarrow 32'b0\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>sltu rd,rs1,rs2</p></td>
+<td><p><span class="math notranslate nohighlight">\(if\ R[rs1] &lt;_u R[rs2] \hspace{0.1in} then\ R[rd] \leftarrow 32'b1 else R[rd] \leftarrow 32'b0\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>xor rd,rs1,rs2</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] \oplus R[rs2]\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>srl rd,rs1,rs2</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] &gt;&gt; R[rs2][4:0]\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>sra rd,rs1,rs2</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] &gt;&gt;&gt; R[rs2][4:0]\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>or rd,rs1,rs2</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] | R[rs2]\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>and rd,rs1,rs2</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow R[rs1] \&amp; R[rs2]\)</span></p></td>
+</tr>
+</tbody>
+</table>
+<p>Careful students may notice that the basic integer arithmetic instructions do not fully cover all arithmetic operations. In RV32I, the basic instruction set can implement functions not covered by the basic instructions through pseudo-instructions or combination instructions. For details, please refer to the <span class="xref std std-ref">Common Pseudo-Instructions</span> section. Functions such as multiplication and division are implemented through software, which will be introduced in the next lab.</p>
+</section>
+<section id="control-transfer-instructions">
+<h3>Control Transfer Instructions<a class="headerlink" href="#control-transfer-instructions" title="Link to this heading"></a></h3>
+<p>The RV32I includes six branch instructions and two unconditional jump instructions. Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-branchcode</span></code> lists the encoding methods for these control transfer instructions.</p>
+<figure class="align-default" id="fig-branchcode">
+<img alt="../_images/branchcode.png" src="../_images/branchcode.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 75 </span><span class="caption-text">List of control transfer instruction encodings in RV32I</span><a class="headerlink" href="#fig-branchcode" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="tab-branchop">
+<caption><span class="caption-number">Table 14 </span><span class="caption-text">Control Transfer Instructions Manual</span><a class="headerlink" href="#tab-branchop" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction</p></th>
+<th class="head"><p>Operation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>jal rd,imm20</p></td>
+<td><p><span class="math notranslate nohighlight">\(makecell[l]{R[rd] \leftarrow PC + 4\\ PC \leftarrow (PC + SEXT(\{imm20,1'b0\}))}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>jalr rd,rs1,imm12</p></td>
+<td><p><span class="math notranslate nohighlight">\(\makecell[l]{R[rd] \leftarrow PC + 4\\ PC \leftarrow (R[rs1] + SEXT(imm12)) \&amp; 0xfffffffe}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>beq rs1,rs2,imm12</p></td>
+<td><p><span class="math notranslate nohighlight">\(\emph{if} R[rs1]==R[rs2] \emph{then} PC \leftarrow PC + SEXT(\{imm12,1'b0\})) \emph{else} PC \leftarrow PC + 4\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>bne rs1,rs2,imm12</p></td>
+<td><p><span class="math notranslate nohighlight">\(\emph{if} R[rs1]!=R[rs2] \emph{then} PC \leftarrow PC + SEXT(\{imm12,1'b0\})) \emph{else} PC \leftarrow PC + 4\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>blt rs1,rs2,imm12</p></td>
+<td><p><span class="math notranslate nohighlight">\(\emph{if} R[rs1] &lt;_s R[rs2] \emph{then} PC \leftarrow PC + SEXT(\{imm12,1'b0\})) \emph{else} PC \leftarrow PC + 4\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>bge rs1,rs2,imm12</p></td>
+<td><p><span class="math notranslate nohighlight">\(\emph{if} R[rs1] \ge_s R[rs2] \emph{then} PC \leftarrow PC + SEXT(\{imm12,1'b0\})) \emph{else} PC \leftarrow PC + 4\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>bltu rs1,rs2,imm12</p></td>
+<td><p><span class="math notranslate nohighlight">\(\emph{if} R[rs1] &lt;_u R[rs2] \emph{then} PC \leftarrow PC + SEXT(\{imm12,1'b0\})) \emph{else} PC \leftarrow PC + 4\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>bgeu rs1,rs2,imm12</p></td>
+<td><p><span class="math notranslate nohighlight">\(\emph{if} R[rs1] \ge_u R[rs2] \emph{then} PC \leftarrow PC + SEXT(\{imm12,1'b0\})) \emph{else} PC \leftarrow PC + 4\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="memory-access-instructions">
+<h3>Memory Access Instructions<a class="headerlink" href="#memory-access-instructions" title="Link to this heading"></a></h3>
+<p>RV32I provides eight instructions for accessing memory by byte, half-word, and word. All memory access instructions use register indirect addressing, and memory access addresses do not have to be aligned to 4-byte boundaries, but in practice, memory accesses may be required to be aligned to 4-byte boundaries. When reading a single byte or half-word, the memory data can be sign-extended or unsigned-extended as required before being stored in the register.
+Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-memcode</span></code> lists the encoding of memory access instructions.
+Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-memop</span></code> lists the specific operations of memory access instructions.</p>
+<figure class="align-default" id="fig-memcode">
+<img alt="../_images/memcode.png" src="../_images/memcode.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 76 </span><span class="caption-text">List of memory access instruction codes in RV32I</span><a class="headerlink" href="#fig-memcode" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<table class="docutils align-default" id="tab-memop">
+<caption><span class="caption-number">Table 15 </span><span class="caption-text">Memory Access Instructions Manual</span><a class="headerlink" href="#tab-memop" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction</p></th>
+<th class="head"><p>Operation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>lb rd,imm12(rs1)</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow SEXT(M_{1B}[ R[rs1] + SEXT(imm12) ])\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>lh rd,imm12(rs1)</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow SEXT(M_{2B}[ R[rs1] + SEXT(imm12) ])\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>lw rd,imm12(rs1)</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow M_{4B}[ R[rs1] + SEXT(imm12) ]\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>lbu rd,imm12(rs1)</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow \{24'b0, M_{1B}[ R[rs1] + SEXT(imm12) ]\}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>lhu rd,imm12(rs1)</p></td>
+<td><p><span class="math notranslate nohighlight">\(R[rd] \leftarrow \{16'b0, M_{2B}[ R[rs1] + SEXT(imm12) ] \}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>sb rs2,imm12(rs1)</p></td>
+<td><p><span class="math notranslate nohighlight">\(M_{1B}[ R[rs1] + SEXT(imm12) ] \leftarrow R[rs2][7:0]\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>sh rs2,imm12(rs1)</p></td>
+<td><p><span class="math notranslate nohighlight">\(M_{2B}[ R[rs1] + SEXT(imm12) ] \leftarrow R[rs2][15:0]\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>sw rs2,imm12(rs1)</p></td>
+<td><p><span class="math notranslate nohighlight">\(M_{4B}[ R[rs1] + SEXT(imm12) ] \leftarrow R[rs2]\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="common-pseudoinstructions">
+<h3>Common Pseudoinstructions<a class="headerlink" href="#common-pseudoinstructions" title="Link to this heading"></a></h3>
+<p>RISC-V defines a number of commonly used pseudoinstructions. These pseudoinstructions can generally be used in assembly programs, and the assembler will convert them into corresponding instruction sequences. Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-pseudocode</span></code> lists the common pseudoinstructions in RISC-V.</p>
+<table class="docutils align-default" id="tab-pseudocode">
+<caption><span class="caption-number">Table 16 </span><span class="caption-text">Common pseudoinstructions explanation</span><a class="headerlink" href="#tab-pseudocode" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Pseudoinstruction</p></th>
+<th class="head"><p>Acutal instruction sequence</p></th>
+<th class="head"><p>Operation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>nop</p></td>
+<td><p>addi x0, x0, 0</p></td>
+<td><p>no operations</p></td>
+</tr>
+<tr class="row-odd"><td><p>li rd,imm</p></td>
+<td><div class="line-block">
+<div class="line">lui rd, imm[32:12]+imm[11]</div>
+<div class="line">addi rd, rd, imm[11:0]</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line">Load 32-bit immediate values, loading the high order bits first,</div>
+<div class="line">then add the low bits, note that the low bits is sign extended.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p>mv rd, rs</p></td>
+<td><p>addi rd, rs</p></td>
+<td><p>register copy</p></td>
+</tr>
+<tr class="row-odd"><td><p>not rd, rs</p></td>
+<td><p>xori rd, rs, -1</p></td>
+<td><p>inversion operation</p></td>
+</tr>
+<tr class="row-even"><td><p>neg rd, rs</p></td>
+<td><p>sub  rd, x0, rs</p></td>
+<td><p>negation operation</p></td>
+</tr>
+<tr class="row-odd"><td><p>seqz rd, rs</p></td>
+<td><p>sltiu rd, rs, 1</p></td>
+<td><p>set bit when equal to 0</p></td>
+</tr>
+<tr class="row-even"><td><p>snez rd, rs</p></td>
+<td><p>sltu rd, x0, rs</p></td>
+<td><p>set bit when not equal to 0</p></td>
+</tr>
+<tr class="row-odd"><td><p>sltz rd, rs</p></td>
+<td><p>slt rd, rs, x0</p></td>
+<td><p>set bit when less than 0</p></td>
+</tr>
+<tr class="row-even"><td><p>sgtz rd, rs</p></td>
+<td><p>slt rd, x0, rs</p></td>
+<td><p>set bit when greater than 0</p></td>
+</tr>
+<tr class="row-odd"><td><p>beqz rs, offset</p></td>
+<td><p>beq rs, x0, offset</p></td>
+<td><p>jump when equal to 0</p></td>
+</tr>
+<tr class="row-even"><td><p>bnez rs, offset</p></td>
+<td><p>bne rs, x0, offset</p></td>
+<td><p>jump when not equal to 0</p></td>
+</tr>
+<tr class="row-odd"><td><p>blez rs, offset</p></td>
+<td><p>bge x0, rs, offset</p></td>
+<td><p>jump when less than or equal to 0</p></td>
+</tr>
+<tr class="row-even"><td><p>bgez rs, offset</p></td>
+<td><p>bge rs, x0, offset</p></td>
+<td><p>jump when greater than or equal to 0</p></td>
+</tr>
+<tr class="row-odd"><td><p>bltz rs, offset</p></td>
+<td><p>blt rs, x0, offset</p></td>
+<td><p>jump when less than 0</p></td>
+</tr>
+<tr class="row-even"><td><p>bgtz rs, offset</p></td>
+<td><p>blt x0, rs, offset</p></td>
+<td><p>jump when greater than 0</p></td>
+</tr>
+<tr class="row-odd"><td><p>bgt rs, rt, offset</p></td>
+<td><p>blt rt, rs, offset</p></td>
+<td><p>jump when rs is greater than rt</p></td>
+</tr>
+<tr class="row-even"><td><p>ble rs, rt, offset</p></td>
+<td><p>bge rt, rs, offset</p></td>
+<td><p>jump when rs is less than rt</p></td>
+</tr>
+<tr class="row-odd"><td><p>bgtu rs, rt, offset</p></td>
+<td><p>bltu rt, rs, offset</p></td>
+<td><p>jump when rs is unsigned greater than rt</p></td>
+</tr>
+<tr class="row-even"><td><p>bleu rs, rt, offset</p></td>
+<td><p>bgeu rt, rs, offset</p></td>
+<td><p>jump when rs is unsigned less than rt</p></td>
+</tr>
+<tr class="row-odd"><td><p>j offset</p></td>
+<td><p>jal x0, offset</p></td>
+<td><p>unconditional jump, no address saving</p></td>
+</tr>
+<tr class="row-even"><td><p>jal offset</p></td>
+<td><p>jal x1, offset</p></td>
+<td><p>unconditional jump, address saved by default in x1</p></td>
+</tr>
+<tr class="row-odd"><td><p>jr rs</p></td>
+<td><p>jalr x0, 0 (rs)</p></td>
+<td><p>unconditional jump to the rs register, no address saving</p></td>
+</tr>
+<tr class="row-even"><td><p>jalr rs</p></td>
+<td><p>jalr x1, 0 (rs)</p></td>
+<td><p>unconditional jump to the rs register, address saved by default in x1</p></td>
+</tr>
+<tr class="row-odd"><td><p>ret</p></td>
+<td><p>jalr x0, 0 (x1)</p></td>
+<td><p>function call return</p></td>
+</tr>
+<tr class="row-even"><td><p>call offset</p></td>
+<td><div class="line-block">
+<div class="line">aupic x1, offset[32:12]+offset[11]</div>
+<div class="line">jalr x1, offset[11:0] (x1)</div>
+</div>
+</td>
+<td><p>call remote subroutines</p></td>
+</tr>
+<tr class="row-odd"><td><p>la rd, symbol</p></td>
+<td><div class="line-block">
+<div class="line">aupic rd, delta[32:12]+delta[11]</div>
+<div class="line">addi rd, rd, delta[11:0]</div>
+</div>
+</td>
+<td><p>load global address, where detla is the difference between the PC and the global symbol address</p></td>
+</tr>
+<tr class="row-even"><td><p>lla rd, symbol</p></td>
+<td><div class="line-block">
+<div class="line">aupic rd, delta[32:12]+delta[11]</div>
+<div class="line">addi rd, rd, delta[11:0]</div>
+</div>
+</td>
+<td><p>load local address, where detla is the difference between the PC and the local symbol address</p></td>
+</tr>
+<tr class="row-odd"><td><p>l{b|h|w} rd, symbol</p></td>
+<td><div class="line-block">
+<div class="line">aupic rd, delta[32:12]+delta[11]</div>
+<div class="line">l{b|h|w} rd, delta[11:0] (rd)</div>
+</div>
+</td>
+<td><p>load global variable</p></td>
+</tr>
+<tr class="row-even"><td><p>s{b|h|w} rd, symbol, rt</p></td>
+<td><div class="line-block">
+<div class="line">aupic rd, delta[32:12]+delta[11]</div>
+<div class="line">s{b|h|w} rd, delta[11:0] (rt)</div>
+</div>
+</td>
+<td><p>load local variable</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="rv32i-circuit-implementation">
+<h2>RV32I Circuit Implementation<a class="headerlink" href="#rv32i-circuit-implementation" title="Link to this heading"></a></h2>
+<section id="single-cycle-circuit-design">
+<h3>Single-cycle circuit design<a class="headerlink" href="#single-cycle-circuit-design" title="Link to this heading"></a></h3>
+<p>After understanding the instruction set architecture (ISA) of the RV32I instruction set, we will proceed to design the microarchitecture of the CPU.
+The same instruction set architecture can be implemented with completely different microarchitectures. When implementing different microarchitectures, as long as the state visible to the programmer, i.e., PC, general purpose registers, memory, etc., and the ISA specifications is followed during instruction execution. The specific microarchitecture implementation can be freely determined.
+In this lab, we will first implement the microarchitecture of a single-cycle CPU. A single-cycle CPU refers to a CPU that needs to complete all operations of an instruction in each clock cycle, that is, one instruction per clock cycle.</p>
+<p>The execution process of each instruction generally requires the following steps:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><strong>Instruction fetch</strong>: Use the new PC of this cycle to fetch instructions from the instruction memory and place them in the instruction register (IR).</p></li>
+<li><p><strong>Instruction decoding</strong>: Analyze the fetched instructions, generate the control signals required to execute the instructions in this cycle, and calculate the address of the next instruction.</p></li>
+<li><p><strong>Read operand</strong>: Read the register operand from the register file and generate the immediate value.</p></li>
+<li><p><strong>Operation</strong>: Use the ALU to perform the necessary operations on the operand.</p></li>
+<li><p><strong>Access memory</strong>: This includes reading or writing the contents of the corresponding memory address.</p></li>
+<li><p><strong>Write back to register</strong>: Write the final result back to the destination register.</p></li>
+</ol>
+</div></blockquote>
+<p>The above steps in the execution of each instruction require the coordination of the CPU’s control path and data path to complete.
+The control path is primarily responsible for generating control signals, which instruct the data path to perform specific data operations.
+The data path is the component that actually performs data access and computation.
+The development model where the control path and data path are separated is commonly encountered in digital systems. The basic design principle is: the control path must be sufficiently flexible and capable of being easily modified and expanded with new features. The performance and latency of the control path are typically not the primary optimization focus.
+Conversely, the data path must be simple yet highly performant. The data path must reliably and rapidly move and process large volumes of data.
+With a simple yet highly performant data path as support, the control path can flexibly implement various applications through the combination of control signals.</p>
+<p>Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-rv32isingle</span></code> provides a reference design for the RV32I single-cycle CPU. Below, we will explain the control path and data path of this CPU separately.</p>
+<figure class="align-default" id="fig-rv32isingle">
+<img alt="../_images/rv32isingle.png" src="../_images/rv32isingle.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 77 </span><span class="caption-text">Circuit diagram of a single-cycle CPU</span><a class="headerlink" href="#fig-rv32isingle" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="control-path">
+<h2>Control Path<a class="headerlink" href="#control-path" title="Link to this heading"></a></h2>
+<section id="pc-generation">
+<h3>PC Generation<a class="headerlink" href="#pc-generation" title="Link to this heading"></a></h3>
+<p>The program counter PC controls the order of execution of all CPU instructions. Under sequential execution conditions, the PC for the next cycle is PC+4 for the current cycle. If a jump occurs, the PC will become the jump target address.
+In this design, each clock cycle starts at the falling edge of the clock signal CLK. Before the end of the previous cycle, the address NextPC of the instruction to be executed in the current cycle is generated using a combinational logic circuit.
+When the falling edge of the clock arrives, NEXT PC is loaded into both the PC register and the address buffer of the instruction memory, completing the first step of the current cycle instruction execution.
+The calculation of NextPC involves instruction decoding and jump analysis, which will be detailed in the <a class="reference internal" href="#jump-control"><span class="std std-ref">Jump Control</span></a> section.
+At system reset or power-on, the PC can be set to a fixed address, such as all zeros, to allow the system to execute from specific startup code.</p>
+</section>
+<section id="instruction-memory">
+<h3>Instruction Memory<a class="headerlink" href="#instruction-memory" title="Link to this heading"></a></h3>
+<p>Ther Instruction Memory is specifically used to store instructions. Although instructions and data are stored in a unified memory in the von Neumann architecture, most modern CPUs separate the instruction cache and data cache. In this experiment, we will also store instructions and data separately.
+The instruction memory in this experiment is similar to the instruction cache in a CPU and is implemented using SRAM in an FPGA. Since the large-capacity SRAM on the DE10-Standard development board only supports read/write operations on the rising edge, this design uses the falling edge of the clock to perform read operations on the instruction memory, with the read address being NextPC.
+The instruction memory only needs to support read operations. In this experiment, all instructions can be required to be 4-byte aligned, meaning the lower two bits of the PC can be considered to always be 2’b00. Since the instruction memory always reads 4 bytes at a time, the size of each memory cell can be set to 32 bits.
+The instruction memory can be implemented using a single-port RAM, with a total capacity typically set to 256 KB (64K instructions), which can meet the needs of most demonstration code.
+The instruction memory can be initialized using a MIF file, which can be generated using the toolchain provided in the experiment guide. If the instruction memory generation selects the In-System Memory dynamic SRAM content update feature, there is no need to compile the entire project; new code can be directly loaded in Quartus.</p>
+<table class="docutils align-default" id="tab-extop">
+<caption><span class="caption-number">Table 17 </span><span class="caption-text">Meaning of control signal ExtOP</span><a class="headerlink" href="#tab-extop" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>ExtOP</p></th>
+<th class="head"><p>Immediate Number Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>000</p></td>
+<td><p>immI</p></td>
+</tr>
+<tr class="row-odd"><td><p>001</p></td>
+<td><p>immU</p></td>
+</tr>
+<tr class="row-even"><td><p>010</p></td>
+<td><p>immS</p></td>
+</tr>
+<tr class="row-odd"><td><p>011</p></td>
+<td><p>immB</p></td>
+</tr>
+<tr class="row-even"><td><p>100</p></td>
+<td><p>immJ</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="instruction-decoding-and-immediate-number-generation">
+<h3>Instruction decoding and immediate number generation<a class="headerlink" href="#instruction-decoding-and-immediate-number-generation" title="Link to this heading"></a></h3>
+<p>After reading the instruction instr[31:0] in this cycle, the CPU decodes the 32-bit instruction and generates the immediate values corresponding to each instruction.
+The RV32I instructions are relatively regular, so the bits corresponding to the instruction can be directly taken as the decoding result:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w">  </span><span class="n">op</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">6</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="k">assign</span><span class="w">  </span><span class="n">rs1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">19</span><span class="o">:</span><span class="mh">15</span><span class="p">];</span>
+<span class="k">assign</span><span class="w">  </span><span class="n">rs2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">24</span><span class="o">:</span><span class="mh">20</span><span class="p">];</span>
+<span class="k">assign</span><span class="w">  </span><span class="n">rd</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">11</span><span class="o">:</span><span class="mh">7</span><span class="p">];</span>
+<span class="k">assign</span><span class="w">  </span><span class="n">func3</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">14</span><span class="o">:</span><span class="mh">12</span><span class="p">];</span>
+<span class="k">assign</span><span class="w">  </span><span class="n">func7</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">25</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>Similarly, you can use the imm Generator to generate all immediate values. Note that all immediate values are sign-extended, and the sign bit is always instr[31]:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">immI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{{</span><span class="mh">20</span><span class="p">{</span><span class="n">instr</span><span class="p">[</span><span class="mh">31</span><span class="p">]}},</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">20</span><span class="p">]};</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">immU</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">instr</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">12</span><span class="p">],</span><span class="w"> </span><span class="mh">12</span><span class="mb">&#39;b0</span><span class="p">};</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">immS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{{</span><span class="mh">20</span><span class="p">{</span><span class="n">instr</span><span class="p">[</span><span class="mh">31</span><span class="p">]}},</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">25</span><span class="p">],</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">11</span><span class="o">:</span><span class="mh">7</span><span class="p">]};</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">immB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{{</span><span class="mh">20</span><span class="p">{</span><span class="n">instr</span><span class="p">[</span><span class="mh">31</span><span class="p">]}},</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">7</span><span class="p">],</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">30</span><span class="o">:</span><span class="mh">25</span><span class="p">],</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">11</span><span class="o">:</span><span class="mh">8</span><span class="p">],</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">};</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">immJ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{{</span><span class="mh">12</span><span class="p">{</span><span class="n">instr</span><span class="p">[</span><span class="mh">31</span><span class="p">]}},</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">19</span><span class="o">:</span><span class="mh">12</span><span class="p">],</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">20</span><span class="p">],</span><span class="w"> </span><span class="n">instr</span><span class="p">[</span><span class="mh">30</span><span class="o">:</span><span class="mh">21</span><span class="p">],</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">};</span>
+</pre></div>
+</div>
+<p>After generating immediate numbers for various types of instructions, the multiplexer selects which of the above five types of imm is the final output of the immediate number generator based on the control signal ExtOP.
+The control signal ExtOP is 3 bits and can be encoded according to Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-extop</span></code>. Encoding not listed can be considered irrelevant.</p>
+<figure class="align-default" id="fig-controlpart1">
+<img alt="../_images/controlpart1.png" src="../_images/controlpart1.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 78 </span><span class="caption-text">RV32I Instruction Control Signal List Part I</span><a class="headerlink" href="#fig-controlpart1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-controlpart2">
+<img alt="../_images/controlpart2.png" src="../_images/controlpart2.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 79 </span><span class="caption-text">RV32I Instruction Control Signal List Part II</span><a class="headerlink" href="#fig-controlpart2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="control-signal-generation">
+<h3>Control signal generation<a class="headerlink" href="#control-signal-generation" title="Link to this heading"></a></h3>
+<p>After determining the instruction type, it is necessary to generate the corresponding control signals for each instruction to control the data path components to perform the corresponding actions. The control signal generator generates the corresponding control signals based on the opcode in instr, as well as func3 and func7.
+Among them, only the upper 5 bits of the opcode are actually useful, and only the second highest bit of func7 is actually useful.
+The generated control signals specifically include:</p>
+<ul class="simple">
+<li><p><strong>ExtOP</strong> : 3 bits wide, selects the output type of the immediate number generator. For specific meanings, refer to Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-extop</span></code> .</p></li>
+<li><p><strong>RegWr</strong> : 1 bit wide, controls whether to write back to register rd. When set to 1, write back to the register.</p></li>
+<li><p><strong>ALUAsrc</strong>: 1-bit width, selects the source of ALU input A. When set to 0, selects rs1; when set to 1, selects PC.</p></li>
+<li><p><strong>ALUBsrc</strong>: 2 bits wide, selects the source of ALU input B. When 00, selects rs2; when 01, selects imm (only the lower 5 bits are valid when it is an immediate shift instruction); when 10, selects the constant 4 (used to calculate the return address PC+4 during jumps).</p></li>
+<li><p><strong>ALUctr</strong>: 4 bits wide, selects the operation to be performed by the ALU. For specific meanings, refer to Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-aluctr</span></code>.</p></li>
+<li><p><strong>Branch</strong>: 3 bits wide, specifies the type of branch or jump, used to generate the final branch control signal. For meanings, refer to Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-branch</span></code>.</p></li>
+<li><p><strong>MemtoReg</strong>: 1-bit wide, selects the register rd to write back the data source. When it is 0, the ALU output is selected, and when it is 1, the data memory output is selected.</p></li>
+<li><p><strong>MemWr</strong>: 1-bit wide, controls whether to write to the data memory. When it is 1, it writes back to the memory.</p></li>
+<li><p><strong>MemOP</strong>: 3 bits wide, controls the data memory read/write format. When set to 010, it performs 4-byte read/write; when set to 001, it performs 2-byte read/write with sign extension; when set to 000, it performs 1-byte read/write with sign extension; when set to 101, it performs 2-byte read/write without sign extension; when set to 100, it performs 1-byte read/write without sign extension.</p></li>
+</ul>
+<p>These control signals control each data path component to perform the corresponding operations according to the instructions. The list of control signals corresponding to all instructions is shown in Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-controlpart1</span></code> and Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-controlpart2</span></code>.
+Based on these control signals, the specific operations that the system needs to perform within a cycle under a given instruction can be derived.
+Note: The control signals defined here may differ from the 9 instruction CPU control signals described in textbooks.
+Students who have not studied computer architecture should refer to relevant textbooks to analyze the specific operations of the data path under given control signals for various instructions. Here, only a brief explanation is provided:</p>
+<ul class="simple">
+<li><p><strong>lui</strong>: The A input of the ALU is not used, and the B input is an immediate value. It is expanded according to the U-Type, and the ALU performs a copy operation on the B input. The ALU result is written back to rd.</p></li>
+<li><p><strong>auipc</strong>: The A input of the ALU is PC, and the B input is an immediate value. It is expanded according to the U-Type, and the ALU performs an addition operation. The ALU result is written back to rd.</p></li>
+<li><p><strong>Immediate number computation instructions</strong>: ALU A input is rs1, B input is immediate number, expanded according to I-Type. ALU operates according to ALUctr, and the ALU result is written back to rd.</p></li>
+<li><p><strong>Register computation instructions</strong>: ALU A input is rs1, B input is rs2. ALU operates according to ALUctr, and the ALU result is written back to rd.</p></li>
+<li><p><strong>jal</strong>: The ALU A input is PC, and the B input is the constant 4. The ALU performs the operation of calculating PC+4, and the ALU result is written back to rd. The PC calculation is performed using a dedicated adder, calculating PC+imm, where imm is J-Type extended.</p></li>
+<li><p><strong>jalr</strong>: The ALU A input is PC, and the B input is the constant 4. The ALU performs the operation of calculating PC+4, and the ALU result is written back to rd. PC calculation is performed by a dedicated adder, calculating rs1+imm, where imm is an I-Type extension.</p></li>
+<li><p><strong>Branch instructions</strong>: ALU A input is rs1, B input is rs2, and the operation performed by ALU is to compare sizes or judge zero. NextPC is selected based on the ALU flag bit, which may be PC+4 or PC+imm, where imm is a B-Type extension, and PC calculation is performed by a dedicated adder. It is not written back to the register.</p></li>
+<li><p><strong>Load instructions</strong>: The ALU A input is rs1, and the B input is an immediate value, and it is expanded according to I-Type. The ALU performs addition to calculate the address, reads from memory, and the memory read operation is executed by the memory itself. The memory output is written back to rd.</p></li>
+<li><p><strong>Store instructions</strong>: The ALU A input is rs1, the B input is an immediate number, and it is expanded according to S-Type. The ALU performs addition calculations on the address, writes the contents of rs2 to memory, and does not write back to the register.</p></li>
+</ul>
+</section>
+<section id="jump-control">
+<h3>Jump Control<a class="headerlink" href="#jump-control" title="Link to this heading"></a></h3>
+<p>During code execution, NextPC may have multiple possibilities:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Sequential execution: NextPC = PC + 4;</p></li>
+<li><p>jal: NextPC = PC + imm;</p></li>
+<li><p>jalr: NextPC = rs1 + imm;</p></li>
+<li><p>Conditional jump: Based on the ALU’s Zero and Less flag, NextPC may be PC + 4 or PC + imm;</p></li>
+</ul>
+</div></blockquote>
+<p>A separate dedicated adder is used in the design to perform PC calculations. At the same time, the jump control module is used to generate the adder input selection. Among them, PCAsrc controls the signal of PC adder input A, selecting the constant 4 when it is 0 and imm when it is 1.
+PCBsrc controls the signal of PC adder input B, selecting the PC of the current cycle when it is 0 and register rs1 when it is 1.</p>
+<p>The jump control module determines PCASrc and PCBsrc based on the control signal Branch and the Zero and Less flags output by the ALU. The definition of the control signal Branch is shown in Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-branch</span></code>.
+The outputs of the jump control module are shown in Table <code class="xref std std-numref docutils literal notranslate"><span class="pre">tab-branchrst</span></code>.</p>
+<table class="docutils align-default" id="tab-branch">
+<caption><span class="caption-number">Table 18 </span><span class="caption-text">Meaning of control signal branch</span><a class="headerlink" href="#tab-branch" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Branch</p></th>
+<th class="head"><p>Jump type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>000</p></td>
+<td><p>non-jump instruction</p></td>
+</tr>
+<tr class="row-odd"><td><p>001</p></td>
+<td><p>unconditional jump to PC target</p></td>
+</tr>
+<tr class="row-even"><td><p>010</p></td>
+<td><p>unconditional jump to register target</p></td>
+</tr>
+<tr class="row-odd"><td><p>100</p></td>
+<td><p>conditional branch, equals</p></td>
+</tr>
+<tr class="row-even"><td><p>101</p></td>
+<td><p>conditional branch, not equals</p></td>
+</tr>
+<tr class="row-odd"><td><p>110</p></td>
+<td><p>conditional branch, less than</p></td>
+</tr>
+<tr class="row-even"><td><p>111</p></td>
+<td><p>conditional branch, greater than or equals to</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default" id="tab-branchrst">
+<caption><span class="caption-number">Table 19 </span><span class="caption-text">PC adder input selection logic</span><a class="headerlink" href="#tab-branchrst" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Branch</p></th>
+<th class="head"><p>Zero</p></th>
+<th class="head"><p>Less</p></th>
+<th class="head"><p>PCAsrc</p></th>
+<th class="head"><p>PCBsrc</p></th>
+<th class="head"><p>NextPC</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>000</p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>PC + 4</p></td>
+</tr>
+<tr class="row-odd"><td><p>001</p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>PC + imm</p></td>
+</tr>
+<tr class="row-even"><td><p>010</p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>rs1 + imm</p></td>
+</tr>
+<tr class="row-odd"><td><p>100</p></td>
+<td><p>0</p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>PC + 4</p></td>
+</tr>
+<tr class="row-even"><td><p>100</p></td>
+<td><p>1</p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>PC + imm</p></td>
+</tr>
+<tr class="row-odd"><td><p>101</p></td>
+<td><p>0</p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>PC + imm</p></td>
+</tr>
+<tr class="row-even"><td><p>101</p></td>
+<td><p>1</p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>PC + 4</p></td>
+</tr>
+<tr class="row-odd"><td><p>110</p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>PC + 4</p></td>
+</tr>
+<tr class="row-even"><td><p>110</p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>PC + imm</p></td>
+</tr>
+<tr class="row-odd"><td><p>111</p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>PC + imm</p></td>
+</tr>
+<tr class="row-even"><td><p>111</p></td>
+<td><p><span class="math notranslate nohighlight">\(\times\)</span></p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>PC + 4</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="datapath">
+<h3>Datapath<a class="headerlink" href="#datapath" title="Link to this heading"></a></h3>
+<p>The single-cycle datapath can reuse the register file, ALU, and data memory designed in the previous lab, so we won’t go into detail here.</p>
+</section>
+<section id="timing-design-of-single-cycle-cpu">
+<h3>Timing design of single-cycle CPU<a class="headerlink" href="#timing-design-of-single-cycle-cpu" title="Link to this heading"></a></h3>
+<p>In a single-cycle CPU, all operations must be completed within a single cycle. Among them, the read and write operations of the single-cycle storage components are key to the timing design. In the CPU architecture, the PC, register file, instruction memory, and data memory are all state components that need to be implemented with registers or memory.
+In Lab 5, we also observed that requiring the above storage components to perform read/write operations asynchronously consumes a significant amount of resources and prevents the implementation of large-capacity storage. Therefore, it is necessary to carefully plan the read/write timing and implementation methods for each storage component.</p>
+<p>Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-timesingle</span></code> describes the timing design proposed in this lab. In this design, since the PC and register file have small capacities, they can be read asynchronously, i.e., the corresponding data is output immediately after the address changes.
+For instruction memory and data memory, a general system requires at least several hundred KB of capacity. In this case, it is recommended to use the clock edge to control reading and writing. Assume that we use the falling edge of the clock as the start of each clock cycle. Writing to memory and registers is uniformly arranged to take place on the falling edge.
+For reading data memory, due to a certain delay in address calculation, reading can be performed on the rising edge of the clock.</p>
+<p>The following figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-timesingle</span></code> describes the specific actions of the CPU within a single clock cycle. The green part represents the correct data for the current cycle, the yellow part represents the old data from the previous cycle, and the blue part represents the future data for the next cycle.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The falling edge at the beginning of the cycle is used to write to the PC register and read the instruction memory at the same time. Since the instruction memory must be read on the falling edge and the PC output cannot be updated until after the falling edge, the PC output cannot be used as the address of the instruction memory. The input of the PC register, NextPC, can be used as the address of the instruction memory. This signal is a combination logic and is generally ready at the end of the previous cycle.</p></li>
+<li><p>After the instruction is read, it will appear at the output end of the instruction memory. This signal can be decoded by combinational logic to generate control signals, register read/write addresses, immediate numbers, etc.</p></li>
+<li><p>After the register read address is generated, the data of the two source registers is read directly through asynchronous reading, prepared together with the immediate number operand, and entered into the input end of the ALU.</p></li>
+<li><p>The ALU is also a combinational logic circuit, which starts calculating after the data at the input end is ready. Since the read address of the data memory is also calculated by the ALU, the ALU output result must be ready before the rising edge of half a clock cycle arrives.</p></li>
+<li><p>When the rising edge of the clock arrives, if the read address of the data memory is ready, the memory read operation can be performed on the rising edge.</p></li>
+<li><p>Finally, when the falling edge of the clock arrives in the next cycle, write operations are performed on the destination register and data memory at the same time. In this way, the data in these memories will be the latest in the next cycle.</p></li>
+</ul>
+</div></blockquote>
+<p>The M10K on the DE10-Standard development board used in the lab supports read/write clock-separated RAM and can perform single-cycle read/write operations at a main clock speed of 50 MHz. In this timing design, the main critical path is the read address generation of the Load instruction, which needs to be completed within half a cycle. If the timing cannot be met, consider lowering the clock frequency.</p>
+<figure class="align-default" id="fig-timesingle">
+<img alt="../_images/timesingle.png" src="../_images/timesingle.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 80 </span><span class="caption-text">Timing design of single-cycle CPU</span><a class="headerlink" href="#fig-timesingle" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="modular-design">
+<h3>Modular Design<a class="headerlink" href="#modular-design" title="Link to this heading"></a></h3>
+<p>The CPU design process requires multiple different modules to collaborate. It is recommended to divide the specific functions and interfaces of each module before starting coding. We provide the following reference suggestions for module division. The modules contained in the top-level entity are mainly:</p>
+<ul class="simple">
+<li><p><strong>CPU module</strong>: Main external interfaces include clock, reset, instruction memory address/data lines, data memory address and data lines, and custom-designed debugging signals.</p>
+<ul>
+<li><p>ALU module: The main external interfaces are the ALU input operands, ALU control words, ALU result outputs, and flag outputs.</p>
+<ul>
+<li><p>Adder module</p></li>
+<li><p>Barrel shifter module</p></li>
+</ul>
+</li>
+<li><p>Register file module: The main external interfaces are register number input, data input, register control signals, write clock, and data output.</p></li>
+<li><p>Control signal generation module: The main external interfaces are instruction input and various control signal outputs.</p></li>
+<li><p>Immediate generator module: The primary external interfaces are instruction input, immediate type, and immediate output.</p></li>
+<li><p>Jump control module: The primary external interfaces are ALU flag input, jump control signal input, and PC selection signal output.</p></li>
+<li><p>PC generation module: The primary external interfaces are PC input, immediate input, rs1 input, PC selection signal, and NEXTPC output.</p></li>
+</ul>
+</li>
+<li><p><strong>Instruction memory module</strong>: Main external interfaces include clock, address lines, and output data lines.</p></li>
+<li><p><strong>Data memory module</strong>: Main external interfaces include clock, input/output address lines, input/output data, memory access control signals, and write enable signals.</p></li>
+<li><p><strong>Peripheral devices</strong>: Used for reset or displaying debugging results, etc.</p></li>
+</ul>
+<p>The above module division is not unique, and students can divide them according to their own understanding.
+The main purpose of separating the memory part from the CPU at the top level in the design is to simplify the access of peripheral devices to the memory in subsequent computer system labs.
+When designing, please divide the modules first, confirm the connections between the modules, and then develop each module separately. It is recommended to test the modules individually before integrating the system.</p>
+</section>
+</section>
+<section id="software-and-testing-section">
+<h2>Software and Testing Section<a class="headerlink" href="#software-and-testing-section" title="Link to this heading"></a></h2>
+<p>The RISC-V CPU is a relatively complex digital system. During development, each stage must be thoroughly tested to ensure the overall reliability of the system.</p>
+<section id="unit-testing">
+<h3>Unit Testing<a class="headerlink" href="#unit-testing" title="Link to this heading"></a></h3>
+<p>During development, it is necessary to first ensure that each sub-unit is functioning properly. Therefore, after completing the code for each unit, corresponding tests must be conducted. Specifically, these may include:</p>
+<ul class="simple">
+<li><p><strong>Code Review</strong>: Check for issues in the code writing process, especially in areas prone to errors such as variable names and data bus widths. Review warnings during compilation and determine whether they could lead to errors.</p></li>
+<li><p><strong>RTL Review</strong>: Use the RTL Viewer to verify that the RTL output from system compilation aligns with the design intent and that there are no floating or unconnected pins.</p></li>
+<li><p><strong>TestBench functional simulation</strong>: Perform functional simulation using a testbench for independent units, paying particular attention to the correctness of the ALU, register file, and memory. For storage components, analyze the timing correctness, i.e., whether the data is given at the correct time and whether it is written as expected when writing.</p></li>
+</ul>
+</section>
+<section id="single-step-simulation">
+<h3>Single-step simulation<a class="headerlink" href="#single-step-simulation" title="Link to this heading"></a></h3>
+<p>After completing the basic unit test, you can proceed to the overall debugging of the CPU. The main purpose of overall debugging is to verify the correctness of the basic functions of each instruction.
+The experiment guide provides testbench examples to help you execute and verify single instructions.</p>
+<p>In this testbench, we first define some variables that will be used in the test:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="no">`timescale</span><span class="w"> </span><span class="mh">1</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mh">10</span><span class="w"> </span><span class="n">ps</span>
+<span class="k">module</span><span class="w"> </span><span class="n">testbench_cpu</span><span class="p">();</span>
+<span class="k">integer</span><span class="w"> </span><span class="n">numcycles</span><span class="p">;</span><span class="w">  </span><span class="c1">//number of cycles in test</span>
+<span class="kt">reg</span><span class="w"> </span><span class="n">clk</span><span class="p">,</span><span class="n">reset</span><span class="p">;</span><span class="w">  </span><span class="c1">//clk and reset signals</span>
+<span class="kt">reg</span><span class="p">[</span><span class="mh">8</span><span class="o">*</span><span class="mh">30</span><span class="o">:</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="n">testcase</span><span class="p">;</span><span class="w"> </span><span class="c1">//name of testcase</span>
+</pre></div>
+</div>
+<p>Among them, testcase is the name of our test case, which is in string format and is used to load different test cases.</p>
+<p>Subsequently, the components in the CPU are instantiated in the testbench. Here, the CPU core, instruction storage, and data storage are instantiated separately:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// CPU declaration</span>
+<span class="c1">// signals</span>
+<span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">iaddr</span><span class="p">,</span><span class="n">idataout</span><span class="p">;</span>
+<span class="kt">wire</span><span class="w"> </span><span class="n">iclk</span><span class="p">;</span>
+<span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">daddr</span><span class="p">,</span><span class="n">ddataout</span><span class="p">,</span><span class="n">ddatain</span><span class="p">;</span>
+<span class="kt">wire</span><span class="w"> </span><span class="n">drdclk</span><span class="p">,</span><span class="w"> </span><span class="n">dwrclk</span><span class="p">,</span><span class="w"> </span><span class="n">dwe</span><span class="p">;</span>
+<span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="n">dop</span><span class="p">;</span>
+<span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">23</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">cpudbgdata</span><span class="p">;</span>
+
+<span class="c1">//main CPU</span>
+<span class="n">rv32is</span><span class="w"> </span><span class="n">mycpu</span><span class="p">(.</span><span class="n">clock</span><span class="p">(</span><span class="n">clk</span><span class="p">),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="n">reset</span><span class="p">),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">imemaddr</span><span class="p">(</span><span class="n">iaddr</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">imemdataout</span><span class="p">(</span><span class="n">idataout</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">imemclk</span><span class="p">(</span><span class="n">iclk</span><span class="p">),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">dmemaddr</span><span class="p">(</span><span class="n">daddr</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">dmemdataout</span><span class="p">(</span><span class="n">ddataout</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">dmemdatain</span><span class="p">(</span><span class="n">ddatain</span><span class="p">),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">dmemrdclk</span><span class="p">(</span><span class="n">drdclk</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">dmemwrclk</span><span class="p">(</span><span class="n">dwrclk</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">dmemop</span><span class="p">(</span><span class="n">dop</span><span class="p">),</span><span class="w"> </span><span class="p">.</span><span class="n">dmemwe</span><span class="p">(</span><span class="n">dwe</span><span class="p">),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">dbgdata</span><span class="p">(</span><span class="n">cpudbgdata</span><span class="p">));</span>
+
+<span class="c1">//instruction memory, no writing</span>
+<span class="n">testmem</span><span class="w"> </span><span class="n">instructions</span><span class="p">(</span>
+<span class="w">  </span><span class="p">.</span><span class="n">address</span><span class="p">(</span><span class="n">iaddr</span><span class="p">[</span><span class="mh">17</span><span class="o">:</span><span class="mh">2</span><span class="p">]),</span>
+<span class="w">  </span><span class="p">.</span><span class="n">clock</span><span class="p">(</span><span class="n">iclk</span><span class="p">),</span>
+<span class="w">  </span><span class="p">.</span><span class="n">data</span><span class="p">(</span><span class="mh">32</span><span class="mb">&#39;b0</span><span class="p">),</span>
+<span class="w">  </span><span class="p">.</span><span class="n">wren</span><span class="p">(</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">),</span>
+<span class="w">  </span><span class="p">.</span><span class="n">q</span><span class="p">(</span><span class="n">idataout</span><span class="p">));</span>
+
+<span class="c1">//data memory</span>
+<span class="n">dmem</span><span class="w"> </span><span class="n">datamem</span><span class="p">(.</span><span class="n">addr</span><span class="p">(</span><span class="n">daddr</span><span class="p">),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">dataout</span><span class="p">(</span><span class="n">ddataout</span><span class="p">),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">datain</span><span class="p">(</span><span class="n">ddatain</span><span class="p">),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">rdclk</span><span class="p">(</span><span class="n">drdclk</span><span class="p">),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">wrclk</span><span class="p">(</span><span class="n">dwrclk</span><span class="p">),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">memop</span><span class="p">(</span><span class="n">dop</span><span class="p">),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">we</span><span class="p">(</span><span class="n">dwe</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>In the actual implementation, students are encouraged to modify the CPU interface according to their own designs. During testing, it is recommended to replace the memory module generated by the IP core with a memory module written by yourself, which facilitates various memory operations.</p>
+<p>Subsequently, a series of auxiliary tasks were defined to assist us in completing various testing operations:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">//useful tasks</span>
+<span class="k">task</span><span class="w"> </span><span class="n">step</span><span class="p">;</span><span class="w">  </span><span class="c1">//step for one cycle ends 1ns AFTER the posedge of the next cycle</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="p">#</span><span class="mh">9</span><span class="w">  </span><span class="n">clk</span><span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="p">#</span><span class="mh">10</span><span class="w"> </span><span class="n">clk</span><span class="o">=</span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">    </span><span class="n">numcycles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">numcycles</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">#</span><span class="mh">1</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">endtask</span>
+
+<span class="k">task</span><span class="w"> </span><span class="n">stepn</span><span class="p">;</span><span class="w"> </span><span class="c1">//step n cycles</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="k">integer</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+<span class="w">  </span><span class="k">integer</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mh">1</span><span class="p">)</span>
+<span class="w">      </span><span class="n">step</span><span class="p">();</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">endtask</span>
+
+<span class="k">task</span><span class="w"> </span><span class="n">resetcpu</span><span class="p">;</span><span class="w">  </span><span class="c1">//reset the CPU and the test</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">reset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">    </span><span class="n">step</span><span class="p">();</span>
+<span class="w">    </span><span class="p">#</span><span class="mh">5</span><span class="w"> </span><span class="n">reset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">numcycles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">endtask</span>
+</pre></div>
+</div>
+<p>The step task advances the CPU clock by one cycle, which is equivalent to executing a single instruction in a single-cycle CPU. Note that the cycle here starts with the rising edge. In actual testing, the time can be stepped to the next cycle’s rising edge plus one time unit. This is mainly because our single-cycle CPU performs writes at the next rising edge, and data verification must be performed slightly after the rising edge.
+The stepn task is used to execute n instructions, and resetcpu is used to reset the CPU and restart execution from the predefined starting address.</p>
+<p>The testbench also defines the load task:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">task</span><span class="w"> </span><span class="n">loadtestcase</span><span class="p">;</span><span class="w">  </span><span class="c1">//load intstructions to instruction mem</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="nb">$readmemh</span><span class="p">({</span><span class="n">testcase</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.hex&quot;</span><span class="p">},</span><span class="n">instructions</span><span class="p">.</span><span class="n">ram</span><span class="p">);</span>
+<span class="w">    </span><span class="nb">$display</span><span class="p">(</span><span class="s">&quot;---Begin test case %s-----&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">testcase</span><span class="p">);</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">endtask</span>
+</pre></div>
+</div>
+<p>This task is used to load instruction files. Instruction files are in text format and are recommended to be placed in the simulate/modelsim subdirectory, with relative directory names used to locate the files.
+Here, $readmemh is used to read into the specified instruction memory. Since the instruction memory space is not declared in the top-level entity instructions, instructions.ram must be used to access the ram variables declared within the entity.
+When writing the testbench, please locate the actual variables to be accessed according to your own design.</p>
+<p>At the same time, it is necessary to define a series of assertion tasks to assist in checking the contents of registers or memory and provide  debugging messages when errors occur:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">task</span><span class="w"> </span><span class="n">checkreg</span><span class="p">;</span><span class="c1">//check registers</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">4</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">regid</span><span class="p">;</span>
+<span class="w">  </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">results</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">debugdata</span><span class="p">;</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">debugdata</span><span class="o">=</span><span class="n">mycpu</span><span class="p">.</span><span class="n">myregfile</span><span class="p">.</span><span class="n">regs</span><span class="p">[</span><span class="n">regid</span><span class="p">];</span><span class="w"> </span><span class="c1">//get register content</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">debugdata</span><span class="o">==</span><span class="n">results</span><span class="p">)</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">        </span><span class="nb">$display</span><span class="p">(</span><span class="s">&quot;OK: end of cycle %d reg %h need to be %h, get %h&quot;</span><span class="p">,</span>
+<span class="w">                  </span><span class="n">numcycles</span><span class="o">-</span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">regid</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="p">,</span><span class="w"> </span><span class="n">debugdata</span><span class="p">);</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">  </span><span class="k">else</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="nb">$display</span><span class="p">(</span><span class="s">&quot;!!!Error: end of cycle %d reg %h need to be %h, get %h&quot;</span><span class="p">,</span>
+<span class="w">              </span><span class="n">numcycles</span><span class="o">-</span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">regid</span><span class="p">,</span><span class="w"> </span><span class="n">results</span><span class="p">,</span><span class="w"> </span><span class="n">debugdata</span><span class="p">);</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">endtask</span>
+</pre></div>
+</div>
+<p>In this task, the regs variable in the CPU’s internally defined register file myregfile is accessed, and the data is extracted based on the required regid and compared with the expected data.
+If incorrect, the task will prompt the comparison result for easy debugging.
+Similarly, a similar memory content comparison module can be written to check the contents of the memory.</p>
+<p>Assuming that you need to test the correctness of the addition statement in the CPU, you can write a short piece of assembly code.</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="n">addi</span><span class="w"> </span><span class="n">t1</span><span class="p">,</span><span class="n">zero</span><span class="p">,</span><span class="mh">100</span>
+<span class="n">addi</span><span class="w"> </span><span class="n">t2</span><span class="p">,</span><span class="n">zero</span><span class="p">,</span><span class="mh">20</span>
+<span class="n">add</span><span class="w">  </span><span class="n">t3</span><span class="p">,</span><span class="n">t1</span><span class="p">,</span><span class="n">t2</span>
+</pre></div>
+</div>
+<p>During the execution of this assembly code, we can check the results of each register to observe the correctness of the code execution.
+Use the <a class="reference external" href="https://github.com/TheThirdOne/rars">rars</a> simulator used last semester to convert this assembly code to binary and write it to the add.hex file without adding the file header v2.0 raw. The specific contents of the sample file are as follows:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="mh">06400313</span>
+<span class="mh">01400393</span>
+<span class="mf">00730E33</span>
+</pre></div>
+</div>
+<p>The specific execution part of the testbench is as follows:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">initial</span><span class="w"> </span><span class="k">begin</span><span class="o">:</span><span class="n">TestBench</span>
+<span class="w">      </span><span class="p">#</span><span class="mh">80</span>
+<span class="w">      </span><span class="c1">// output the state of every instruction</span>
+<span class="w">    </span><span class="nb">$monitor</span><span class="p">(</span><span class="s">&quot;cycle=%d, pc=%h, instruct= %h op=%h,</span>
+<span class="w">              </span><span class="n">rs1</span><span class="o">=%</span><span class="n">h</span><span class="p">,</span><span class="n">rs2</span><span class="o">=%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">rd</span><span class="o">=%</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">imm</span><span class="o">=%</span><span class="n">h</span><span class="s">&quot;,</span>
+<span class="w">              </span><span class="n">numcycles</span><span class="p">,</span><span class="w">  </span><span class="n">mycpu</span><span class="p">.</span><span class="n">pc</span><span class="p">,</span><span class="w"> </span><span class="n">mycpu</span><span class="p">.</span><span class="n">instr</span><span class="p">,</span><span class="w"> </span><span class="n">mycpu</span><span class="p">.</span><span class="n">op</span><span class="p">,</span>
+<span class="w">              </span><span class="n">mycpu</span><span class="p">.</span><span class="n">rs1</span><span class="p">,</span><span class="n">mycpu</span><span class="p">.</span><span class="n">rs2</span><span class="p">,</span><span class="n">mycpu</span><span class="p">.</span><span class="n">rd</span><span class="p">,</span><span class="n">mycpu</span><span class="p">.</span><span class="n">imm</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">testcase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;add&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">loadtestcase</span><span class="p">();</span>
+<span class="w">    </span><span class="n">resetcpu</span><span class="p">();</span>
+<span class="w">    </span><span class="n">step</span><span class="p">();</span>
+<span class="w">    </span><span class="n">checkreg</span><span class="p">(</span><span class="mh">6</span><span class="p">,</span><span class="mh">100</span><span class="p">);</span><span class="w"> </span><span class="c1">//t1==100</span>
+<span class="w">    </span><span class="n">step</span><span class="p">();</span>
+<span class="w">    </span><span class="n">checkreg</span><span class="p">(</span><span class="mh">7</span><span class="p">,</span><span class="mh">20</span><span class="p">);</span><span class="w">  </span><span class="c1">//t2=20</span>
+<span class="w">    </span><span class="n">step</span><span class="p">();</span>
+<span class="w">    </span><span class="n">checkreg</span><span class="p">(</span><span class="mh">28</span><span class="p">,</span><span class="mh">120</span><span class="p">);</span><span class="w"> </span><span class="c1">//t3=120</span>
+<span class="w">    </span><span class="nb">$stop</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>During execution, we first use $monitor to define the variables we need to observe. Whenever these variables change, Modelsim will automatically print out their contents.
+This allows us to view the corresponding PC and key information about instruction decoding for each instruction executed. Students can also define their own signals to observe.
+After loading the add test case, the testbench was executed three times in single steps, and after each execution, the t1, t2, and t3 registers were checked according to our expected execution results.
+The actual output of Modelsim is shown in the figure: numref:<cite>fig-simoutput</cite>:</p>
+<figure class="align-default" id="fig-simoutput">
+<img alt="../_images/simoutput.png" src="../_images/simoutput.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 81 </span><span class="caption-text">Simulation output of the single-cycle CPU</span><a class="headerlink" href="#fig-simoutput" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>As shown in the figure, after initialization, the code starts executing from the all-zero address. At the end of each cycle, the registers are checked. Note that the checkpoint occurs after the rising edge arrives, so by the end of the nth cycle, the PC and instruction have already been updated to the content of the next instruction.</p>
+<p>Please modify the single-step simulation testbench according to your own design and design test cases to perform preliminary integration testing of the CPU.</p>
+</section>
+<section id="system-function-simulation">
+<h3>System Function Simulation<a class="headerlink" href="#system-function-simulation" title="Link to this heading"></a></h3>
+<p>Single-step simulation is used to simply verify the basic execution of each instruction in the CPU to ensure that the CPU can perform basic functions.
+However, in order to eliminate potential bugs in the CPU, we need to conduct detailed testing of the CPU implementation to avoid difficult-to-locate bugs due to CPU issues when building the entire computer system later.
+In this lab, we use the official RISC-V test suite to perform comprehensive system simulation of the CPU.</p>
+</section>
+<section id="introduction-to-the-riscv-tests-test-suite">
+<h3>Introduction to the riscv-tests test suite<a class="headerlink" href="#introduction-to-the-riscv-tests-test-suite" title="Link to this heading"></a></h3>
+<p>The RISC-V community has developed an <a class="reference external" href="https://github.com/riscv/riscv-tests">official test suite</a> that provides tests for different RISC-V instruction variants.
+To compile the test suite, you need to install the risc-v gcc toolchain and run it on Ubuntu.</p>
+<div class="highlight-Bash notranslate"><div class="highlight"><pre><span></span>apt-get<span class="w"> </span>install<span class="w"> </span>g++-riscv64-linux-gnu<span class="w"> </span>binutils-riscv64-linux-gnu
+</pre></div>
+</div>
+<p>If you encounter problems during compilation, please refer to the troubleshooting section in <a class="reference external" href="https://nju-projectn.github.io/ics-pa-gitbook/ics2021/2.2.html#%E8%BF%90%E8%A1%8C%E7%AC%AC%E4%B8%80%E4%B8%AAc%E7%A8%8B%E5%BA%8F">PA2.2</a>.
+We have ported the test to AM, located at <a class="reference external" href="https://github.com/NJU-ProjectN/riscv-tests.git">https://github.com/NJU-ProjectN/riscv-tests.git</a>. To use this test set, run the following command</p>
+<div class="highlight-Bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>-b<span class="w"> </span>digit<span class="w"> </span>https://github.com/NJU-ProjectN/riscv-tests.git
+$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>-b<span class="w"> </span>digit<span class="w"> </span>https://github.com/NJU-ProjectN/abstract-machine.git
+$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">AM_HOME</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/abstract-machine
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>riscv-tests
+$<span class="w"> </span>make
+</pre></div>
+</div>
+<p>The first two lines download the riscv-tests and am source code from GitHub, the third line sets the environment variables, and finally compiles the test set.
+The compiled files are located in the riscv-tests/build directory, including executable files (.elf) and disassembly files (.txt), as well as the FPGA memory hex files and mif files we need. You can view the instructions included in the test cases and the address of each instruction in the disassembly files.</p>
+<p>The official RISC-V test suite provides tests for different RISC-V instruction variants. In this lab, we mainly use rv32ui, which is the basic instruction set of RV32. u stands for user mode, and i stands for integer basic instruction set. The environment used in the lab is a non-virtual address environment, which means that only physical addresses are used to access memory.</p>
+</section>
+<section id="test-program-porting">
+<h3>Test Program Porting<a class="headerlink" href="#test-program-porting" title="Link to this heading"></a></h3>
+<p>AM provides a bare-metal runtime environment for applications. The simplest runtime environment is shown in start.S and trm.c under the abstract-machine/src/npc directory.
+AM sets the stack pointer, the program entry point (main), and the program exit method (halt). After initialization is complete, it jumps to the application, which is the target test in riscv-tests, to continue execution.</p>
+<p>The riscv-tests provide unit tests for each instruction. The following is a partial disassembly fragment from the add test case:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">00000580</span> <span class="o">&lt;</span><span class="n">test_38</span><span class="o">&gt;</span><span class="p">:</span>
+<span class="mi">580</span><span class="p">:</span>  <span class="mi">01000093</span>                <span class="n">li</span>      <span class="n">ra</span><span class="p">,</span><span class="mi">16</span>
+<span class="mi">584</span><span class="p">:</span>  <span class="mf">01e00113</span>                <span class="n">li</span>      <span class="n">sp</span><span class="p">,</span><span class="mi">30</span>
+<span class="mi">588</span><span class="p">:</span>  <span class="mi">00208033</span>                <span class="n">add</span>     <span class="n">zero</span><span class="p">,</span><span class="n">ra</span><span class="p">,</span><span class="n">sp</span>
+<span class="mi">58</span><span class="n">c</span><span class="p">:</span>  <span class="mi">00000393</span>                <span class="n">li</span>      <span class="n">t2</span><span class="p">,</span><span class="mi">0</span>
+<span class="mi">590</span><span class="p">:</span>  <span class="mi">02600193</span>                <span class="n">li</span>      <span class="n">gp</span><span class="p">,</span><span class="mi">38</span>
+<span class="mi">594</span><span class="p">:</span>  <span class="mi">00701463</span>                <span class="n">bne</span>     <span class="n">zero</span><span class="p">,</span><span class="n">t2</span><span class="p">,</span><span class="mi">59</span><span class="n">c</span> <span class="o">&lt;</span><span class="n">fail</span><span class="o">&gt;</span>
+<span class="mi">598</span><span class="p">:</span>  <span class="mi">00301863</span>                <span class="n">bne</span>     <span class="n">zero</span><span class="p">,</span><span class="n">gp</span><span class="p">,</span><span class="mi">5</span><span class="n">a8</span> <span class="o">&lt;</span><span class="k">pass</span><span class="o">&gt;</span>
+
+<span class="mi">0000059</span><span class="n">c</span> <span class="o">&lt;</span><span class="n">fail</span><span class="o">&gt;</span><span class="p">:</span>
+<span class="mi">59</span><span class="n">c</span><span class="p">:</span>  <span class="n">deade537</span>                <span class="n">lui</span>     <span class="n">a0</span><span class="p">,</span><span class="mh">0xdeade</span>
+<span class="mi">5</span><span class="n">a0</span><span class="p">:</span>  <span class="n">ead50513</span>                <span class="n">addi</span>    <span class="n">a0</span><span class="p">,</span><span class="n">a0</span><span class="p">,</span><span class="o">-</span><span class="mi">339</span> <span class="c1"># deaddead &lt;_pmem_start+0x5eaddead&gt;</span>
+<span class="mi">5</span><span class="n">a4</span><span class="p">:</span>  <span class="mi">0200006</span><span class="n">f</span>                <span class="n">j</span>       <span class="mi">5</span><span class="n">c4</span> <span class="o">&lt;</span><span class="n">halt</span><span class="o">&gt;</span>
+
+<span class="mi">000005</span><span class="n">a8</span> <span class="o">&lt;</span><span class="k">pass</span><span class="o">&gt;</span><span class="p">:</span>
+<span class="mi">5</span><span class="n">a8</span><span class="p">:</span>  <span class="mi">00</span><span class="n">c10537</span>                <span class="n">lui</span>     <span class="n">a0</span><span class="p">,</span><span class="mh">0xc10</span>
+<span class="mi">5</span><span class="n">ac</span><span class="p">:</span>  <span class="n">fee50513</span>                <span class="n">addi</span>    <span class="n">a0</span><span class="p">,</span><span class="n">a0</span><span class="p">,</span><span class="o">-</span><span class="mi">18</span> <span class="c1"># c0ffee &lt;_end+0xb0f7ee&gt;</span>
+<span class="mi">5</span><span class="n">b0</span><span class="p">:</span>  <span class="mi">0140006</span><span class="n">f</span>                <span class="n">j</span>       <span class="mi">5</span><span class="n">c4</span> <span class="o">&lt;</span><span class="n">halt</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Here, the program checks whether the addition of the two numbers is the expected result and jumps to fail or pass accordingly.
+In pass, halt is called, the value of the a0 register is set to 32’h00c0ffee, and an instruction 32’hdead10cc is inserted, indicating that the test is complete. After obtaining this number in the simulation, it can be determined that the simulation is complete.
+If it is a fail case, a0 is set to 32’hdeaddead, and then the simulation is stopped. At the end of the simulation, the value of the a0 register can be used to determine whether all tests have passed.</p>
+<div class="admonition myquestion">
+<p class="admonition-title">Special Instruction 32’hdead10cc</p>
+<p>Why would 32’hdead10cc definitely not appear in a normal rv32i instruction sequence? In the disassembly file, what is 32’hdead10cc disassembled into?</p>
+</div>
+<p>After compiling and generating the executable file, the resulting ELF file cannot be directly used for FPGA memory initialization. Therefore, we need to automatically generate a text .hex file for Verilog and a .mif file for IP core initialization.
+After compilation is complete, the following commands in abstract-machine/scripts/riscv32-npc.mk will be automatically executed to generate the .hex file that needs to be loaded into the FPGA:</p>
+<div class="highlight-Makefile notranslate"><div class="highlight"><pre><span></span><span class="nv">RISCV_OBJCOPY</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span><span class="k">$(</span>RISCV_PREFIX<span class="k">)</span>objcopy<span class="w"> </span>-O<span class="w"> </span>verilog
+<span class="nv">RISCV_HEXGEN</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span><span class="s1">&#39;BEGIN{output=0;}{ gsub(&quot;\r&quot;,&quot;&quot;,$$(NF)); if ($$1~/@/) {if ($$1 ~/@80000000/) {output=code;} else {output=1-code;}; gsub(&quot;@&quot;,&quot;0x&quot;,$$1); addr=strtonum($$1); if (output==1){printf &quot;@%08x\n&quot;,(addr%262144)/4;}} else {if (output==1) {for(i=1;i&lt;NF;i+=4) print $$(i+3)$$(i+2)$$(i+1)$$i;}}}&#39;</span>
+<span class="nv">RISCV_MIFGEN</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span><span class="s1">&#39;BEGIN{printf &quot;WIDTH=32;\nDEPTH=%d;\n\nADDRESS_RADIX=HEX;\nDATA_RADIX=HEX;\n\nCONTENT BEGIN\n&quot;,depth; addr=0;} { gsub(&quot;\r&quot;,&quot;&quot;,$$(NF)); if ($$1 ~/@/) {gsub(&quot;@&quot;,&quot;0x&quot;,$$1);addr=strtonum($$1);} else {printf &quot;%04X : %s;\n&quot;,addr, $$1; addr=addr+1;}} END{print &quot;END\n&quot;;}&#39;</span>
+
+<span class="nf">image</span><span class="o">:</span><span class="w"> </span><span class="k">$(</span><span class="nv">IMAGE</span><span class="k">)</span>.<span class="n">elf</span>
+<span class="w">  </span>@<span class="k">$(</span>OBJDUMP<span class="k">)</span><span class="w"> </span>-d<span class="w"> </span><span class="k">$(</span>IMAGE<span class="k">)</span>.elf<span class="w"> </span>&gt;<span class="w"> </span><span class="k">$(</span>IMAGE<span class="k">)</span>.txt
+<span class="w">  </span><span class="k">$(</span>RISCV_OBJCOPY<span class="k">)</span><span class="w"> </span>$&lt;<span class="w"> </span><span class="k">$(</span>IMAGE<span class="k">)</span>.tmp
+<span class="w">  </span>awk<span class="w"> </span>-v<span class="w"> </span><span class="nv">code</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="k">$(</span>RISCV_HEXGEN<span class="k">)</span><span class="w"> </span><span class="k">$(</span>IMAGE<span class="k">)</span>.tmp<span class="w"> </span>&gt;<span class="w"> </span><span class="k">$(</span>IMAGE<span class="k">)</span>.hex
+<span class="w">  </span>awk<span class="w"> </span>-v<span class="w"> </span><span class="nv">code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="k">$(</span>RISCV_HEXGEN<span class="k">)</span><span class="w"> </span><span class="k">$(</span>IMAGE<span class="k">)</span>.tmp<span class="w"> </span>&gt;<span class="w"> </span><span class="k">$(</span>IMAGE<span class="k">)</span>_d.hex
+<span class="w">  </span>awk<span class="w"> </span>-v<span class="w"> </span><span class="nv">depth</span><span class="o">=</span><span class="m">65536</span><span class="w"> </span><span class="k">$(</span>RISCV_MIFGEN<span class="k">)</span><span class="w"> </span><span class="k">$(</span>IMAGE<span class="k">)</span>.hex<span class="w"> </span>&gt;<span class="w"> </span><span class="k">$(</span>IMAGE<span class="k">)</span>.mif
+<span class="w">  </span>awk<span class="w"> </span>-v<span class="w"> </span><span class="nv">depth</span><span class="o">=</span><span class="m">32768</span><span class="w"> </span><span class="k">$(</span>RISCV_MIFGEN<span class="k">)</span><span class="w"> </span><span class="k">$(</span>IMAGE<span class="k">)</span>_d.hex<span class="w"> </span>&gt;<span class="w"> </span><span class="k">$(</span>IMAGE<span class="k">)</span>_d.mif
+</pre></div>
+</div>
+<p>The process is divided into the following steps:
+First, use the disassembly tool objdump to generate a text file containing all instructions for testing purposes.
+Second, use the objcopy tool to generate a .tmp file that complies with Verilog format requirements. However, the data in this file is stored in 8-bit bytes and cannot be directly used to initialize 32-bit-wide memory.
+Third (lines 8-9), use the Linux awk text processing tool to convert the Verilog format. The awk commands should be researched and learned separately. In this example, awk determines whether to print the output based on the output variable. After reading a line, it first removes the newline character from the last token, then checks if the address starts with &#64;. If so, it checks if the address is the starting address of the 0x80000000 code segment. Based on the code variable, it determines whether to generate a code initialization file or a data initialization file. Subsequently, it takes the lower 18 bits of the address, divides the address by four (converting from byte addressing to 4-byte addressing in our memory), and prints the modified address. For normal data lines, awk groups the tokens into sets of four and reprints them.</p>
+<div class="admonition myquestion">
+<p class="admonition-title">Thinking Question</p>
+<p>Why does our CPU still execute correctly and find the corresponding data when we only take the lower 18 bits of the code segment and data segment addresses starting with 0x80000000 to generate the initialization files for the code and data memory?</p>
+</div>
+<p>The fourth step (lines 10-11) uses awk to convert the text from hex format to mif format, adding file headers, footers, and address identifiers.</p>
+<div class="admonition myquestion">
+<p class="admonition-title">Thinking Question</p>
+<p>If the data storage device is implemented using four 8-bit memory chips, how do you generate the initialization file corresponding to the four memory chips?</p>
+</div>
+<p>Using the framework and methods described above, we can easily port other test programs. Take a simple summation computation as an example:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">//sum.c</span>
+<span class="cp">#define PASS_CODE 0xc0ffee</span>
+<span class="cp">#define FAIL_CODE 0xdeaddead</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">halt</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">code</span><span class="p">);</span>
+
+<span class="n">__attribute__</span><span class="p">((</span><span class="n">noinline</span><span class="p">))</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">check</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">cond</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">cond</span><span class="p">)</span><span class="w"> </span><span class="n">halt</span><span class="p">(</span><span class="n">FAIL_CODE</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">  </span><span class="k">volatile</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="k">while</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">    </span><span class="n">i</span><span class="w"> </span><span class="o">++</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">check</span><span class="p">(</span><span class="n">sum</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">5050</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">PASS_CODE</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>And write the corresponding Makefile file. We provide a simple Makefile example as follows:</p>
+<div class="highlight-Makefile notranslate"><div class="highlight"><pre><span></span><span class="err">//</span><span class="w"> </span><span class="err">Makefile</span>
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">all</span> <span class="n">clean</span> <span class="k">$(</span><span class="nv">ALL</span><span class="k">)</span>
+
+<span class="nv">ARCH</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span>riscv32-npc
+<span class="nv">ALL</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span>sum
+
+<span class="nf">all</span><span class="o">:</span><span class="w"> </span><span class="k">$(</span><span class="nv">addprefix</span> <span class="nv">Makefile-</span>, <span class="k">$(</span><span class="nv">ALL</span><span class="k">))</span>
+<span class="w">  </span>@echo<span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="k">$(</span>ALL<span class="k">)</span>
+
+<span class="nf">$(ALL)</span><span class="o">:</span><span class="w"> </span>%: <span class="n">Makefile</span>-%
+
+<span class="nf">Makefile-%</span><span class="o">:</span><span class="w"> </span>%.<span class="n">c</span>
+<span class="w">  </span>@/bin/echo<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;NAME = </span><span class="nv">$*</span><span class="s2">\nSRCS = </span>$<span class="s2">&lt;\nLIBS += klib\nINC_PATH += </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/env/p </span><span class="k">$(</span>shell<span class="w"> </span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/isa/macros/scalar\ninclude </span><span class="nv">$$</span><span class="s2">{AM_HOME}/Makefile&quot;</span><span class="w"> </span>&gt;<span class="w"> </span><span class="nv">$@</span>
+<span class="w">  </span>-@make<span class="w"> </span>-s<span class="w"> </span>-f<span class="w"> </span><span class="nv">$@</span><span class="w"> </span><span class="nv">ARCH</span><span class="o">=</span><span class="k">$(</span>ARCH<span class="k">)</span><span class="w"> </span><span class="k">$(</span>MAKECMDGOALS<span class="k">)</span>
+<span class="w">  </span>-@rm<span class="w"> </span>-f<span class="w"> </span>Makefile-<span class="nv">$*</span>
+
+<span class="nf">clean</span><span class="o">:</span>
+<span class="w">  </span>rm<span class="w"> </span>-rf<span class="w"> </span>Makefile-*<span class="w"> </span>build/
+</pre></div>
+</div>
+<p>Specify the source files to be compiled using the variable ALL, and use the Makefile in AM to compile the application, runtime environment, and library functions defined in AM into an executable file. Students can read the Makefile in AM to understand the specific compilation process, or write their own Makefile for compilation.
+After setting the environment variable AM_HOME, you can compile the files using the make command, and find coresponding files in the build directory. This allows you to write more test cases to test the implementation of the processor.</p>
+<div class="admonition myinfo">
+<p class="admonition-title"></p>
+<p>Note that the official test set uses branch instructions to determine whether the operation is correct. If there is a problem with the implementation of the branch instruction, it may output the correct result even when there is a bug in the CPU. In particular, in some cases, when the signal is an undefined value X, the branch instruction may make an incorrect judgment. Please take care to eliminate such problems.</p>
+</div>
+</section>
+<section id="testbench">
+<h3>TestBench<a class="headerlink" href="#testbench" title="Link to this heading"></a></h3>
+<p>We need to modify Testbench to support simulation of the official test suite. The following auxiliary tasks have been added:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">integer</span><span class="w"> </span><span class="n">maxcycles</span><span class="w"> </span><span class="o">=</span><span class="mh">10000</span><span class="p">;</span>
+
+<span class="k">task</span><span class="w"> </span><span class="n">run</span><span class="p">;</span>
+<span class="w">  </span><span class="k">integer</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">  </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="w"> </span><span class="p">(</span><span class="n">mycpu</span><span class="p">.</span><span class="n">instr</span><span class="o">!=</span><span class="mh">32&#39;hdead10cc</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">&lt;</span><span class="n">maxcycles</span><span class="p">))</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">      </span><span class="n">step</span><span class="p">();</span>
+<span class="w">      </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="o">+</span><span class="mh">1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">endtask</span>
+</pre></div>
+</div>
+<p>The code execution task run will continue to execute the code step by step until it encounters the code termination signal we defined. If the code does not terminate, the simulation will stop after a given maximum cycle.</p>
+<p>The simulation results are tested by checking whether the data in the a0 register meets expectations after the simulation is completed. Of course, if the program does not terminate or the a0 data is abnormal, an error will be reported.</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">task</span><span class="w"> </span><span class="n">checkmagnum</span><span class="p">;</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">      </span><span class="k">if</span><span class="p">(</span><span class="n">numcycles</span><span class="o">&gt;</span><span class="n">maxcycles</span><span class="p">)</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">      </span><span class="nb">$display</span><span class="p">(</span><span class="s">&quot;!!!Error:test case %s does not terminate!&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">testcase</span><span class="p">);</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">mycpu</span><span class="p">.</span><span class="n">myregfile</span><span class="p">.</span><span class="n">regs</span><span class="p">[</span><span class="mh">10</span><span class="p">]</span><span class="o">==</span><span class="mh">32&#39;hc0ffee</span><span class="p">)</span>
+<span class="w">        </span><span class="k">begin</span>
+<span class="w">          </span><span class="nb">$display</span><span class="p">(</span><span class="s">&quot;OK:test case %s finshed OK at cycle %d.&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">testcase</span><span class="p">,</span><span class="w"> </span><span class="n">numcycles</span><span class="o">-</span><span class="mh">1</span><span class="p">);</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">mycpu</span><span class="p">.</span><span class="n">myregfile</span><span class="p">.</span><span class="n">regs</span><span class="p">[</span><span class="mh">10</span><span class="p">]</span><span class="o">==</span><span class="mh">32&#39;hdeaddead</span><span class="p">)</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">      </span><span class="nb">$display</span><span class="p">(</span><span class="s">&quot;!!!ERROR:test case %s finshed with error in cycle %d.&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">testcase</span><span class="p">,</span><span class="w"> </span><span class="n">numcycles</span><span class="o">-</span><span class="mh">1</span><span class="p">);</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">        </span><span class="nb">$display</span><span class="p">(</span><span class="s">&quot;!!!ERROR:test case %s unknown error in cycle %d.&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">testcase</span><span class="p">,</span><span class="w"> </span><span class="n">numcycles</span><span class="o">-</span><span class="mh">1</span><span class="p">);</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">endtask</span>
+</pre></div>
+</div>
+<p>Data storage can be initialized using the hex file we generate. During simulation, the RAM module we provide can be used to replace the module generated by the IP core. Data storage initialization is generally only required when testing memory access instructions.</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">task</span><span class="w"> </span><span class="n">loaddatamem</span><span class="p">;</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">      </span><span class="nb">$readmemh</span><span class="p">({</span><span class="n">testcase</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;_d.hex&quot;</span><span class="p">},</span><span class="n">datamem</span><span class="p">.</span><span class="n">mymem</span><span class="p">.</span><span class="n">ram</span><span class="p">);</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">endtask</span>
+</pre></div>
+</div>
+<p>We also provide a simple task that can execute a single test case.</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="k">task</span><span class="w"> </span><span class="n">run_riscv_test</span><span class="p">;</span>
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">loadtestcase</span><span class="p">();</span>
+<span class="w">    </span><span class="n">loaddatamem</span><span class="p">();</span>
+<span class="w">    </span><span class="n">resetcpu</span><span class="p">();</span>
+<span class="w">    </span><span class="n">run</span><span class="p">();</span>
+<span class="w">    </span><span class="n">checkmagnum</span><span class="p">();</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">endtask</span>
+</pre></div>
+</div>
+<p>Therefore, during the simulation process, we only need to execute all the necessary simulations in sequence:</p>
+<div class="highlight-Verilog notranslate"><div class="highlight"><pre><span></span><span class="n">testcase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;rv32ui-p-simple&quot;</span><span class="p">;</span>
+<span class="n">run_riscv_test</span><span class="p">();</span>
+<span class="n">testcase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;rv32ui-p-add&quot;</span><span class="p">;</span>
+<span class="n">run_riscv_test</span><span class="p">();</span>
+<span class="n">testcase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;rv32ui-p-addi&quot;</span><span class="p">;</span>
+<span class="n">run_riscv_test</span><span class="p">();</span>
+<span class="n">testcase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;rv32ui-p-and&quot;</span><span class="p">;</span>
+<span class="n">run_riscv_test</span><span class="p">();</span>
+</pre></div>
+</div>
+<figure class="align-default" id="fig-simout2">
+<img alt="../_images/simuout2.png" src="../_images/simuout2.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 82 </span><span class="caption-text">Simulation output of the CPU using the official test suite</span><a class="headerlink" href="#fig-simout2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>During simulation, you can temporarily comment out the $monitor task and only check the specific test cases that failed when an error occurs. Figure <code class="xref std std-numref docutils literal notranslate"><span class="pre">fig-simout2</span></code> shows an example of the output results of simulation using the official test suite.</p>
+</section>
+<section id="on-board-testing">
+<h3>On-Board Testing<a class="headerlink" href="#on-board-testing" title="Link to this heading"></a></h3>
+<p>During the design process, it is recommended that the CPU reserve a test data interface. Before testing on the board, the corresponding interface can be connected to the LED or seven-segment display on the board to display the internal status of the CPU. You can decide what content to output from the test interface, such as PC, register results, control signals, etc.
+During the initial on-board test, the CPU clock can be connected to the on-board KEY button, and each press will execute one cycle, which is convenient for debugging.</p>
+<p>For single-cycle CPUs, since all steps of instruction execution must be completed within a single cycle, it is likely that they cannot run at 50 MHz. Please observe whether the timing analysis results after your CPU synthesis show any timing violations, i.e., whether the setup slack is negative for certain models. In this case, you can consider adjusting the design to reduce the critical path delay or lower the main frequency.</p>
+</section>
+</section>
+<section id="lab-check-in-contents">
+<h2>Lab check-in contents<a class="headerlink" href="#lab-check-in-contents" title="Link to this heading"></a></h2>
+<section id="online-test">
+<h3>Online test<a class="headerlink" href="#online-test" title="Link to this heading"></a></h3>
+<p>Please complete the implementation of the single-cycle CPU on your own and pass the functional test and official test sections for the single-cycle CPU in the online test.</p>
+<ul class="simple">
+<li><p><strong>Mandatory Task</strong>: Single-cycle functional test</p></li>
+<li><p><strong>Mandatory Task</strong>: Single-cycle CPU official test</p></li>
+</ul>
+<div class="admonition myinfo">
+<p class="admonition-title">Caution</p>
+<p>Since our online test is only for single-cycle CPUs, if students implement multi-cycle or pipelined CPUs, the timing may not match the online test results. You can refer to the test bench provided on the course website to write your own test code. You need to complete the testing of all instructions in the official RISC-V test suite that begin with rv32ui-p. After the teaching assistant has verified the results on site, you will pass this lab.</p>
+</div>
+<div class="admonition myinfo">
+<p class="admonition-title">Acknowledgments</p>
+<p>We would like to express our gratitude to Li Han and Gao Hao, students from the class of 2019, for their exploration of the RISC-V toolchain.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="10.html" class="btn btn-neutral float-left" title="Lab 10: CPU Datapath" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="12.html" class="btn btn-neutral float-right" title="Lab 12: Computer Systems" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Wei Wang, Haijun Wu, Lu Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
